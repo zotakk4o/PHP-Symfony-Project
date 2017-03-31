@@ -1,0 +1,10 @@
+body{
+    padding-top: 0;
+}
+.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+}
+.footer-mooter{
+    text-align: center;
+}
