@@ -4,6 +4,8 @@
     {% for product in products %}
         <div class="panel panel-info">
             <div class="panel-heading">
+                <h3 class="panel-title"><a class="pull-right purchases-actions" href="{{ path('add_product', {id: product.id}) }}">Add to Cart</a></h3>
+                <h3 class="panel-title"><a class="pull-right purchases-actions" href="{{ path('buy_product', {id: product.id}) }}">Buy</a></h3>
                 <h3 class="panel-title">{{ product.name }}</h3>
             </div>
             <div class="panel-body">
