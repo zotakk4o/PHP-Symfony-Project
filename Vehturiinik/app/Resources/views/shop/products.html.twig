@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    {% for product in products %}
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{ product.name }}</h3>
+            </div>
+            <div class="panel-body">
+                {{ product.description }}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

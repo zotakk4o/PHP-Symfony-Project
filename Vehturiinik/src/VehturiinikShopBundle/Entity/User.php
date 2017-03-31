@@ -2,6 +2,7 @@
 
 namespace VehturiinikShopBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -42,6 +43,18 @@ class User implements UserInterface
      * @ORM\Column(name="fullName", type="string", length=255)
      */
     private $fullName;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="VehturiinikShopBundle\Entity\Product", inversedBy="users")
+     * * @ORM\JoinTable(name="users_products",
+     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="product_id", referencedColumnName="id")}
+     *     )
+     */
+    private $products;
+
 
 
     /**
@@ -170,5 +183,20 @@ class User implements UserInterface
     {
         // TODO: Implement eraseCredentials() method.
     }
+
+    /**
+     * @return mixed
+     */
+    public function getProducts()
+    {
+        return $this->products;
+    }
+
+    public function addProduct(Product $product)
+    {
+        $this->products[] = $product;
+    }
+
+
 }
 

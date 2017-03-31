@@ -16,10 +16,20 @@
                         <div class="navbar-header">
                             <a class="navbar-brand" href="{{ path('home_index') }}">Vehturiinik</a>
                         </div>
+                        <div class="navbar-header pull-left">
+                            <a class="navbar-brand" href="#">About</a>
+                        </div>
                         {% if app.user %}
                             <div class="navbar-header pull-right">
                                 <a class="navbar-brand" href="{{ path('logout') }}">Logout</a>
                             </div>
+                            <li class="dropdown pull-right">
+                                <a href="{{ path('view_cart') }}" class="navbar-brand" data-toggle="dropdown" role="button" aria-expanded="false">🛒</a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{{ path('view_cart') }}">View Cart</a></li>
+                                    <li><a href="#">Clear Cart</a></li>
+                                </ul>
+                            </li>
                         {% else %}
                         <div class="navbar-header pull-right">
                             <a class="navbar-brand" href="{{ path('user_register') }}">Register</a>
@@ -29,7 +39,7 @@
                         </div>
                         {% endif %}
                         <div class="navbar-header pull-right">
-                            <a class="navbar-brand" href="#">About</a>
+                            <a class="navbar-brand" href="{{ path('view_shop') }}">Shop</a>
                         </div>
                     </div>
                 </nav>
