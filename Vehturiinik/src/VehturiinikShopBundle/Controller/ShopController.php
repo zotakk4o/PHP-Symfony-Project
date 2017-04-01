@@ -14,7 +14,9 @@ class ShopController extends Controller
      */
    public function viewProductsAction()
    {
-      $products = $this->getDoctrine()->getRepository(Product::class)->findAll();
+      $repository = $this->getDoctrine()->getRepository(Product::class);
+
+      $products = $repository->createQueryBuilder('p')->where('p.quantity > 0')->getQuery()->getResult();
 
       return $this->render('shop/products.html.twig',['products' => $products]);
    }
