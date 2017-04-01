@@ -30,3 +30,9 @@ body{
     width: 40px;
     text-align: center;
 }
+.discount{
+    background-color: #e60000;
+}
+.quantity{
+    display: inline-block;
+}

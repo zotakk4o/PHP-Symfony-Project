@@ -15,9 +15,14 @@
             <div class="panel-body">
                 {{ product.description }}
                 <div>
-                    Price: <h4 class="price">{{ product.price }} vehturiiki</h4>
+                    {% if product.discount %}
+                    Price: <h4 class="price discount">{{ product.price - (product.price * product.discount / 100)  }} vehturiiki</h4>
+                        Discount: {{ product.discount }}%
+                    {% else %}
+                        Price: <h4 class="price">{{ product.price }} vehturiiki</h4>
+                    {% endif %}
                     <div>
-                        Quantity in Stock: <h4 class="price">{{ product.quantity }}</h4>
+                        Quantity in Stock: <h4 class="quantity">{{ product.quantity }}</h4>
                     </div>
                 </div>
             </div>

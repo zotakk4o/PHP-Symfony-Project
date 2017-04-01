@@ -18,11 +18,20 @@
             </div>
             <div class="panel-body">
                 {{ product.description }}
-                <div>
+                {% if product.discount %}
+                    Price: <h4 class="price discount">{{ product.price - (product.price * product.discount / 100)  }} vehturiiki</h4>
+                    Discount: {{ product.discount }}%
+                    <div>
+                        Cost: <h4 class="price discount">{{ (product.price - (product.price * product.discount / 100)) * session.get(product.name) }} vehturiiki</h4>
+                    </div>
+                {% else %}
                     Price: <h4 class="price">{{ product.price }} vehturiiki</h4>
                     <div>
-                        Cost: <h4 class="price">{{ product.price * session.get(product.name) }} vehturiiki</h4>
+                        Cost: <h4 class="price">{{ product.price  * session.get(product.name) }} vehturiiki</h4>
                     </div>
+                {% endif %}
+                <div>
+                    Quantity in Stock: <h4 class="quantity">{{ product.quantity }}</h4>
                 </div>
             </div>
         </div>
