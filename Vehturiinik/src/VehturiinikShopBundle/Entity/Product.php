@@ -51,6 +51,13 @@ class Product
     private $discount;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="quantity", type="integer")
+     */
+    private $quantity;
+
+    /**
      * @var ArrayCollection
      *
      * @ORM\ManyToMany(targetEntity="VehturiinikShopBundle\Entity\User", mappedBy="products")
@@ -179,6 +186,24 @@ class Product
     {
         $this->users = $users;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getQuantity()
+    {
+        return $this->quantity;
+    }
+
+    /**
+     * @param mixed $quantity
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+    }
+
+
 
 
 }

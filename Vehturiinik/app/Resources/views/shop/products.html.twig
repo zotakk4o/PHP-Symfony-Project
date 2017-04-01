@@ -1,15 +1,25 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
+    {% if app.user %}
+        <h2>Your Cash is: {{ app.user.money }} vehturiiki</h2>
+    {% endif %}
     {% for product in products %}
         <div class="panel panel-info">
             <div class="panel-heading">
-                <h3 class="panel-title"><a class="pull-right purchases-actions" href="{{ path('add_product', {id: product.id}) }}">Add to Cart</a></h3>
-                <h3 class="panel-title"><a class="pull-right purchases-actions" href="{{ path('buy_product', {id: product.id}) }}">Buy</a></h3>
+                {% if app.user %}
+                    <h3 class="panel-title"><a class="pull-right purchases-actions" href="{{ path('add_product', {id: product.id}) }}">Add to Cart</a></h3>
+                {% endif %}
                 <h3 class="panel-title">{{ product.name }}</h3>
             </div>
             <div class="panel-body">
                 {{ product.description }}
+                <div>
+                    Price: <h4 class="price">{{ product.price }} vehturiiki</h4>
+                    <div>
+                        Quantity in Stock: <h4 class="price">{{ product.quantity }}</h4>
+                    </div>
+                </div>
             </div>
         </div>
     {% endfor %}

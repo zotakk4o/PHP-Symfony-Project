@@ -45,6 +45,13 @@ class User implements UserInterface
     private $fullName;
 
     /**
+     * @var float
+     *
+     * @ORM\Column(name="money", type="float", options={"default" = 420})
+     */
+    private $money;
+
+    /**
      * @var ArrayCollection
      *
      * @ORM\ManyToMany(targetEntity="VehturiinikShopBundle\Entity\Product", inversedBy="users")
@@ -196,6 +203,24 @@ class User implements UserInterface
     {
         $this->products[] = $product;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getMoney()
+    {
+        return $this->money;
+    }
+
+    /**
+     * @param mixed $money
+     */
+    public function setMoney($money)
+    {
+        $this->money = $money;
+    }
+
+
 
 
 }

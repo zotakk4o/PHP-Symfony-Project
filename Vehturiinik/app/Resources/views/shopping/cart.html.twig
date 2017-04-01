@@ -2,14 +2,28 @@
 
 {% block main %}
     {% for product in products %}
+        <h2>Your Cash is: {{ app.user.money }}</h2>
         <div class="panel panel-info">
             <div class="panel-heading">
-                <h3 class="panel-title">{{ session.get(product.name) }}</h3>
-                <h3 class="panel-title"><a class="pull-right purchases-actions" href="#">Remove</a></h3>
+                <h3 class="panel-title"><a class="pull-right purchases-actions" href="{{ path('remove_all_from_cart', {productName: product.name}) }}">X</a></h3>
                 <h3 class="panel-title">{{ product.name }}</h3>
+                <h2 class="panel-title text-center">
+                    <form action="{{ path('add_quantity') }}" method="post">
+                        <input type="submit" class="btn-success" value="Make Quantity"/>
+                    <input type="text" class="quantity-field" name="quantity" value="{{ session.get(product.name) }}"/>
+                    <input type="hidden" name="productName" value="{{ product.name }}"/>
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+                    </form>
+                </h2>
             </div>
             <div class="panel-body">
                 {{ product.description }}
+                <div>
+                    Price: <h4 class="price">{{ product.price }} vehturiiki</h4>
+                    <div>
+                        Cost: <h4 class="price">{{ product.price * session.get(product.name) }} vehturiiki</h4>
+                    </div>
+                </div>
             </div>
         </div>
     {% endfor %}

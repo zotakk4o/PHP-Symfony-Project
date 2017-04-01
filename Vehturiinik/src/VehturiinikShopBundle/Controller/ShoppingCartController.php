@@ -6,7 +6,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use VehturiinikShopBundle\Entity\Product;
 use VehturiinikShopBundle\Entity\User;
@@ -68,13 +71,22 @@ class ShoppingCartController extends Controller
     {
         $session = $this->get('session');
 
-        if(!$session->has('products')){
+        if(!$session->has('products') || empty($session->get('products'))){
             return $this->redirectToRoute('view_shop');
         }
 
-        $products = $this->get('session')->get('products');
 
-        return $this->render('shopping/bought.html.twig', ['products' => $products]);
+        $products = $session->get('products');
+
+        if(in_array(0, $session->all())){
+            $productName = array_search(0, $session->all());
+            $session->remove($productName);
+            $products = $session->get('products');
+            unset($products[$productName]);
+            $session->set('products', $products);
+        }
+
+        return $this->render('shopping/cart.html.twig', ['products' => $products, 'session' => $session]);
     }
 
 
@@ -109,9 +121,47 @@ class ShoppingCartController extends Controller
         }
         $session->set('products', $products);
 
+        return $this->redirectToRoute('view_shop');
 
-        return $this->render('shopping/cart.html.twig', ['products' => $products,'session' => $session]);
+
+    }
+
+    /**
+     * @param $productName
+     * @Route("/shop/remove-from-cart/{productName}", name="remove_all_from_cart")
+     * @return RedirectResponse
+     */
+    public function removeAllFromCartAction($productName)
+    {
+        $session = $this->get('session');
+        $session->remove($productName);
+        $products = $session->get('products');
+        unset($products[$productName]);
+        $session->set('products',$products);
 
 
+        return $this->redirectToRoute('view_cart');
+    }
+
+    /**
+     * @param Request $request
+     * @Route("/shop/add-quantity", name="add_quantity")
+     * @Method({"POST"})
+     * @return RedirectResponse
+     */
+    public function addQuantityAction(Request $request)
+    {
+        $productName = $request->request->get('productName');
+        $quantity = $request->request->get('quantity');
+
+        $session = $this->get('session');
+
+        if(!$session->has($productName)){
+            return $this->redirectToRoute('view_cart');
+        }
+
+        $session->set($productName, $quantity);
+
+        return $this->redirectToRoute('view_cart');
     }
 }

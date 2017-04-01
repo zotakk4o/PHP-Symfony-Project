@@ -11,3 +11,22 @@ body{
 .purchases-actions{
     padding-left: 15px;
 }
+.price{
+    background-color: #3399ff;
+    display: inline-block;
+    text-align: center;
+    color: white;
+}
+.cart-buttons{
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
+}
+.quantity-field{
+    color: black;
+    width: 40px;
+    text-align: center;
+}
