@@ -31,8 +31,10 @@ class UserController extends Controller
             $password = $this->get('security.password_encoder');
             $userPassword = $password->encodePassword($user,$user->getPassword());
             $user->setPassword($userPassword);
+            $user->setMoney(420);
 
             /** save user to the database*/
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
