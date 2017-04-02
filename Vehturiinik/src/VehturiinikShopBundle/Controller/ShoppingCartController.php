@@ -126,6 +126,8 @@ class ShoppingCartController extends Controller
         }
         $session->set('products', $products);
 
+        $this->addFlash('notice', "$productName successfully added to your cart!");
+
         return $this->redirectToRoute('view_products_in_category',['id' => $product->getCategory()->getId()]);
 
 
