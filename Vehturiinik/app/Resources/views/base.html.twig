@@ -1,3 +1,4 @@
+{% import 'macros.html.twig' as helpers %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -44,6 +45,11 @@
                     </div>
                 </nav>
             </header>
+            {% for type, flash_messages in app.session.flashBag.all %}
+                {% for flash_message in flash_messages %}
+                    {{  helpers.flash(type, flash_message) }}
+                {% endfor %}
+            {% endfor %}
         {% endblock %}
         <div class="container body-container">
             {% block body %}
