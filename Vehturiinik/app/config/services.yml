@@ -4,8 +4,6 @@ parameters:
 #    parameter_name: value
 
 services:
-    app.twig_extension:
-        class: VehturiinikShopBundle\Twig\AppExtension
-        public: false
-        tags:
-            - { name: twig.extension }
+#    service_name:
+#        class: VehturiinikShopBundle\Directory\ClassName
+#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
