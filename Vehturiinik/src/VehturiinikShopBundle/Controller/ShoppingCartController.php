@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use VehturiinikShopBundle\Entity\Category;
 use VehturiinikShopBundle\Entity\Product;
 use VehturiinikShopBundle\Entity\User;
 
@@ -99,10 +100,14 @@ class ShoppingCartController extends Controller
     {
 
         $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
+
         $productName = $product->getName();
         if($product === null){
             $this->redirectToRoute('view_shop');
         }
+
+        $category = $this->getDoctrine()->getRepository(Category::class)->findOneBy(['id' => $product->getCategoryId()]);
+        $product->setCategory($category);
 
         $session = $this->get('session');
 
@@ -121,7 +126,7 @@ class ShoppingCartController extends Controller
         }
         $session->set('products', $products);
 
-        return $this->redirectToRoute('view_shop');
+        return $this->redirectToRoute('view_products_in_category',['id' => $product->getCategory()->getId()]);
 
 
     }

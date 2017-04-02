@@ -7,6 +7,7 @@
     {% for product in products %}
         <div class="panel panel-info">
             <div class="panel-heading">
+                <h3 class="panel-title text-center">{{ product.category.name }}</h3>
                 {% if app.user %}
                     <h3 class="panel-title"><a class="pull-right purchases-actions" href="{{ path('add_product', {id: product.id}) }}">Add to Cart</a></h3>
                 {% endif %}
@@ -16,7 +17,7 @@
                 {{ product.description }}
                 <div>
                     {% if product.discount %}
-                    Price: <h4 class="price discount">{{ product.price - (product.price * product.discount / 100)  }} vehturiiki</h4>
+                        Price: <h4 class="price discount">{{ product.price - (product.price * product.discount / 100)  }} vehturiiki</h4>
                         Discount: {{ product.discount }}%
                     {% else %}
                         Price: <h4 class="price">{{ product.price }} vehturiiki</h4>

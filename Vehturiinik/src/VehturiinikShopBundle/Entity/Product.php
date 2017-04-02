@@ -46,14 +46,14 @@ class Product
     /**
      * @var string
      *
-     * @ORM\Column(name="discount", type="integer")
+     * @ORM\Column(name="discount", type="integer", options={"default" = 0})
      */
     private $discount;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="quantity", type="integer")
+     * @ORM\Column(name="quantity", type="integer", options={"default" = 0})
      */
     private $quantity;
 
@@ -64,6 +64,21 @@ class Product
      */
     private $users;
 
+    /**
+     * @var Category
+     *
+     * @ORM\ManyToOne(targetEntity="VehturiinikShopBundle\Entity\Category", inversedBy="products")
+     *
+     * @ORM\JoinColumn(name="categoryId", referencedColumnName="id")
+     */
+    private $category;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="categoryId", type="integer")
+     */
+    private $categoryId;
 
     /**
      * Get id
@@ -202,6 +217,44 @@ class Product
     {
         $this->quantity = $quantity;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param mixed $category
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCategoryId(): int
+    {
+        return $this->categoryId;
+    }
+
+    /**
+     * @param int $categoryId
+     */
+    public function setCategoryId(int $categoryId)
+    {
+        $this->categoryId = $categoryId;
+    }
+
+
+
+
+
+
 
 
 

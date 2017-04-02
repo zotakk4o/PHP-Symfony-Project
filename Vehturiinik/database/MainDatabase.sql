@@ -17,6 +17,25 @@ DROP DATABASE IF EXISTS `vehturiinik`;
 CREATE DATABASE IF NOT EXISTS `vehturiinik` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `vehturiinik`;
 
+-- Dumping structure for table vehturiinik.category
+DROP TABLE IF EXISTS `category`;
+CREATE TABLE IF NOT EXISTS `category` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `description` longtext COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UNIQ_64C19C15E237E06` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- Dumping data for table vehturiinik.category: ~0 rows (approximately)
+DELETE FROM `category`;
+/*!40000 ALTER TABLE `category` DISABLE KEYS */;
+INSERT INTO `category` (`id`, `name`, `description`) VALUES
+	(1, 'Za Doma', 'Gotini neshtica koito da se haresat na vashite loshi jeni'),
+	(2, 'Kompiutri', 'Gotini neshtica koito da se haresat na vashite dechica'),
+	(3, 'Koli', 'Neshta za vas :)');
+/*!40000 ALTER TABLE `category` ENABLE KEYS */;
+
 -- Dumping structure for table vehturiinik.products
 DROP TABLE IF EXISTS `products`;
 CREATE TABLE IF NOT EXISTS `products` (
@@ -24,18 +43,22 @@ CREATE TABLE IF NOT EXISTS `products` (
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `price` double NOT NULL,
   `description` longtext COLLATE utf8_unicode_ci NOT NULL,
-  `discount` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `discount` int(11) NOT NULL DEFAULT '0',
+  `quantity` int(11) NOT NULL DEFAULT '0',
+  `categoryId` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `IDX_B3BA5A5A9C370B71` (`categoryId`),
+  CONSTRAINT `FK_B3BA5A5A9C370B71` FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping data for table vehturiinik.products: ~3 rows (approximately)
+-- Dumping data for table vehturiinik.products: ~0 rows (approximately)
 DELETE FROM `products`;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` (`id`, `name`, `price`, `description`, `discount`, `quantity`) VALUES
-	(1, 'Knife', 243, 'Very Sharp', 0, 24),
-	(2, 'Stove', 123, 'Shitec', 0, 33),
-	(3, 'Sofa', 420, 'Very Soft', 0, 17);
+INSERT INTO `products` (`id`, `name`, `price`, `description`, `discount`, `quantity`, `categoryId`) VALUES
+	(2, 'Audi s8', 42351, 'Mnogo si e burzo nqma kvo da sel afim', 0, 4, 3),
+	(3, 'Kompec', 1080, 'E ne e s gtx 1080 ama pak staa', 0, 15, 2),
+	(5, 'Furna za jenata', 10, 'Da ne vi trovi nervite', 0, 2, 1),
+	(6, 'BMW M6', 50000, 'Da vozite prizlujnicata', 0, 3, 3);
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 
 -- Dumping structure for table vehturiinik.users
