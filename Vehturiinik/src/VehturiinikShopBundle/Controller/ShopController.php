@@ -16,8 +16,6 @@ class ShopController extends Controller
      */
    public function viewCategoriesAction()
    {
-       //$repository = $this->getDoctrine()->getRepository(Product::class);
-       //$products = $repository->createQueryBuilder('p')->where('p.quantity > 0')->getQuery()->getResult();
 
        $categories = $this->getDoctrine()->getRepository(Category::class)->findAll();
 
@@ -32,7 +30,13 @@ class ShopController extends Controller
    public function viewProductsInCategoryAction($id)
    {
         $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
-        $products = $category->getProducts();
+
+        if($category === null){
+            $this->addFlash('error','This category doesn\'t exist!');
+            return $this->redirectToRoute('view_shop');
+        }
+
+       $products = $category->getProducts();
 
         return $this->render('shop/products.html.twig', ['products' => $products]);
    }

@@ -80,11 +80,15 @@ class Category
     }
 
     /**
-     * @return Collection
+     * @return Product[]
      */
-    public function getProducts(): Collection
+    public function getProducts()
     {
-        return $this->products;
+        $products = [];
+        foreach ($this->products as $product){
+            if(!$product->getQuantity() == 0)$products[] = $product;
+        }
+        return $products;
     }
 
     /**

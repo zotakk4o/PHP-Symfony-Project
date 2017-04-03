@@ -22,6 +22,10 @@ class ShoppingCartController extends Controller
      */
     public function viewBoughtProductsAction()
     {
+        if(!$this->getUser()){
+            $this->addFlash('error','Log in in order view your purchases!');
+            return $this->redirectToRoute('security_login');
+        }
         $userId = $this->getUser()->getId();
 
         $repository = $this->getDoctrine()->getManager()->getRepository(Product::class);
@@ -43,6 +47,11 @@ class ShoppingCartController extends Controller
      */
     public function buyProductAction($id)
     {
+        if(!$this->getUser()){
+            $this->addFlash('error','Log in in order to buy products from the shop!');
+            return $this->redirectToRoute('security_login');
+        }
+
         /**
          * Retrieve the logged in user in order later to add the product to his purchases list
          *
@@ -53,6 +62,7 @@ class ShoppingCartController extends Controller
         $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
 
         if($product === null){
+            $this->addFlash('error','This product doesn\'t exist');
             return $this->redirectToRoute('view_shop');
         }
 
@@ -70,9 +80,14 @@ class ShoppingCartController extends Controller
      */
     public function viewCartAction()
     {
+        if(!$this->getUser()){
+            $this->addFlash('error','Log in in order to access your cart!');
+            return $this->redirectToRoute('security_login');
+        }
         $session = $this->get('session');
 
         if(!$session->has('products') || empty($session->get('products'))){
+            $this->addFlash('warning','You have no products in your cart!');
             return $this->redirectToRoute('view_shop');
         }
 
@@ -98,11 +113,16 @@ class ShoppingCartController extends Controller
      */
     public function addToCartAction($id)
     {
+        if(!$this->getUser()){
+            $this->addFlash('error','Log in in order to add products to your cart!');
+            return $this->redirectToRoute('security_login');
+        }
 
         $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
 
         $productName = $product->getName();
         if($product === null){
+            $this->addFlash('error','This product doesn\'t exist');
             $this->redirectToRoute('view_shop');
         }
 
@@ -126,7 +146,7 @@ class ShoppingCartController extends Controller
         }
         $session->set('products', $products);
 
-        $this->addFlash('notice', "$productName successfully added to your cart!");
+        $this->addFlash('notice', strtoupper($productName) . " successfully added to your cart!");
 
         return $this->redirectToRoute('view_products_in_category',['id' => $product->getCategory()->getId()]);
 
@@ -138,14 +158,21 @@ class ShoppingCartController extends Controller
      * @Route("/shop/remove-from-cart/{productName}", name="remove_all_from_cart")
      * @return RedirectResponse
      */
-    public function removeAllFromCartAction($productName)
+    public function removeProductFromCartAction($productName)
     {
+        if(!$this->getUser()){
+            $this->addFlash('error','Log in in order to access your cart!');
+            return $this->redirectToRoute('security_login');
+        }
+
         $session = $this->get('session');
         $session->remove($productName);
         $products = $session->get('products');
         unset($products[$productName]);
         $session->set('products',$products);
 
+
+        $this->addFlash('notice','You have successfully removed '. strtoupper($productName) .' product from your cart!');
 
         return $this->redirectToRoute('view_cart');
     }
@@ -158,6 +185,10 @@ class ShoppingCartController extends Controller
      */
     public function addQuantityAction(Request $request)
     {
+        if(!$this->getUser()){
+            $this->addFlash('error','Log in in order to manage to your cart!');
+            return $this->redirectToRoute('security_login');
+        }
         $productName = $request->request->get('productName');
         $quantity = $request->request->get('quantity');
 

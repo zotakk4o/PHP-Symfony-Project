@@ -80,11 +80,20 @@ class Product
      */
     private $categoryId;
 
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
+
     /**
      * Get id
      *
      * @return int
      */
+
+
+
+
     public function getId()
     {
         return $this->id;
