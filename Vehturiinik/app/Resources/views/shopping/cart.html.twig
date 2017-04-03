@@ -1,41 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
+    <h2>Your Cash is: {{ app.user.money }}</h2>
     {% for product in products %}
-        <h2>Your Cash is: {{ app.user.money }}</h2>
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <h3 class="panel-title text-center"><a href="{{ path('view_products_in_category', {id: product.category.id}) }}">{{ product.category.name}}</a></h3>
-                <h3 class="panel-title"><a class="pull-right purchases-actions" href="{{ path('remove_all_from_cart', {productName: product.name}) }}">X</a></h3>
-                <h3 class="panel-title">{{ product.name }}</h3>
-                <h2 class="panel-title text-center">
-                    <form action="{{ path('add_quantity') }}" method="post">
-                        <input type="submit" class="btn-success" value="Make Quantity"/>
-                    <input type="text" class="quantity-field" name="quantity" value="{{ session.get(product.name) }}"/>
-                    <input type="hidden" name="productName" value="{{ product.name }}"/>
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
-                    </form>
-                </h2>
-            </div>
-            <div class="panel-body">
-                {{ product.description }}
-                {% if product.discount %}
-                    Price: <h4 class="price discount">{{ product.price - (product.price * product.discount / 100)  }} vehturiiki</h4>
-                    Discount: {{ product.discount }}%
-                    <div>
-                        Cost: <h4 class="price discount">{{ (product.price - (product.price * product.discount / 100)) * session.get(product.name) }} vehturiiki</h4>
-                    </div>
-                {% else %}
-                    Price: <h4 class="price">{{ product.price }} vehturiiki</h4>
-                    <div>
-                        Cost: <h4 class="price">{{ product.price  * session.get(product.name) }} vehturiiki</h4>
-                    </div>
-                {% endif %}
-                <div>
-                    Quantity in Stock: <h4 class="quantity">{{ product.quantity }}</h4>
-                </div>
-            </div>
-        </div>
+        {{ cartMacros.cartProduct(product) }}
     {% endfor %}
 {% endblock %}
 

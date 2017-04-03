@@ -87,7 +87,7 @@ class ShoppingCartController extends Controller
             $session->set('products', $products);
         }
 
-        return $this->render('shopping/cart.html.twig', ['products' => $products, 'session' => $session]);
+        return $this->render('shopping/cart.html.twig', ['products' => $products]);
     }
 
 

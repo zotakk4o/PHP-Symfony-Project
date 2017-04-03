@@ -1,0 +1,9 @@
+{% macro flash(type, message) %}
+    <div class="alert alert-dismissible alert-{{ type|checkType }}">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>{{ message }}</strong>
+    </div>
+{% endmacro %}
+
+
+

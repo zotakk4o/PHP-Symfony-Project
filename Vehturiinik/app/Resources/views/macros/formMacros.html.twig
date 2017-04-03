@@ -1,0 +1,81 @@
+{% macro loginForm() %}
+    {% import _self as helpers %}
+    <div>
+        <form class="form-horizontal" name="login" method="post" action="{{ path('security_login') }}">
+            <fieldset>
+                <legend>Login</legend>
+                {{ helpers.udInputField('Username','text','_username') }}
+                {{ helpers.udInputField('Password','password','_password') }}
+                {{ helpers.submitAndCancelButtons('Login',path('home_index')) }}
+                {{ helpers.csrfField() }}
+            </fieldset>
+        </form>
+    </div>
+{% endmacro %}
+
+{% macro registerForm(form) %}
+    {% import _self as helpers %}
+    <div>
+        <form class="form-horizontal" name="register" method="post" action="{{ path('user_register') }}">
+            <fieldset>
+                <legend>Register</legend>
+                {{ helpers.formInputField(form.username, 'Username') }}
+                {{ helpers.formInputField(form.fullName, 'Full Name') }}
+                {{ helpers.formInputField(form.password, 'Password') }}
+                {{ helpers.submitAndCancelButtons('Register',path('home_index')) }}
+                {{ form_row(form._token) }}
+            </fieldset>
+        </form>
+    </div>
+{% endmacro %}
+
+{% macro quantityForm(product) %}
+    {% import _self as helpers %}
+    <form action="{{ path('add_quantity') }}" method="post">
+        <input type="submit" class="btn-success" value="Make Quantity"/>
+        <input type="text" class="quantity-field" name="quantity" value="{{ app.session.get(product.name) }}"/>
+        <input type="hidden" name="productName" value="{{ product.name }}"/>
+        {{ helpers.csrfField() }}
+    </form>
+{% endmacro %}
+
+{% macro formInputField(formField, label) %}
+    <div class="form-group">
+        <h3><label class="col-lg-2 control-label">{{ label }}</label></h3>
+        <div class="col-lg-10">
+            {{ form_widget(formField) }}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro csrfField() %}
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+{% endmacro %}
+
+{% macro udInputField(label, type, name) %}
+    <div class="form-group">
+        <h3><label class="col-lg-2 control-label">{{ label|default('') }}</label></h3>
+        <div class="col-lg-10">
+            <input type="{{ type }}" name="{{ name }}" class="form-control" placeholder="{{ label|default('') }}" required />
+        </div>
+    </div>
+{% endmacro %}
+
+
+
+{% macro submitAndCancelButtons(value, cancelHref) %}
+    <div class="form-group">
+        <div class="col-lg-10 col-lg-offset-2">
+            <a href="{{ cancelHref }}" class="btn btn-default">Cancel</a>
+            <button type="submit" class="btn btn-primary">{{ value }}</button>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro submitButton(value) %}
+    <div class="form-group">
+        <div class="col-lg-10 col-lg-offset-2">
+            <button type="submit" class="btn btn-primary">{{ value }}</button>
+        </div>
+    </div>
+{% endmacro %}

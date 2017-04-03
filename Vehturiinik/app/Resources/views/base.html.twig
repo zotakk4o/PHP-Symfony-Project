@@ -1,4 +1,7 @@
-{% import 'macros.html.twig' as helpers %}
+{% import 'macros/mixedMacros.html.twig' as mixedMacros %}
+{% import 'macros/formMacros.html.twig' as formMacros %}
+{% import 'macros/cartMacros.html.twig' as cartMacros %}
+{% import 'macros/shopMacros.html.twig' as shopMacros %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -47,7 +50,7 @@
             </header>
             {% for type, flash_messages in app.session.flashBag.all %}
                 {% for flash_message in flash_messages %}
-                    {{  helpers.flash(type, flash_message) }}
+                    {{  mixedMacros.flash(type, flash_message) }}
                 {% endfor %}
             {% endfor %}
         {% endblock %}
