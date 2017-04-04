@@ -13,67 +13,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use VehturiinikShopBundle\Entity\Category;
 use VehturiinikShopBundle\Entity\Product;
+use VehturiinikShopBundle\Entity\Purchase;
 use VehturiinikShopBundle\Entity\User;
 
 class ShoppingCartController extends Controller
 {
-    /**
-     * @Route("/purchases", name="view_purchases")
-     */
-    public function viewBoughtProductsAction()
-    {
-        if(!$this->getUser()){
-            $this->addFlash('error','Log in in order view your purchases!');
-            return $this->redirectToRoute('security_login');
-        }
-        $userId = $this->getUser()->getId();
-
-        $repository = $this->getDoctrine()->getManager()->getRepository(Product::class);
-
-        /** Get the products the logged in user have */
-        $query = $repository->createQueryBuilder('p')
-            ->innerJoin('p.users', 'u')
-            ->where('u.id = :user_id')
-            ->setParameter('user_id', $userId)
-            ->getQuery()->getResult();
-
-        return $this->render('shopping/bought.html.twig', ['products' => $query]);
-    }
-
-    /**
-     * @param $id int
-     * @Route("/shop/buy/{id}",name="buy_product")
-     * @return RedirectResponse
-     */
-    public function buyProductAction($id)
-    {
-        if(!$this->getUser()){
-            $this->addFlash('error','Log in in order to buy products from the shop!');
-            return $this->redirectToRoute('security_login');
-        }
-
-        /**
-         * Retrieve the logged in user in order later to add the product to his purchases list
-         *
-         * @var $user User
-         */
-        $user = $this->getUser();
-
-        $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
-
-        if($product === null){
-            $this->addFlash('error','This product doesn\'t exist');
-            return $this->redirectToRoute('view_shop');
-        }
-
-        $em = $this->getDoctrine()->getManager();
-        $user->addProduct($product);
-        $em->persist($user);
-        $em->flush();
-
-        return $this->redirectToRoute('view_purchases');
-    }
-
     /**
      * @Route("/shop/cart", name="view_cart")
      * @return Response

@@ -1,18 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
-    {% for product in products %}
-    <div class="panel panel-info">
-        <div class="panel-heading">
-            <h3 class="panel-title">{{ product.name }}</h3>
-        </div>
-        <div class="panel-body">
-            {{ product.description }}
-            <div>
-                <h4 class="price">{{ product.price }}</h4>
-            </div>
-        </div>
-    </div>
+    <h2>Your Cash is: {{ app.user.money }}</h2>
+    {% for productName, quantity in quantities %}
+        {{ purchasesMacros.purchaseProduct(products[productName], quantity) }}
     {% endfor %}
-
 {% endblock %}

@@ -1,0 +1,19 @@
+{% macro purchaseProduct(product,quantity)%}
+    {% import 'macros/formMacros.html.twig' as formMacros %}
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title text-center"><a href="{{ path('view_products_in_category', {id: product.category.id}) }}">{{ product.category.name}}</a></h3>
+            <h3 class="panel-title">{{ product.name }}</h3>
+        </div>
+        <div class="panel-body">
+            {{ product.description }}
+            <div>
+                Cost: <h4 class="price">{{ product.price  * quantity }} vehturiiki</h4>
+            </div>
+            <div>
+                Quantity bought: <h4 class="quantity">{{ quantity }}</h4>
+            </div>
+            <h2 class="panel-title text-right"><a href="#">Sell</a></h2>
+        </div>
+    </div>
+{% endmacro %}

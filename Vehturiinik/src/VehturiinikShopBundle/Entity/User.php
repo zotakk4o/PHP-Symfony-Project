@@ -54,13 +54,10 @@ class User implements UserInterface
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="VehturiinikShopBundle\Entity\Product", inversedBy="users")
-     * @ORM\JoinTable(name="users_products",
-     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="product_id", referencedColumnName="id")}
-     *     )
+     * @ORM\OneToMany(targetEntity="VehturiinikShopBundle\Entity\Purchase", mappedBy="user")
+     *
      */
-    private $products;
+    private $purchases;
 
     /**
      * @var ArrayCollection
@@ -75,7 +72,7 @@ class User implements UserInterface
 
     public function __construct()
     {
-        $this->products = new ArrayCollection();
+        $this->purchases = new ArrayCollection();
         $this->roles = new ArrayCollection();
     }
 
@@ -203,14 +200,17 @@ class User implements UserInterface
     /**
      * @return mixed
      */
-    public function getProducts()
+    public function getPurchases()
     {
-        return $this->products;
+        return $this->purchases;
     }
 
-    public function addProduct(Product $product)
+    /**
+     * @param Purchase $purchase
+     */
+    public function addPurchase(Purchase $purchase)
     {
-        $this->products[] = $product;
+        $this->purchases[] = $purchase;
     }
 
     /**
@@ -240,10 +240,21 @@ class User implements UserInterface
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isEditor(): bool
+    {
+        return in_array('ROLE_EDITOR', $this->getRoles());
+    }
 
-
-
-
+    /**
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return in_array('ROLE_ADMIN', $this->getRoles());
+    }
 
 }
 

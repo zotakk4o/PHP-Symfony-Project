@@ -42,7 +42,7 @@ class UserController extends Controller
             $user->addRole($role);
 
             /**Give user some money to spend later on our vehturiiki*/
-            $user->setMoney(420);
+            $user->setMoney(4200);
 
             /** save user to the database*/
             $em = $this->getDoctrine()->getManager();

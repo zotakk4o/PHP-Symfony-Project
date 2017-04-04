@@ -57,12 +57,6 @@ class Product
      */
     private $quantity;
 
-    /**
-     * @var ArrayCollection
-     *
-     * @ORM\ManyToMany(targetEntity="VehturiinikShopBundle\Entity\User", mappedBy="products")
-     */
-    private $users;
 
     /**
      * @var Category
@@ -79,6 +73,14 @@ class Product
      * @ORM\Column(name="categoryId", type="integer")
      */
     private $categoryId;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="VehturiinikShopBundle\Entity\Purchase", mappedBy="product")
+     *
+     */
+    private $buyings;
 
     public function __construct()
     {
@@ -193,22 +195,6 @@ class Product
     public function getDiscount()
     {
         return $this->discount;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getUsers()
-    {
-        return $this->users;
-    }
-
-    /**
-     * @param mixed $users
-     */
-    public function setUsers($users)
-    {
-        $this->users = $users;
     }
 
     /**

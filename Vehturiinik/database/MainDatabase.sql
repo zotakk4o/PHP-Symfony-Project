@@ -55,11 +55,32 @@ CREATE TABLE IF NOT EXISTS `products` (
 DELETE FROM `products`;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
 INSERT INTO `products` (`id`, `name`, `price`, `description`, `discount`, `quantity`, `categoryId`) VALUES
-	(2, 'Audi s8', 42351, 'Mnogo si e burzo nqma kvo da sel afim', 0, 4, 3),
-	(3, 'Kompec', 1080, 'E ne e s gtx 1080 ama pak staa', 0, 15, 2),
-	(5, 'Furna za jenata', 10, 'Da ne vi trovi nervite', 0, 2, 1),
-	(6, 'BMW M6', 50000, 'Da vozite prizlujnicata', 0, 2, 3);
+	(2, 'Audi s8', 3500, 'Mnogo si e burzo nqma kvo da sel afim', 0, 42, 3),
+	(3, 'Kompec', 1000, 'E ne e s gtx 1080 ama pak staa', 0, 14, 2),
+	(5, 'Furna za jenata', 150, 'Da ne vi trovi nervite', 0, 312, 1),
+	(6, 'BMW M6', 2500, 'Da vozite prizlujnicata', 0, 12, 3);
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
+
+-- Dumping structure for table vehturiinik.purchases
+DROP TABLE IF EXISTS `purchases`;
+CREATE TABLE IF NOT EXISTS `purchases` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `quantity` int(11) NOT NULL DEFAULT '0',
+  `userId` int(11) NOT NULL,
+  `productId` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `IDX_AA6431FE64B64DCC` (`userId`),
+  KEY `IDX_AA6431FE36799605` (`productId`),
+  CONSTRAINT `FK_AA6431FE36799605` FOREIGN KEY (`productId`) REFERENCES `products` (`id`),
+  CONSTRAINT `FK_AA6431FE64B64DCC` FOREIGN KEY (`userId`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- Dumping data for table vehturiinik.purchases: ~0 rows (approximately)
+DELETE FROM `purchases`;
+/*!40000 ALTER TABLE `purchases` DISABLE KEYS */;
+INSERT INTO `purchases` (`id`, `quantity`, `userId`, `productId`) VALUES
+	(1, 1, 3, 3);
+/*!40000 ALTER TABLE `purchases` ENABLE KEYS */;
 
 -- Dumping structure for table vehturiinik.roles
 DROP TABLE IF EXISTS `roles`;
@@ -70,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `roles` (
   UNIQUE KEY `UNIQ_B63E2EC75E237E06` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping data for table vehturiinik.roles: ~3 rows (approximately)
+-- Dumping data for table vehturiinik.roles: ~2 rows (approximately)
 DELETE FROM `roles`;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
 INSERT INTO `roles` (`id`, `name`) VALUES
@@ -91,30 +112,13 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `UNIQ_1483A5E9F85E0677` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping data for table vehturiinik.users: ~1 rows (approximately)
+-- Dumping data for table vehturiinik.users: ~2 rows (approximately)
 DELETE FROM `users`;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id`, `username`, `password`, `fullName`, `money`) VALUES
-	(2, 'Zotakk', '$2y$13$wo1.NDtBGVGkmAxAflBuL.MDOoDULichB/BYyzxRB/rrbBsqpkWM2', 'Zotakk Funbazov', 420),
-	(3, 'Gega', '$2y$13$95HZyDdQCpt/miBb/eVNs.y9rJOUTWY1bHTEZUuyvfIaOD9esyi9S', 'Gegata Nashiq', 420);
+	(2, 'Zotakk', '$2y$13$wo1.NDtBGVGkmAxAflBuL.MDOoDULichB/BYyzxRB/rrbBsqpkWM2', 'Zotakk Funbazov', 4200),
+	(3, 'Gega', '$2y$13$95HZyDdQCpt/miBb/eVNs.y9rJOUTWY1bHTEZUuyvfIaOD9esyi9S', 'Gegata Nashiq', 4200);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
-
--- Dumping structure for table vehturiinik.users_products
-DROP TABLE IF EXISTS `users_products`;
-CREATE TABLE IF NOT EXISTS `users_products` (
-  `user_id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
-  PRIMARY KEY (`user_id`,`product_id`),
-  KEY `IDX_C8FB7180A76ED395` (`user_id`),
-  KEY `IDX_C8FB71804584665A` (`product_id`),
-  CONSTRAINT `FK_C8FB71804584665A` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`),
-  CONSTRAINT `FK_C8FB7180A76ED395` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- Dumping data for table vehturiinik.users_products: ~0 rows (approximately)
-DELETE FROM `users_products`;
-/*!40000 ALTER TABLE `users_products` DISABLE KEYS */;
-/*!40000 ALTER TABLE `users_products` ENABLE KEYS */;
 
 -- Dumping structure for table vehturiinik.users_roles
 DROP TABLE IF EXISTS `users_roles`;
@@ -128,7 +132,7 @@ CREATE TABLE IF NOT EXISTS `users_roles` (
   CONSTRAINT `FK_51498A8ED60322AC` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping data for table vehturiinik.users_roles: ~0 rows (approximately)
+-- Dumping data for table vehturiinik.users_roles: ~2 rows (approximately)
 DELETE FROM `users_roles`;
 /*!40000 ALTER TABLE `users_roles` DISABLE KEYS */;
 INSERT INTO `users_roles` (`user_id`, `role_id`) VALUES

@@ -15,7 +15,7 @@
                 Price: <h4 class="price discount">{{ product.price - (product.price * product.discount / 100)  }} vehturiiki</h4>
                 Discount: {{ product.discount }}%
                 <div>
-                    Cost: <h4 class="price discount">{{ (product.price - (product.price * product.discount / 100)) * session.get(product.name) }} vehturiiki</h4>
+                    Cost: <h4 class="price discount">{{ (product.price - (product.price * product.discount / 100)) * app.session.get(product.name) }} vehturiiki</h4>
                 </div>
             {% else %}
                 Price: <h4 class="price">{{ product.price }} vehturiiki</h4>
@@ -26,6 +26,7 @@
             <div>
                 Quantity in Stock: <h4 class="quantity">{{ product.quantity }}</h4>
             </div>
+            <h2 class="panel-title text-right"><a href="{{ path('buy_product', {id: product.id, quantity: app.session.get(product.name)}) }}">Buy</a></h2>
         </div>
     </div>
 {% endmacro %}
