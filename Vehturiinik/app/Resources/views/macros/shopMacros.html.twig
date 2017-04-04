@@ -1,7 +1,11 @@
-{% macro shopProduct(product) %}
+{% macro shopProduct(product, categoryLink) %}
     <div class="panel panel-info">
         <div class="panel-heading">
-            <h3 class="panel-title text-center">{{ product.category.name }}</h3>
+            {% if categoryLink %}
+                <h3 class="panel-title text-center"><a href="{{ path('view_products_in_category', {id: product.category.id}) }}">{{ product.category.name }}</a></h3>
+            {% else %}
+                <h3 class="panel-title text-center">{{ product.category.name }}</h3>
+            {% endif %}
             {% if app.user %}
                 <h3 class="panel-title"><a class="pull-right purchases-actions" href="{{ path('add_product', {id: product.id}) }}">Add to Cart</a></h3>
             {% endif %}

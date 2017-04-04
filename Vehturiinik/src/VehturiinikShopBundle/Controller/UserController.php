@@ -32,6 +32,10 @@ class UserController extends Controller
 
         /** if the form is submitted - register the user otherwise render the register form */
         if($form->isSubmitted() && $form->isValid()){
+            if($user->getPassword() === null || $user->getFullName() === null || $user->getUsername() === null){
+                $this->addFlash('error','All fields are required!');
+                return $this->redirectToRoute('user_register');
+            }
             /** encode user's password and set it to the user we have instantiated*/
             $password = $this->get('security.password_encoder');
             $userPassword = $password->encodePassword($user,$user->getPassword());

@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS `category` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `description` longtext COLLATE utf8_unicode_ci NOT NULL,
+  `dateAdded` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_64C19C15E237E06` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -30,10 +31,10 @@ CREATE TABLE IF NOT EXISTS `category` (
 -- Dumping data for table vehturiinik.category: ~2 rows (approximately)
 DELETE FROM `category`;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` (`id`, `name`, `description`) VALUES
-	(1, 'Za Doma', 'Gotini neshtica koito da se haresat na vashite loshi jeni'),
-	(2, 'Kompiutri', 'Gotini neshtica koito da se haresat na vashite dechica'),
-	(3, 'Koli', 'Neshta za vas :)');
+INSERT INTO `category` (`id`, `name`, `description`, `dateAdded`) VALUES
+	(1, 'Za Doma', 'Gotini neshtica koito da se haresat na vashite loshi jeni', '0000-00-00 00:00:00'),
+	(2, 'Kompiutri', 'Gotini neshtica koito da se haresat na vashite dechica', '0000-00-00 00:00:00'),
+	(3, 'Koli', 'Neshta za vas :)', '0000-00-00 00:00:00');
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 
 -- Dumping structure for table vehturiinik.products
@@ -46,19 +47,21 @@ CREATE TABLE IF NOT EXISTS `products` (
   `discount` int(11) NOT NULL DEFAULT '0',
   `quantity` int(11) NOT NULL DEFAULT '0',
   `categoryId` int(11) NOT NULL,
+  `dateAdded` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_B3BA5A5A9C370B71` (`categoryId`),
   CONSTRAINT `FK_B3BA5A5A9C370B71` FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Dumping data for table vehturiinik.products: ~3 rows (approximately)
 DELETE FROM `products`;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` (`id`, `name`, `price`, `description`, `discount`, `quantity`, `categoryId`) VALUES
-	(2, 'Audi s8', 3500, 'Mnogo si e burzo nqma kvo da sel afim', 0, 42, 3),
-	(3, 'Kompec', 1000, 'E ne e s gtx 1080 ama pak staa', 0, 14, 2),
-	(5, 'Furna za jenata', 150, 'Da ne vi trovi nervite', 0, 312, 1),
-	(6, 'BMW M6', 2500, 'Da vozite prizlujnicata', 0, 12, 3);
+INSERT INTO `products` (`id`, `name`, `price`, `description`, `discount`, `quantity`, `categoryId`, `dateAdded`) VALUES
+	(2, 'Audi s8', 3500, 'Mnogo si e burzo nqma kvo da sel afim', 0, 42, 3, '0000-00-00 00:00:00'),
+	(3, 'Kompec', 1000, 'E ne e s gtx 1080 ama pak staa', 0, 14, 2, '0000-00-00 00:00:00'),
+	(5, 'Furna za jenata', 150, 'Da ne vi trovi nervite', 0, 312, 1, '0000-00-00 00:00:00'),
+	(6, 'BMW M6', 2500, 'Da vozite prizlujnicata', 0, 12, 3, '0000-00-00 00:00:00'),
+	(10, 'Novata Kola na mitko', 11, 'Bezcenna ama aide', 0, 23, 3, '0000-00-00 00:00:00');
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 
 -- Dumping structure for table vehturiinik.purchases
@@ -68,6 +71,7 @@ CREATE TABLE IF NOT EXISTS `purchases` (
   `quantity` int(11) NOT NULL DEFAULT '0',
   `userId` int(11) NOT NULL,
   `productId` int(11) NOT NULL,
+  `datePurchased` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_AA6431FE64B64DCC` (`userId`),
   KEY `IDX_AA6431FE36799605` (`productId`),
@@ -78,8 +82,8 @@ CREATE TABLE IF NOT EXISTS `purchases` (
 -- Dumping data for table vehturiinik.purchases: ~0 rows (approximately)
 DELETE FROM `purchases`;
 /*!40000 ALTER TABLE `purchases` DISABLE KEYS */;
-INSERT INTO `purchases` (`id`, `quantity`, `userId`, `productId`) VALUES
-	(1, 1, 3, 3);
+INSERT INTO `purchases` (`id`, `quantity`, `userId`, `productId`, `datePurchased`) VALUES
+	(1, 1, 3, 3, '0000-00-00 00:00:00');
 /*!40000 ALTER TABLE `purchases` ENABLE KEYS */;
 
 -- Dumping structure for table vehturiinik.roles
@@ -110,14 +114,15 @@ CREATE TABLE IF NOT EXISTS `users` (
   `money` double NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_1483A5E9F85E0677` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Dumping data for table vehturiinik.users: ~2 rows (approximately)
 DELETE FROM `users`;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id`, `username`, `password`, `fullName`, `money`) VALUES
 	(2, 'Zotakk', '$2y$13$wo1.NDtBGVGkmAxAflBuL.MDOoDULichB/BYyzxRB/rrbBsqpkWM2', 'Zotakk Funbazov', 4200),
-	(3, 'Gega', '$2y$13$95HZyDdQCpt/miBb/eVNs.y9rJOUTWY1bHTEZUuyvfIaOD9esyi9S', 'Gegata Nashiq', 4200);
+	(3, 'Gega', '$2y$13$95HZyDdQCpt/miBb/eVNs.y9rJOUTWY1bHTEZUuyvfIaOD9esyi9S', 'Gegata Nashiq', 4200),
+	(4, 'Tarikat', '$2y$13$28Buad2dLjSQROi6WyAaW.hooUxi3RpVoj5iQUIkgMAJ7jtBTCZdm', 'Tarikat', 4200);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 -- Dumping structure for table vehturiinik.users_roles
@@ -137,7 +142,8 @@ DELETE FROM `users_roles`;
 /*!40000 ALTER TABLE `users_roles` DISABLE KEYS */;
 INSERT INTO `users_roles` (`user_id`, `role_id`) VALUES
 	(2, 1),
-	(3, 1);
+	(3, 1),
+	(4, 1);
 /*!40000 ALTER TABLE `users_roles` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

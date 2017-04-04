@@ -4,6 +4,7 @@ namespace VehturiinikShopBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Product
@@ -82,18 +83,18 @@ class Product
      */
     private $buyings;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateAdded", type="datetime")
+     */
+    private $dateAdded;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->dateAdded = new DateTime('now');
     }
-
-    /**
-     * Get id
-     *
-     * @return int
-     */
-
-
 
 
     public function getId()
@@ -245,12 +246,21 @@ class Product
         $this->categoryId = $categoryId;
     }
 
+    /**
+     * @return ArrayCollection
+     */
+    public function getBuyings(): ArrayCollection
+    {
+        return $this->buyings;
+    }
 
-
-
-
-
-
+    /**
+     * @return \DateTime
+     */
+    public function getDateAdded(): \DateTime
+    {
+        return $this->dateAdded;
+    }
 
 
 

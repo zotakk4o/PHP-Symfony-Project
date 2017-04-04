@@ -17,7 +17,15 @@ class SecurityController extends Controller
             $this->addFlash('error','You are already logged in!');
             return $this->redirectToRoute('security_login');
         }
+
+        $authenticationUtils = $this->get('security.authentication_utils');
+
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        if($error !== null)$this->addFlash('error',$error->getMessage());
+
         return $this->render('security/login.html.twig');
+
     }
 
 }

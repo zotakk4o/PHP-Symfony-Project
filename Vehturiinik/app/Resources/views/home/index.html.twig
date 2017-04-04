@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
-
-
+    <h2 class="text-center">Newest Products in Vehturiinik</h2>
+    {% for product in products %}
+        {{ shopMacros.shopProduct(product, true) }}
+    {% endfor %}
 {% endblock %}

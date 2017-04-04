@@ -3,6 +3,7 @@
 namespace VehturiinikShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Purchase
@@ -59,6 +60,18 @@ class Purchase
      * @ORM\Column(name="productId", type="integer")
      */
     private $productId;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="datePurchased", type="datetime")
+     */
+    private $datePurchased;
+
+    public function __construct()
+    {
+        $this->datePurchased = new DateTime('now');
+    }
 
 
     /**
@@ -159,6 +172,16 @@ class Purchase
     {
         $this->productId = $productId;
     }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDatePurchased(): \DateTime
+    {
+        return $this->datePurchased;
+    }
+
+
 
 
 }

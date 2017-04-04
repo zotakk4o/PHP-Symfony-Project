@@ -5,6 +5,8 @@ namespace VehturiinikShopBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\Date;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Category
@@ -43,6 +45,21 @@ class Category
      * @ORM\Column(name="description", type="text")
      */
     private $description;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateAdded", type="datetime")
+     */
+    private $dateAdded;
+
+
+    public function __construct()
+    {
+        $this->dateAdded = new DateTime('now');
+        $this->products = new ArrayCollection();
+
+    }
 
 
     /**
