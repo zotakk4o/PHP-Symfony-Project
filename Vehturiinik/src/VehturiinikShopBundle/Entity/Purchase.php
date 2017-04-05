@@ -30,6 +30,15 @@ class Purchase
     private $quantity;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="quantityForSale", type="integer", options={"default" = 0})
+     */
+    private $quantityForSale;
+
+
+
+    /**
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="VehturiinikShopBundle\Entity\User", inversedBy="purchases")
@@ -70,7 +79,7 @@ class Purchase
 
     public function __construct()
     {
-        $this->datePurchased = new DateTime('now');
+        $this->datePurchased = new \DateTime('now');
     }
 
 
@@ -180,6 +189,24 @@ class Purchase
     {
         return $this->datePurchased;
     }
+
+    /**
+     * @return int
+     */
+    public function getQuantityForSale(): int
+    {
+        return $this->quantityForSale;
+    }
+
+    /**
+     * @param int $quantityForSale
+     */
+    public function setQuantityForSale(int $quantityForSale)
+    {
+        $this->quantityForSale = $quantityForSale;
+    }
+
+
 
 
 

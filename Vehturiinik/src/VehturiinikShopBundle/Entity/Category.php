@@ -56,7 +56,7 @@ class Category
 
     public function __construct()
     {
-        $this->dateAdded = new DateTime('now');
+        $this->dateAdded = new \DateTime('now');
         $this->products = new ArrayCollection();
 
     }

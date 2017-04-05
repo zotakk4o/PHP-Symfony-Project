@@ -11,7 +11,7 @@ class SecurityController extends Controller
     /**
      * @Route("/login", name="security_login")
      */
-    public function login()
+    public function loginAction()
     {
         if($this->getUser()){
             $this->addFlash('error','You are already logged in!');

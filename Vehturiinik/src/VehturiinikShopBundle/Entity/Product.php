@@ -4,7 +4,6 @@ namespace VehturiinikShopBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Product
@@ -93,7 +92,7 @@ class Product
     public function __construct()
     {
         $this->users = new ArrayCollection();
-        $this->dateAdded = new DateTime('now');
+        $this->dateAdded = new \DateTime('now');
     }
 
 

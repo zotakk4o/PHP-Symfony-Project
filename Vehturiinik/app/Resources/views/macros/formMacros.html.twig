@@ -31,8 +31,8 @@
 
 {% macro quantityForm(product) %}
     {% import _self as helpers %}
-    <form action="{{ path('add_quantity') }}" method="post">
-        <input type="submit" class="btn-success" value="Make Quantity"/>
+    <form action="{{ path('set_quantity') }}" method="post">
+        <input type="submit" class="btn-success" value="Set Quantity"/>
         <input type="text" class="quantity-field" name="quantity" value="{{ app.session.get(product.name) }}"/>
         <input type="hidden" name="productName" value="{{ product.name }}"/>
         {{ helpers.csrfField() }}
@@ -78,4 +78,14 @@
             <button type="submit" class="btn btn-primary">{{ value }}</button>
         </div>
     </div>
+{% endmacro %}
+
+{% macro sellQuantityForm(product,quantity) %}
+    {% import _self as helpers %}
+    <form action="{{ path('set_sell_quantity') }}" method="post">
+        <input type="submit" class="btn-success" value="Quantity For Sale"/>
+        <input type="text" class="quantity-field" name="quantity" value="{{ quantity }}"/>
+        <input type="hidden" name="productId" value="{{ product.id }}"/>
+        {{ helpers.csrfField() }}
+    </form>
 {% endmacro %}

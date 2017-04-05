@@ -28,14 +28,17 @@
                             <div class="navbar-header pull-right">
                                 <a class="navbar-brand" href="{{ path('logout') }}">Logout</a>
                             </div>
-                            <li class="dropdown pull-right">
-                                <a href="{{ path('view_cart') }}" class="navbar-brand" data-toggle="dropdown" role="button" aria-expanded="false">🛒</a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ path('view_cart') }}">View Cart</a></li>
-                                    <li><a href="#">Clear Cart</a></li>
-                                    <li><a href="{{ path('view_purchases') }}">View Bought Products</a></li>
-                                </ul>
-                            </li>
+                            <div class="navbar-header pull-right">
+                                <a class="navbar-brand" href="{{ path('view_purchases') }}">Purchases</a>
+                            </div>
+                                <div class="navbar-header pull-right dropdown">
+                                    <a href="#" class="navbar-brand pull-right" data-toggle="dropdown" role="button" aria-expanded="false">🛒</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="{{ path('view_cart') }}">View Cart</a></li>
+                                        <li><a href={{ path('clear_cart') }}>Clear Cart</a></li>
+                                        <li><a href="{{ path('view_purchases') }}">View Bought Products</a></li>
+                                    </ul>
+                                </div>
                         {% else %}
                         <div class="navbar-header pull-right">
                             <a class="navbar-brand" href="{{ path('user_register') }}">Register</a>

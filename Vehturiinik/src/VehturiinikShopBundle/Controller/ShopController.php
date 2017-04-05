@@ -2,9 +2,11 @@
 
 namespace VehturiinikShopBundle\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use VehturiinikShopBundle\Entity\Category;
 use VehturiinikShopBundle\Entity\Product;
@@ -60,12 +62,11 @@ class ShopController extends Controller
 
         $purchases = $this->getDoctrine()->getRepository(Purchase::class)->findBy(['userId' => $userId]);
         $productsBought = [];
-        $quantities = [];
 
         foreach ($purchases as $purchase){
             $product = $purchase->getProduct();
-            $productsBought[$product->getName()] =  $product;
-            $quantities[$product->getName()] = $purchase->getQuantity();
+            $productsBought[] =  $product;
+
         }
 
         if(empty($productsBought)){
@@ -73,7 +74,7 @@ class ShopController extends Controller
             return $this->redirectToRoute('view_shop');
         }
 
-        return $this->render('shopping/bought.html.twig', ['products' => $productsBought, 'quantities' => $quantities]);
+        return $this->render('shopping/bought.html.twig', ['purchases' => $purchases]);
     }
 
     /**
@@ -120,11 +121,13 @@ class ShopController extends Controller
 
         if($purchase !== null){
             $purchase->setQuantity($purchase->getQuantity() + $quantity);
+            $purchase->setQuantityForSale($purchase->getQuantity());
         }else{
             $purchase = new Purchase();
             $purchase->setProduct($product);
             $purchase->setUser($user);
             $purchase->setQuantity($quantity);
+            $purchase->setQuantityForSale($quantity);
 
             $user->addPurchase($purchase);
         }
@@ -147,6 +150,106 @@ class ShopController extends Controller
         $em->flush();
 
         return $this->redirectToRoute('view_purchases');
+    }
+
+    /**
+     * @param $purchaseId int
+     * @Route("/purchases/sell/purchase/{purchaseId}", name="sell_product")
+     * @return Response
+     */
+    public function sellProductsAction($purchaseId)
+    {
+        /**@var User $user*/
+        $user = $this->getUser();
+        if(!$user){
+            $this->addFlash('error','Cannot access this page!');
+            return $this->redirectToRoute('security_login');
+        }
+
+        $purchase = $this->getDoctrine()->getRepository(Purchase::class)->find($purchaseId);
+        $product = $purchase->getProduct();
+
+        if($purchase === null){
+            $this->addFlash('warning','You haven\'t bought this product!');
+            return $this->redirectToRoute('view_purchases');
+        }
+        $quantity = $purchase->getQuantityForSale();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $user->setMoney($user->getMoney() + $quantity * $product->getPrice());
+
+        $em->persist($user);
+        $em->flush();
+
+        $purchase->setQuantity($purchase->getQuantity() - $quantity);
+        $purchase->setQuantityForSale($purchase->getQuantity());
+
+        if($purchase->getQuantity() == 0){
+            $em->remove($purchase);
+            $em->flush();
+        }else{
+            $em->persist($purchase);
+            $em->flush();
+        }
+
+        $this->addFlash('notice','You have successfully sold ' . strtoupper($product->getName()));
+        return $this->redirectToRoute('home_index');
+
+
+    }
+
+    /**
+     * @param Request $request
+     * @Route("/purchases/sell/set-quantity", name="set_sell_quantity")
+     * @Method({"POST"})
+     * @return Response
+     */
+    public function setSellQuantity(Request $request)
+    {
+        if(!$this->getUser()){
+            $this->addFlash('error','Log in in order to manage your purchases!');
+            return $this->redirectToRoute('security_login');
+        }
+        $quantity = $request->request->get('quantity');
+        $productId = $request->request->get('productId');
+        $userId = $this->getUser()->getId();
+            $query = $this->getDoctrine()
+            ->getRepository(Purchase::class)
+            ->createQueryBuilder('purchase')
+            ->select('purchase')
+            ->where('purchase.productId = ?1')
+            ->andWhere('purchase.userId = ?2')
+            ->setParameter(1, $productId)
+            ->setParameter(2, $userId)
+            ->getQuery()
+            ->getResult();
+
+        /**@var $purchase Purchase*/
+        $purchase = $query[0];
+
+        if($purchase === null) {
+            $this->addFlash('warning','You haven\'t bought this product!');
+            return $this->redirectToRoute('view_purchases');
+        }elseif($purchase->getQuantity() < $quantity) {
+            $this->addFlash('warning','Cannot sell more than you have!');
+            return $this->redirectToRoute('view_purchases');
+        }elseif($quantity <= 0) {
+            $this->addFlash('warning','Invalid Quantity For Sale!');
+            return $this->redirectToRoute('view_purchases');
+        }
+
+        $em = $this->getDoctrine()->getManager();
+
+        $purchase->setQuantityForSale($quantity);
+
+        $em->persist($purchase);
+        $em->flush();
+
+        $this->addFlash('notice',"Quantity For Sale successfully set to ". strtoupper($quantity));
+        return $this->redirectToRoute('view_purchases');
+
+
     }
 
 }

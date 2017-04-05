@@ -123,11 +123,11 @@ class ShoppingCartController extends Controller
 
     /**
      * @param Request $request
-     * @Route("/shop/add-quantity", name="add_quantity")
+     * @Route("/shop/add-quantity", name="set_quantity")
      * @Method({"POST"})
      * @return RedirectResponse
      */
-    public function addQuantityAction(Request $request)
+    public function setQuantityAction(Request $request)
     {
         if(!$this->getUser()){
             $this->addFlash('error','Log in in order to manage to your cart!');
@@ -136,9 +136,15 @@ class ShoppingCartController extends Controller
         $productName = $request->request->get('productName');
         $quantity = $request->request->get('quantity');
 
+        if($quantity <= 0){
+            $this->addFlash('warning','Invalid Quantity!');
+            return $this->redirectToRoute('security_login');
+        }
+
         $session = $this->get('session');
 
         if(!$session->has($productName)){
+            $this->addFlash('warning','Invalid Product!');
             return $this->redirectToRoute('view_cart');
         }
 
@@ -146,4 +152,35 @@ class ShoppingCartController extends Controller
 
         return $this->redirectToRoute('view_cart');
     }
+
+    /**
+     * @Route("/shop/cart/clear", name="clear_cart")
+     * @return RedirectResponse
+     */
+    public function clearCartAction()
+    {
+        $session = $this->get('session');
+
+        if(!$session->has('products')){
+            $this->addFlash('warning','You have no items in your cart!');
+            return $this->redirectToRoute('home_index');
+        }
+
+        /**
+         *@var Product[] $products
+         */
+        $products = $session->get('products');
+        $session->remove('products');
+        foreach ($products as $product){
+            $session->remove($product->getName());
+        }
+        unset($products);
+
+
+        $this->addFlash('notice','Cart was successfully cleared!');
+
+        return $this->redirectToRoute('home_index');
+
+    }
+
 }

@@ -2,7 +2,7 @@
 
 {% block main %}
     <h2>Your Cash is: {{ app.user.money }}</h2>
-    {% for productName, quantity in quantities %}
-        {{ purchasesMacros.purchaseProduct(products[productName], quantity) }}
+    {% for purchase in purchases %}
+        {{ purchasesMacros.purchaseProduct(purchase) }}
     {% endfor %}
 {% endblock %}

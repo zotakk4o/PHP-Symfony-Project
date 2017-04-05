@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `category` (
   UNIQUE KEY `UNIQ_64C19C15E237E06` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping data for table vehturiinik.category: ~2 rows (approximately)
+-- Dumping data for table vehturiinik.category: ~3 rows (approximately)
 DELETE FROM `category`;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
 INSERT INTO `category` (`id`, `name`, `description`, `dateAdded`) VALUES
@@ -53,13 +53,13 @@ CREATE TABLE IF NOT EXISTS `products` (
   CONSTRAINT `FK_B3BA5A5A9C370B71` FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping data for table vehturiinik.products: ~3 rows (approximately)
+-- Dumping data for table vehturiinik.products: ~4 rows (approximately)
 DELETE FROM `products`;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
 INSERT INTO `products` (`id`, `name`, `price`, `description`, `discount`, `quantity`, `categoryId`, `dateAdded`) VALUES
-	(2, 'Audi s8', 3500, 'Mnogo si e burzo nqma kvo da sel afim', 0, 42, 3, '0000-00-00 00:00:00'),
-	(3, 'Kompec', 1000, 'E ne e s gtx 1080 ama pak staa', 0, 14, 2, '0000-00-00 00:00:00'),
-	(5, 'Furna za jenata', 150, 'Da ne vi trovi nervite', 0, 312, 1, '0000-00-00 00:00:00'),
+	(2, 'Audi s8', 3500, 'Mnogo si e burzo nqma kvo da sel afim', 0, 41, 3, '0000-00-00 00:00:00'),
+	(3, 'Kompec', 1000, 'E ne e s gtx 1080 ama pak staa', 0, 9, 2, '0000-00-00 00:00:00'),
+	(5, 'Furna za jenata', 150, 'Da ne vi trovi nervite', 0, 292, 1, '0000-00-00 00:00:00'),
 	(6, 'BMW M6', 2500, 'Da vozite prizlujnicata', 0, 12, 3, '0000-00-00 00:00:00'),
 	(10, 'Novata Kola na mitko', 11, 'Bezcenna ama aide', 0, 23, 3, '0000-00-00 00:00:00');
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
@@ -72,18 +72,20 @@ CREATE TABLE IF NOT EXISTS `purchases` (
   `userId` int(11) NOT NULL,
   `productId` int(11) NOT NULL,
   `datePurchased` datetime NOT NULL,
+  `quantityForSale` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `IDX_AA6431FE64B64DCC` (`userId`),
   KEY `IDX_AA6431FE36799605` (`productId`),
   CONSTRAINT `FK_AA6431FE36799605` FOREIGN KEY (`productId`) REFERENCES `products` (`id`),
   CONSTRAINT `FK_AA6431FE64B64DCC` FOREIGN KEY (`userId`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping data for table vehturiinik.purchases: ~0 rows (approximately)
+-- Dumping data for table vehturiinik.purchases: ~1 rows (approximately)
 DELETE FROM `purchases`;
 /*!40000 ALTER TABLE `purchases` DISABLE KEYS */;
-INSERT INTO `purchases` (`id`, `quantity`, `userId`, `productId`, `datePurchased`) VALUES
-	(1, 1, 3, 3, '0000-00-00 00:00:00');
+INSERT INTO `purchases` (`id`, `quantity`, `userId`, `productId`, `datePurchased`, `quantityForSale`) VALUES
+	(2, 1, 2, 2, '2017-04-05 13:23:29', 1),
+	(5, 3, 4, 5, '2017-04-05 14:45:11', 3);
 /*!40000 ALTER TABLE `purchases` ENABLE KEYS */;
 
 -- Dumping structure for table vehturiinik.roles
@@ -120,9 +122,9 @@ CREATE TABLE IF NOT EXISTS `users` (
 DELETE FROM `users`;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id`, `username`, `password`, `fullName`, `money`) VALUES
-	(2, 'Zotakk', '$2y$13$wo1.NDtBGVGkmAxAflBuL.MDOoDULichB/BYyzxRB/rrbBsqpkWM2', 'Zotakk Funbazov', 4200),
+	(2, 'Zotakk', '$2y$13$wo1.NDtBGVGkmAxAflBuL.MDOoDULichB/BYyzxRB/rrbBsqpkWM2', 'Zotakk Funbazov', 700),
 	(3, 'Gega', '$2y$13$95HZyDdQCpt/miBb/eVNs.y9rJOUTWY1bHTEZUuyvfIaOD9esyi9S', 'Gegata Nashiq', 4200),
-	(4, 'Tarikat', '$2y$13$28Buad2dLjSQROi6WyAaW.hooUxi3RpVoj5iQUIkgMAJ7jtBTCZdm', 'Tarikat', 4200);
+	(4, 'Tarikat', '$2y$13$28Buad2dLjSQROi6WyAaW.hooUxi3RpVoj5iQUIkgMAJ7jtBTCZdm', 'Tarikat', 3750);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 -- Dumping structure for table vehturiinik.users_roles
