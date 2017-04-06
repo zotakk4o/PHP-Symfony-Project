@@ -52,11 +52,11 @@ class ShoppingCartController extends Controller
             /**@var Product $product*/
             $totalAmount += floatval($product->getPrice()) * $quantities[$product->getName()];
         }
-        $totalAmount = number_format($totalAmount, 2, '.', '');
+        $totalAmount = number_format($totalAmount, 2, '.', ' ');
         $session->set('total', $totalAmount);
 
 
-        return $this->render('shopping/cart.html.twig', ['products' => $products,'quantities' => $quantities]);
+        return $this->render('shopping/cart.html.twig', ['products' => $products,'quantities' => $quantities,'total'=>$totalAmount]);
     }
 
 
@@ -158,9 +158,6 @@ class ShoppingCartController extends Controller
             return $this->redirectToRoute('view_cart');
         }elseif ($quantity <= 0 || $product->getQuantity() < $quantity){
             $this->addFlash('warning','Invalid Quantity!');
-            return $this->redirectToRoute('view_cart');
-        }elseif ($product->getPrice() * $quantity > $user->getMoney()){
-            $this->addFlash('warning','Not Enough Money In The Pocket!');
             return $this->redirectToRoute('view_cart');
         }
 

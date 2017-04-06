@@ -82,8 +82,10 @@ class ShopController extends Controller
      * @Route("/purchases/sell/purchase/{purchaseId}", name="sell_product")
      * @return Response
      */
+    //TODO: ON SALE INCREASE PRODUCT QUANTITY
     public function sellPurchaseAction($purchaseId)
     {
+
         /**@var User $user*/
         $user = $this->getUser();
         if(!$user){

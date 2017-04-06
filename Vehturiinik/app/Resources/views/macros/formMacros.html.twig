@@ -7,7 +7,7 @@
                 {{ helpers.udInputField('Username','text','_username') }}
                 {{ helpers.udInputField('Password','password','_password') }}
                 {{ helpers.submitAndCancelButtons('Login',path('home_index')) }}
-                {{ helpers.csrfField() }}
+                {{ helpers.csrfField('authenticate') }}
             </fieldset>
         </form>
     </div>
@@ -31,11 +31,11 @@
 
 {% macro quantityForm(product, quantity) %}
     {% import _self as helpers %}
-    <form action="{{ path('set_quantity') }}" method="post">
+    <form action="{{ path('set_quantity') }}" name="quantity" method="post">
         <input type="submit" class="btn-success" value="Set Quantity"/>
         <input type="text" class="quantity-field" name="quantity" value="{{ quantity }}"/>
         <input type="hidden" name="productName" value="{{ product.name }}"/>
-        {{ helpers.csrfField() }}
+        {{ helpers.csrfField('quantity') }}
     </form>
 {% endmacro %}
 
@@ -48,8 +48,8 @@
     </div>
 {% endmacro %}
 
-{% macro csrfField() %}
-    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+{% macro csrfField(name) %}
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token(name) }}"/>
 {% endmacro %}
 
 {% macro udInputField(label, type, name) %}
@@ -82,10 +82,10 @@
 
 {% macro sellQuantityForm(product,quantity) %}
     {% import _self as helpers %}
-    <form action="{{ path('set_sell_quantity') }}" method="post">
+    <form action="{{ path('set_sell_quantity') }}" name="sell_quantity" method="post">
         <input type="submit" class="btn-success" value="Quantity For Sale"/>
         <input type="text" class="quantity-field" name="quantity" value="{{ quantity }}"/>
         <input type="hidden" name="productId" value="{{ product.id }}"/>
-        {{ helpers.csrfField() }}
+        {{ helpers.csrfField('sell_quantity') }}
     </form>
 {% endmacro %}
