@@ -19,7 +19,7 @@ class ShopController extends Controller
     /**
      * @Route("/shop", name="view_shop")
      */
-   public function viewCategoriesAction()
+    public function viewCategoriesAction()
    {
        $validCategories = [];
        $categories = $this->getDoctrine()->getRepository(Category::class)->findAll();
@@ -35,7 +35,7 @@ class ShopController extends Controller
      * @Route("shop/category/{id}", name="view_products_in_category")
      * @return Response
      */
-   public function viewProductsInCategoryAction($id)
+    public function viewProductsInCategoryAction($id)
    {
         $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
 
@@ -78,86 +78,11 @@ class ShopController extends Controller
     }
 
     /**
-     * @param $id int
-     * @param $quantity int
-     * @Route("/shop/buy/{id}/{quantity}",name="buy_product")
-     * @return RedirectResponse
-     */
-    public function buyProductAction($id, $quantity)
-    {
-        if(!$this->getUser()){
-            $this->addFlash('error','Log in in order to buy products from the shop!');
-            return $this->redirectToRoute('security_login');
-        }
-
-        /**
-         * Retrieve the logged in user in order later to add the product to his purchases list
-         *
-         * @var $user User
-         */
-        $user = $this->getUser();
-
-        $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
-
-        if($product === null){
-            $this->addFlash('error','This product doesn\'t exist');
-            return $this->redirectToRoute('view_shop');
-        }
-
-        $session = $this->get('session');
-        $em = $this->getDoctrine()->getManager();
-
-        $productPrice = $product->getPrice();
-
-        if($user->getMoney() - $productPrice * $quantity < 0) {
-            $this->addFlash('warning','You don\'t have enough cash to buy this product!');
-            return $this->redirectToRoute('view_shop');
-        }elseif($product->getQuantity() - $quantity < 0) {
-            $this->addFlash('warning','Invalid product quantity!');
-            return $this->redirectToRoute('view_shop');
-        }
-
-        $purchase = $this->getDoctrine()->getRepository(Purchase::class)->findOneBy(['productId' => $product->getId()]);
-
-        if($purchase !== null){
-            $purchase->setQuantity($purchase->getQuantity() + $quantity);
-            $purchase->setQuantityForSale($purchase->getQuantity());
-        }else{
-            $purchase = new Purchase();
-            $purchase->setProduct($product);
-            $purchase->setUser($user);
-            $purchase->setQuantity($quantity);
-            $purchase->setQuantityForSale($quantity);
-
-            $user->addPurchase($purchase);
-        }
-
-        $em->persist($purchase);
-        $em->flush();
-
-        $user->setMoney($user->getMoney() - $productPrice * $quantity);
-        $product->setQuantity($product->getQuantity() - $quantity);
-
-        $session->remove($product->getName());
-        $products = $session->get('products');
-        unset($products[$product->getName()]);
-        $session->set('products',$products);
-
-        $em->persist($user);
-        $em->flush();
-
-        $em->persist($product);
-        $em->flush();
-
-        return $this->redirectToRoute('view_purchases');
-    }
-
-    /**
      * @param $purchaseId int
      * @Route("/purchases/sell/purchase/{purchaseId}", name="sell_product")
      * @return Response
      */
-    public function sellProductsAction($purchaseId)
+    public function sellPurchaseAction($purchaseId)
     {
         /**@var User $user*/
         $user = $this->getUser();
@@ -214,19 +139,8 @@ class ShopController extends Controller
         $quantity = $request->request->get('quantity');
         $productId = $request->request->get('productId');
         $userId = $this->getUser()->getId();
-            $query = $this->getDoctrine()
-            ->getRepository(Purchase::class)
-            ->createQueryBuilder('purchase')
-            ->select('purchase')
-            ->where('purchase.productId = ?1')
-            ->andWhere('purchase.userId = ?2')
-            ->setParameter(1, $productId)
-            ->setParameter(2, $userId)
-            ->getQuery()
-            ->getResult();
 
-        /**@var $purchase Purchase*/
-        $purchase = $query[0];
+        $purchase = $this->getDoctrine()->getRepository(Purchase::class)->findOneByUserIdAndProductId($productId, $userId);
 
         if($purchase === null) {
             $this->addFlash('warning','You haven\'t bought this product!');

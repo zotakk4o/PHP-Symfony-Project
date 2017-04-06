@@ -35,18 +35,28 @@ class ShoppingCartController extends Controller
             return $this->redirectToRoute('view_shop');
         }
 
-
         $products = $session->get('products');
+        $quantities = $session->get('quantities');
 
-        if(in_array(0, $session->all())){
-            $productName = array_search(0, $session->all());
-            $session->remove($productName);
-            $products = $session->get('products');
+        if(in_array(0, $quantities)){
+            $productName = array_search(0, $quantities);
+            unset($quantities[$productName]);
             unset($products[$productName]);
             $session->set('products', $products);
+            $session->set('quantities', $quantities);
         }
 
-        return $this->render('shopping/cart.html.twig', ['products' => $products]);
+        $totalAmount = 0;
+
+        foreach ($products as $product){
+            /**@var Product $product*/
+            $totalAmount += floatval($product->getPrice()) * $quantities[$product->getName()];
+        }
+        $totalAmount = number_format($totalAmount, 2, '.', '');
+        $session->set('total', $totalAmount);
+
+
+        return $this->render('shopping/cart.html.twig', ['products' => $products,'quantities' => $quantities]);
     }
 
 
@@ -75,20 +85,22 @@ class ShoppingCartController extends Controller
 
         $session = $this->get('session');
 
-        if(!$session->has('products')){
+        if(!$session->has('products') && !$session->has('quantities')){
             $session->set('products', []);
+            $session->set('quantities',[]);
         }
 
         $products = $session->get('products');
-        $productCount = $session->get($productName);
+        $quantities = $session->get('quantities');
 
         if(!array_key_exists($productName,$products)){
             $products[$productName] = $product;
-            $session->set($productName,1);
+            $quantities[$productName] = 1;
         }else{
-            $session->set($productName, $productCount+1);
+            $quantities[$productName]++;
         }
         $session->set('products', $products);
+        $session->set('quantities', $quantities);
 
         $this->addFlash('notice', strtoupper($productName) . " successfully added to your cart!");
 
@@ -110,10 +122,12 @@ class ShoppingCartController extends Controller
         }
 
         $session = $this->get('session');
-        $session->remove($productName);
         $products = $session->get('products');
+        $quantities = $session->get('quantities');
         unset($products[$productName]);
+        unset($quantities[$productName]);
         $session->set('products',$products);
+        $session->set('quantities',$quantities);
 
 
         $this->addFlash('notice','You have successfully removed '. strtoupper($productName) .' product from your cart!');
@@ -129,27 +143,35 @@ class ShoppingCartController extends Controller
      */
     public function setQuantityAction(Request $request)
     {
-        if(!$this->getUser()){
+        $user = $this->getUser();
+        if(!$user){
             $this->addFlash('error','Log in in order to manage to your cart!');
             return $this->redirectToRoute('security_login');
         }
         $productName = $request->request->get('productName');
         $quantity = $request->request->get('quantity');
 
-        if($quantity <= 0){
+        $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['name' => $productName]);
+
+        if($product === null){
+            $this->addFlash('warning','Invalid Product!');
+            return $this->redirectToRoute('view_cart');
+        }elseif ($quantity <= 0 || $product->getQuantity() < $quantity){
             $this->addFlash('warning','Invalid Quantity!');
-            return $this->redirectToRoute('security_login');
+            return $this->redirectToRoute('view_cart');
+        }elseif ($product->getPrice() * $quantity > $user->getMoney()){
+            $this->addFlash('warning','Not Enough Money In The Pocket!');
+            return $this->redirectToRoute('view_cart');
         }
 
         $session = $this->get('session');
 
-        if(!$session->has($productName)){
-            $this->addFlash('warning','Invalid Product!');
-            return $this->redirectToRoute('view_cart');
-        }
+        $quantities = $session->get('quantities');
 
-        $session->set($productName, $quantity);
+        $quantities[$productName] = $quantity;
+        $session->set('quantities',$quantities);
 
+        $this->addFlash('notice',"Quantity successfully set to ". strtoupper($quantity));
         return $this->redirectToRoute('view_cart');
     }
 
@@ -166,20 +188,83 @@ class ShoppingCartController extends Controller
             return $this->redirectToRoute('home_index');
         }
 
-        /**
-         *@var Product[] $products
-         */
-        $products = $session->get('products');
         $session->remove('products');
-        foreach ($products as $product){
-            $session->remove($product->getName());
-        }
-        unset($products);
-
+        $session->remove('quantities');
 
         $this->addFlash('notice','Cart was successfully cleared!');
 
         return $this->redirectToRoute('home_index');
+
+    }
+
+    /**
+     * @Route("/shop/cart/checkout", name="checkout_cart")
+     */
+    public function checkOutCartAction()
+    {
+        $user = $this->getUser();
+
+        if(!$user){
+            $this->addFlash('error','Log in in order to buy products from the shop!');
+            return $this->redirectToRoute('security_login');
+        }
+
+        $session = $this->get('session');
+        $total = $session->get('total');
+
+        if(!$session->has('products')){
+            $this->addFlash('warning','You Have No Items In Your Cart!');
+            return $this->redirectToRoute('view_shop');
+        }
+
+        if($total > $user->getMoney()){
+            $this->addFlash('warning','Not Enough Money In The Pocket!');
+            return $this->redirectToRoute('view_cart');
+        }
+
+        $quantities = $session->get('quantities');
+        $products = $session->get('products');
+
+        $productNames = array_keys($quantities);
+
+
+        $em = $this->getDoctrine()->getManager();
+
+        foreach ($productNames as $productName){
+            $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['name'=>$productName]);
+            $quantity = $quantities[$product->getName()];
+            $productPrice = $product->getPrice();
+
+            $purchase = $this->getDoctrine()->getRepository(Purchase::class)->findOneByUserIdAndProductId($user->getId(), $product->getId());
+
+            $user->setMoney($user->getMoney() - $productPrice * $quantity);
+            $product->setQuantity($product->getQuantity() - $quantity);
+            if($purchase !== null){
+                $purchase
+                    ->setQuantity($purchase->getQuantity() + $quantity)
+                    ->setQuantityForSale($purchase->getQuantity());
+            }else{
+                $purchase = new Purchase();
+                $purchase
+                    ->setProduct($product)
+                    ->setUser($user)
+                    ->setQuantity($quantity)
+                    ->setQuantityForSale($quantity);
+                $user->addPurchase($purchase);
+            }
+
+            $em->persist($purchase);
+            $em->flush();
+
+            unset($products[$product->getName()]);
+            unset($quantities[$product->getName()]);
+            $session->set('products',$products);
+            $session->set('quantities',$quantities);
+
+        }
+
+        $this->addFlash('notice','You have successfully made your purchase');
+        return $this->redirectToRoute('view_purchases');
 
     }
 

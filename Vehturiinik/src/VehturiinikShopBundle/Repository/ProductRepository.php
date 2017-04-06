@@ -2,6 +2,8 @@
 
 namespace VehturiinikShopBundle\Repository;
 
+use Proxies\__CG__\VehturiinikShopBundle\Entity\Product;
+
 /**
  * ProductRepository
  *
@@ -10,4 +12,20 @@ namespace VehturiinikShopBundle\Repository;
  */
 class ProductRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @return Product[]
+     */
+    public function findFirstFive()
+    {
+       return $this->getEntityManager()
+            ->getRepository(Product::class)
+            ->createQueryBuilder('p')
+            ->select('p')
+            ->where('p.quantity > 0')
+            ->orderBy('p.dateAdded','DESC')
+            ->setMaxResults(5)
+            ->getQuery()
+            ->getResult();
+    }
+
 }

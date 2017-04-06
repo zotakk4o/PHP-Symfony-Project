@@ -1,4 +1,4 @@
-{% macro cartProduct(product)%}
+{% macro cartProduct(product, quantity)%}
     {% import 'macros/formMacros.html.twig' as formMacros %}
     <div class="panel panel-info">
         <div class="panel-heading">
@@ -6,7 +6,7 @@
             <h3 class="panel-title"><a class="pull-right purchases-actions" href="{{ path('remove_all_from_cart', {productName: product.name}) }}">X</a></h3>
             <h3 class="panel-title">{{ product.name }}</h3>
             <h2 class="panel-title text-center">
-            {{ formMacros.quantityForm(product) }}
+            {{ formMacros.quantityForm(product, quantity) }}
             </h2>
         </div>
         <div class="panel-body">
@@ -15,18 +15,17 @@
                 Price: <h4 class="price discount">{{ product.price - (product.price * product.discount / 100)  }} vehturiiki</h4>
                 Discount: {{ product.discount }}%
                 <div>
-                    Cost: <h4 class="price discount">{{ (product.price - (product.price * product.discount / 100)) * app.session.get(product.name) }} vehturiiki</h4>
+                    Cost: <h4 class="price discount">{{ (product.price - (product.price * product.discount / 100)) * quantity }} vehturiiki</h4>
                 </div>
             {% else %}
                 Price: <h4 class="price">{{ product.price }} vehturiiki</h4>
                 <div>
-                    Cost: <h4 class="price">{{ product.price  * app.session.get(product.name) }} vehturiiki</h4>
+                    Cost: <h4 class="price">{{ product.price  * quantity }} vehturiiki</h4>
                 </div>
             {% endif %}
             <div>
                 Quantity in Stock: <h4 class="quantity">{{ product.quantity }}</h4>
             </div>
-            <h2 class="panel-title text-right"><a href="{{ path('buy_product', {id: product.id, quantity: app.session.get(product.name)}) }}">Buy</a></h2>
         </div>
     </div>
 {% endmacro %}

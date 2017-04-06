@@ -127,10 +127,14 @@ class Purchase
 
     /**
      * @param User $user
+     *
+     * @return Purchase
      */
     public function setUser($user)
     {
         $this->user = $user;
+
+        return $this;
     }
 
     /**
@@ -143,10 +147,14 @@ class Purchase
 
     /**
      * @param mixed $userId
+     *
+     * @return Purchase
      */
     public function setUserId($userId)
     {
         $this->userId = $userId;
+
+        return $this;
     }
 
     /**
@@ -160,10 +168,14 @@ class Purchase
 
     /**
      * @param Product $product
+     *
+     * @return Purchase
      */
     public function setProduct(Product $product)
     {
         $this->product = $product;
+
+        return $this;
     }
 
     /**
@@ -176,10 +188,14 @@ class Purchase
 
     /**
      * @param int $productId
+     *
+     * @return Purchase
      */
     public function setProductId(int $productId)
     {
         $this->productId = $productId;
+
+        return $this;
     }
 
     /**
@@ -200,10 +216,14 @@ class Purchase
 
     /**
      * @param int $quantityForSale
+     *
+     * @return Purchase
      */
     public function setQuantityForSale(int $quantityForSale)
     {
         $this->quantityForSale = $quantityForSale;
+
+        return $this;
     }
 
 

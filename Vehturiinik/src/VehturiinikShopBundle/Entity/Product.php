@@ -207,10 +207,14 @@ class Product
 
     /**
      * @param mixed $quantity
+     *
+     * @return Product
      */
     public function setQuantity($quantity)
     {
         $this->quantity = $quantity;
+
+        return $this;
     }
 
     /**
@@ -223,10 +227,14 @@ class Product
 
     /**
      * @param mixed $category
+     *
+     * @return Product
      */
     public function setCategory($category)
     {
         $this->category = $category;
+
+        return $this;
     }
 
     /**
@@ -239,10 +247,14 @@ class Product
 
     /**
      * @param int $categoryId
+     *
+     * @return Product
      */
     public function setCategoryId(int $categoryId)
     {
         $this->categoryId = $categoryId;
+
+        return $this;
     }
 
     /**

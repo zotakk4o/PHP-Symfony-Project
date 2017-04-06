@@ -3,7 +3,9 @@
 {% block main %}
     <h2>Your Cash is: {{ app.user.money }}</h2>
     {% for product in products %}
-        {{ cartMacros.cartProduct(product) }}
+        {{ cartMacros.cartProduct(product, quantities[product.name]) }}
     {% endfor %}
+    <h4>Total Amount: {{ app.session.get('total') }} vehturiiki</h4>
+    <a href="{{ path('checkout_cart') }}" class="btn btn-primary">Buy All Products</a>
 {% endblock %}
 

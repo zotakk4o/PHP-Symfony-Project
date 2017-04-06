@@ -223,10 +223,13 @@ class User implements UserInterface
 
     /**
      * @param mixed $money
+     * @return User
      */
     public function setMoney($money)
     {
         $this->money = $money;
+
+        return $this;
     }
 
     /**

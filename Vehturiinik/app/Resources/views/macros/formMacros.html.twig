@@ -29,11 +29,11 @@
     </div>
 {% endmacro %}
 
-{% macro quantityForm(product) %}
+{% macro quantityForm(product, quantity) %}
     {% import _self as helpers %}
     <form action="{{ path('set_quantity') }}" method="post">
         <input type="submit" class="btn-success" value="Set Quantity"/>
-        <input type="text" class="quantity-field" name="quantity" value="{{ app.session.get(product.name) }}"/>
+        <input type="text" class="quantity-field" name="quantity" value="{{ quantity }}"/>
         <input type="hidden" name="productName" value="{{ product.name }}"/>
         {{ helpers.csrfField() }}
     </form>

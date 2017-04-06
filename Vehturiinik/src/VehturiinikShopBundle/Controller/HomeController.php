@@ -15,14 +15,7 @@ class HomeController extends Controller
     public function indexAction(Request $request)
     {
 
-        $products = $this->getDoctrine()
-            ->getRepository(Product::class)
-            ->createQueryBuilder('p')
-            ->select('p')
-            ->orderBy('p.dateAdded','DESC')
-            ->setMaxResults(5)
-            ->getQuery()
-            ->getResult();
+        $products = $this->getDoctrine()->getRepository(Product::class)->findFirstFive();
 
         return $this->render('home/index.html.twig',['products' => $products]);
     }
