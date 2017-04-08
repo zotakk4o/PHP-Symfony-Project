@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Csrf\CsrfToken;
 use VehturiinikShopBundle\Entity\Category;
 use VehturiinikShopBundle\Entity\Product;
 use VehturiinikShopBundle\Entity\Purchase;
@@ -150,6 +151,13 @@ class ShoppingCartController extends Controller
         }
         $productName = $request->request->get('productName');
         $quantity = $request->request->get('quantity');
+        $submittedToken = $request->request->get('_csrf_token');
+
+        $csrfToken = new CsrfToken('quantity', $submittedToken);
+        if(!$this->get('security.csrf.token_manager')->isTokenValid($csrfToken)){
+            $this->addFlash('error','Invalid CSRF Token!');
+            return $this->redirectToRoute('home_index');
+        }
 
         $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['name' => $productName]);
 

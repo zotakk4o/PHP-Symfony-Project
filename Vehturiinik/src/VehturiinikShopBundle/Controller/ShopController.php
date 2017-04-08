@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Csrf\CsrfToken;
 use VehturiinikShopBundle\Entity\Category;
 use VehturiinikShopBundle\Entity\Product;
 use VehturiinikShopBundle\Entity\Purchase;
@@ -109,8 +110,10 @@ class ShopController extends Controller
         $em->persist($user);
         $em->flush();
 
+        $purchase->getProduct()->setQuantity($purchase->getQuantityForSale() + $purchase->getProduct()->getQuantity());
         $purchase->setQuantity($purchase->getQuantity() - $quantity);
         $purchase->setQuantityForSale($purchase->getQuantity());
+
 
         if($purchase->getQuantity() == 0){
             $em->remove($purchase);
@@ -134,13 +137,22 @@ class ShopController extends Controller
      */
     public function setSellQuantity(Request $request)
     {
-        if(!$this->getUser()){
+        $user = $this->getUser();
+        if(!$user){
             $this->addFlash('error','Log in in order to manage your purchases!');
             return $this->redirectToRoute('security_login');
         }
+        $userId = $user->getId();
         $quantity = $request->request->get('quantity');
         $productId = $request->request->get('productId');
-        $userId = $this->getUser()->getId();
+        $submittedToken = $request->request->get('_csrf_token');
+
+        $csrfToken = new CsrfToken('sell_quantity', $submittedToken);
+        if(!$this->get('security.csrf.token_manager')->isTokenValid($csrfToken)){
+            $this->addFlash('error','Invalid CSRF Token!');
+            return $this->redirectToRoute('home_index');
+        }
+
 
         $purchase = $this->getDoctrine()->getRepository(Purchase::class)->findOneByUserIdAndProductId($productId, $userId);
 
