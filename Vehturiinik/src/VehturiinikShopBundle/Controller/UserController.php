@@ -50,8 +50,14 @@ class UserController extends Controller
 
             /** save user to the database*/
             $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
+            try{
+                $em->persist($user);
+                $em->flush();
+            }catch(\Exception $e){
+                $this->addFlash('error','Username Already Taken!');
+                return $this->redirectToRoute('user_register');
+            }
+
 
             $this->addFlash('notice','You have successfully registered to Vehturiinik!');
             return $this->redirectToRoute('security_login');
