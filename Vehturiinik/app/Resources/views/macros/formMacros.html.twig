@@ -32,7 +32,7 @@
 {% macro quantityForm(product, quantity) %}
     {% import _self as helpers %}
     <form action="{{ path('set_quantity') }}" name="quantity" method="post">
-        <input type="submit" class="btn-success" value="Set Quantity"/>
+        {{ helpers.quantityButton('Set Quantity') }}
         <input type="text" class="quantity-field" name="quantity" value="{{ quantity }}"/>
         <input type="hidden" name="productName" value="{{ product.name }}"/>
         {{ helpers.csrfField('quantity') }}
@@ -61,8 +61,6 @@
     </div>
 {% endmacro %}
 
-
-
 {% macro submitAndCancelButtons(value, cancelHref) %}
     <div class="form-group">
         <div class="col-lg-10 col-lg-offset-2">
@@ -80,12 +78,18 @@
     </div>
 {% endmacro %}
 
-{% macro sellQuantityForm(product,quantity) %}
-    {% import _self as helpers %}
-    <form action="{{ path('set_sell_quantity') }}" name="sell_quantity" method="post">
-        <input type="submit" class="btn-success" value="Quantity For Sale"/>
-        <input type="text" class="quantity-field" name="quantity" value="{{ quantity }}"/>
-        <input type="hidden" name="productId" value="{{ product.id }}"/>
-        {{ helpers.csrfField('sell_quantity') }}
-    </form>
+{% macro quantityButton(value) %}
+    <input type="submit" class="btn-success" value="{{ value }}"/>
 {% endmacro %}
+
+{% macro sellQuantityForm(form) %}
+    {% import _self as helpers %}
+    {{ form_start(form) }}
+        {{ helpers.quantityButton('Set Quantity') }}
+        {{ form_widget(form.quantityForSale) }}
+        {{ form_widget(form.productId) }}
+        {{ form_row(form._token) }}
+    {{ form_end(form) }}
+{% endmacro %}
+
+

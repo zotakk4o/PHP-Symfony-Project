@@ -13,6 +13,7 @@ use VehturiinikShopBundle\Entity\Category;
 use VehturiinikShopBundle\Entity\Product;
 use VehturiinikShopBundle\Entity\Purchase;
 use VehturiinikShopBundle\Entity\User;
+use VehturiinikShopBundle\Form\PurchaseType;
 
 class ShopController extends Controller
 {
@@ -62,20 +63,17 @@ class ShopController extends Controller
         $userId = $this->getUser()->getId();
 
         $purchases = $this->getDoctrine()->getRepository(Purchase::class)->findBy(['userId' => $userId]);
-        $productsBought = [];
-
-        foreach ($purchases as $purchase){
-            $product = $purchase->getProduct();
-            $productsBought[] =  $product;
-
-        }
-
-        if(empty($productsBought)){
+        if(empty($purchases)){
             $this->addFlash('warning','You haven\'t bought any products!');
             return $this->redirectToRoute('view_shop');
         }
+        $forms = [];
+        foreach ($purchases as $purchase){
+            $forms[$purchase->getProduct()->getName()] = $this->createForm(PurchaseType::class, $purchase,['action' => $this->generateUrl('set_sell_quantity')])->createView();
 
-        return $this->render('shopping/bought.html.twig', ['purchases' => $purchases]);
+        }
+
+        return $this->render('shopping/bought.html.twig', ['purchases' => $purchases,'forms' => $forms]);
     }
 
     /**
@@ -83,7 +81,6 @@ class ShopController extends Controller
      * @Route("/purchases/sell/purchase/{purchaseId}", name="sell_product")
      * @return Response
      */
-    //TODO: ON SALE INCREASE PRODUCT QUANTITY
     public function sellPurchaseAction($purchaseId)
     {
 
@@ -143,11 +140,13 @@ class ShopController extends Controller
             return $this->redirectToRoute('security_login');
         }
         $userId = $user->getId();
-        $quantity = $request->request->get('quantity');
-        $productId = $request->request->get('productId');
-        $submittedToken = $request->request->get('_csrf_token');
+        $params = $request->request->all()['purchase'];
+        $quantity = $params['quantityForSale'];
+        $productId = $params['productId'];
+        $submittedToken = $params['_token'];
 
-        $csrfToken = new CsrfToken('sell_quantity', $submittedToken);
+        $csrfToken = new CsrfToken('purchase', $submittedToken);
+
         if(!$this->get('security.csrf.token_manager')->isTokenValid($csrfToken)){
             $this->addFlash('error','Invalid CSRF Token!');
             return $this->redirectToRoute('home_index');
