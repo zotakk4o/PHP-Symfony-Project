@@ -32,7 +32,7 @@
 {% macro quantityForm(product, quantity) %}
     {% import _self as helpers %}
     <form action="{{ path('set_quantity') }}" name="quantity" method="post">
-        {{ helpers.quantityButton('Set Quantity') }}
+        <input type="submit" class="btn-success" value="Set Quantity">
         <input type="text" class="quantity-field" name="quantity" value="{{ quantity }}"/>
         <input type="hidden" name="productName" value="{{ product.name }}"/>
         {{ helpers.csrfField('quantity') }}
@@ -52,11 +52,11 @@
     <input type="hidden" name="_csrf_token" value="{{ csrf_token(name) }}"/>
 {% endmacro %}
 
-{% macro udInputField(label, type, name) %}
+{% macro udInputField(label, type, name, value) %}
     <div class="form-group">
         <h3><label class="col-lg-2 control-label">{{ label|default('') }}</label></h3>
         <div class="col-lg-10">
-            <input type="{{ type }}" name="{{ name }}" class="form-control" placeholder="{{ label|default('') }}" required />
+            <input type="{{ type }}" name="{{ name }}" class="form-control" value="{{ value }}" placeholder="{{ label|default('') }}" required />
         </div>
     </div>
 {% endmacro %}
@@ -78,14 +78,17 @@
     </div>
 {% endmacro %}
 
-{% macro quantityButton(value) %}
-    <input type="submit" class="btn-success" value="{{ value }}"/>
+{% macro submitFormButton(formButton) %}
+    <div class="form-group">
+        <div class="col-lg-10 col-lg-offset-2">
+            {{ form_widget(formField) }}
+        </div>
+    </div>
 {% endmacro %}
 
 {% macro sellQuantityForm(form) %}
-    {% import _self as helpers %}
     {{ form_start(form) }}
-        {{ helpers.quantityButton('Set Quantity') }}
+        {{ form_widget(form.submit) }}
         {{ form_widget(form.quantityForSale) }}
         {{ form_widget(form.productId) }}
         {{ form_row(form._token) }}

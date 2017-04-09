@@ -5,6 +5,7 @@ namespace VehturiinikShopBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -69,7 +70,11 @@ class ShopController extends Controller
         }
         $forms = [];
         foreach ($purchases as $purchase){
-            $forms[$purchase->getProduct()->getName()] = $this->createForm(PurchaseType::class, $purchase,['action' => $this->generateUrl('set_sell_quantity')])->createView();
+            $forms[$purchase->getProduct()->getName()] = $this->createForm(PurchaseType::class,
+                $purchase,
+                ['action' => $this->generateUrl('set_sell_quantity')])
+                ->add('submit',SubmitType::class,['label' => 'Set Quantity','attr' => ['class' => 'btn-success']])
+                ->createView();
 
         }
 

@@ -161,17 +161,18 @@ class User implements UserInterface
 
     /**
      *
-     * @return string[]
+     * @return string[]|ArrayCollection
      */
     public function getRoles()
     {
         $result = [];
         $roles = $this->roles;
-
-        foreach ($roles as $role)$result[] = $role->getName();
+        foreach ($roles as $role){
+            if(gettype($role) == 'string')$result[] = $role;
+            else $result[] = $role->getName();
+        }
 
         return $result;
-
     }
 
     /**
@@ -258,6 +259,17 @@ class User implements UserInterface
     {
         return in_array('ROLE_ADMIN', $this->getRoles());
     }
+
+    /**
+     * @param Role[] $roles
+     */
+    public function setRoles(array $roles)
+    {
+
+        $this->roles = $roles;
+    }
+
+
 
 }
 

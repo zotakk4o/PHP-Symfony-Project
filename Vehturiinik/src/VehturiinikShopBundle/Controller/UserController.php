@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use VehturiinikShopBundle\Entity\Role;
 use VehturiinikShopBundle\Entity\User;
-use VehturiinikShopBundle\Form\UserType;
+use VehturiinikShopBundle\Form\RegisterType;
 
 class UserController extends Controller
 {
@@ -25,7 +25,7 @@ class UserController extends Controller
         }
         /** Create user and form of the corresponding type in order later to be processed*/
         $user = new User();
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(RegisterType::class, $user);
 
         /** Processing the form */
         $form->handleRequest($request);
