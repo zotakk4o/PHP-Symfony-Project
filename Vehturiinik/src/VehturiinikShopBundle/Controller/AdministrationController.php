@@ -17,7 +17,10 @@ class AdministrationController extends Controller
      */
     public function indexAction()
     {
-        $this->authenticate();
+        if(!$this->authenticate()){
+            $this->addFlash('error','Access Denied!');
+            return $this->redirectToRoute('home_index');
+        }
 
         return $this->render('administration/panel.html.twig');
     }
