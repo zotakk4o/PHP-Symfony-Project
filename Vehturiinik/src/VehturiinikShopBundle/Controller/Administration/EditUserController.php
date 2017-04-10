@@ -3,12 +3,14 @@
 namespace VehturiinikShopBundle\Controller\Administration;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use VehturiinikShopBundle\Entity\Purchase;
 use VehturiinikShopBundle\Entity\Role;
 use VehturiinikShopBundle\Entity\User;
+use VehturiinikShopBundle\Form\PurchaseType;
 use VehturiinikShopBundle\Form\UserType;
 
 class EditUserController extends Controller
@@ -45,6 +47,10 @@ class EditUserController extends Controller
         }
 
         $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+        if($user === null){
+            $this->addFlash('error','This User Doesn\'t Exist!');
+            return $this->redirectToRoute('view_users_panel');
+        }
 
         $form = $this->createForm(UserType::class, $user);
 
@@ -82,6 +88,10 @@ class EditUserController extends Controller
         }
 
         $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+        if($user === null){
+            $this->addFlash('error','This User Doesn\'t Exist!');
+            return $this->redirectToRoute('view_users_panel');
+        }
         $purchases = $user->getPurchases();
 
         if($purchases[0] === null){
@@ -101,8 +111,10 @@ class EditUserController extends Controller
      */
     public function removePurchaseAction($userId, $purchaseId)
     {
-        $this->authenticate();
-
+        if(!$this->authenticate()){
+            $this->addFlash('error','Access Denied!');
+            return $this->redirectToRoute('home_index');
+        }
         $user = $this->getDoctrine()->getRepository(User::class)->find($userId);
         $purchase = $this->getDoctrine()->getRepository(Purchase::class)->find($purchaseId);
         $product = $purchase->getProduct();
@@ -125,6 +137,45 @@ class EditUserController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @param $userId
+     * @param $purchaseId
+     *
+     * @Route("/administration/user/{userId}/purchase/edit/{purchaseId}", name="edit_purchase")
+     * @return Response
+     */
+    public function editUserPurchaseAction(Request $request,$userId, $purchaseId)
+    {
+        if(!$this->authenticate()){
+            $this->addFlash('error','Access Denied!');
+            return $this->redirectToRoute('home_index');
+        }
+
+        $purchase = $this->getDoctrine()->getRepository(Purchase::class)->find($purchaseId);
+
+        if($purchase === null || $purchase->getUserId() != $userId){
+            $this->addFlash('warning','This User Hasn\'t Bought This Product!');
+            return $this->redirectToRoute('view_user_purchases',['id' => $userId]);
+        }
+
+        $form = $this->createForm(PurchaseType::class, $purchase)
+            ->add('submit',SubmitType::class,array('label' => 'Edit Purchase','attr' => ['class' => 'btn btn-primary']));
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($purchase);
+            $em->flush();
+
+            $this->addFlash('notice','Purchase Successfully Edited!');
+            return $this->redirectToRoute('view_user_purchases',['id' => $userId]);
+        }
+
+        return $this->render('administration/purchase.html.twig',['purchase' => $purchase, 'form' => $form->createView()]);
+
+    }
     private function authenticate()
     {
         return $this->getUser() && $this->getUser()->isAdmin();

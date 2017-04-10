@@ -14,7 +14,7 @@ use VehturiinikShopBundle\Entity\Category;
 use VehturiinikShopBundle\Entity\Product;
 use VehturiinikShopBundle\Entity\Purchase;
 use VehturiinikShopBundle\Entity\User;
-use VehturiinikShopBundle\Form\PurchaseType;
+use VehturiinikShopBundle\Form\PurchaseQuantityType;
 
 class ShopController extends Controller
 {
@@ -70,7 +70,7 @@ class ShopController extends Controller
         }
         $forms = [];
         foreach ($purchases as $purchase){
-            $forms[$purchase->getProduct()->getName()] = $this->createForm(PurchaseType::class,
+            $forms[$purchase->getProduct()->getName()] = $this->createForm(PurchaseQuantityType::class,
                 $purchase,
                 ['action' => $this->generateUrl('set_sell_quantity')])
                 ->add('submit',SubmitType::class,['label' => 'Set Quantity','attr' => ['class' => 'btn-success']])
@@ -145,12 +145,12 @@ class ShopController extends Controller
             return $this->redirectToRoute('security_login');
         }
         $userId = $user->getId();
-        $params = $request->request->all()['purchase'];
+        $params = $request->request->all()['purchase_quantity'];
         $quantity = $params['quantityForSale'];
         $productId = $params['productId'];
         $submittedToken = $params['_token'];
 
-        $csrfToken = new CsrfToken('purchase', $submittedToken);
+        $csrfToken = new CsrfToken('purchase_quantity', $submittedToken);
 
         if(!$this->get('security.csrf.token_manager')->isTokenValid($csrfToken)){
             $this->addFlash('error','Invalid CSRF Token!');

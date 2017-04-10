@@ -14,7 +14,10 @@
         <tr>
             <td>{{ purchase.user.fullName }}</td>
             <td>{{ purchase.product.name }}</td>
-            <td><a href="{{ path('remove_purchase', {userId: purchase.userId, purchaseId: purchase.id }) }}" class="btn btn-primary">Remove</a></td>
+            <td>
+                <a href="{{ path('remove_purchase', {userId: purchase.userId, purchaseId: purchase.id }) }}" class="btn btn-primary">Remove</a>
+                <a href="{{ path('edit_purchase',{userId: purchase.userId, purchaseId: purchase.id}) }}" class="btn btn-primary">Edit</a>
+            </td>
         </tr>
     {% endfor %}
     </tbody>
