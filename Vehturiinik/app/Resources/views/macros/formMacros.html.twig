@@ -13,22 +13,6 @@
     </div>
 {% endmacro %}
 
-{% macro registerForm(form) %}
-    {% import _self as helpers %}
-    <div>
-        <form class="form-horizontal" name="register" method="post" action="{{ path('user_register') }}">
-            <fieldset>
-                <legend>Register</legend>
-                {{ helpers.formInputField(form.username, 'Username') }}
-                {{ helpers.formInputField(form.fullName, 'Full Name') }}
-                {{ helpers.formInputField(form.password, 'Password') }}
-                {{ helpers.submitAndCancelButtons('Register',path('home_index')) }}
-                {{ form_row(form._token) }}
-            </fieldset>
-        </form>
-    </div>
-{% endmacro %}
-
 {% macro quantityForm(product, quantity) %}
     {% import _self as helpers %}
     <form action="{{ path('set_quantity') }}" name="quantity" method="post">

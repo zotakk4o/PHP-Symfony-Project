@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
+    {% import 'macros/shopMacros.html.twig' as shopMacros %}
     {% for category in categories %}
         {{ shopMacros.shopCategory(category) }}
     {% endfor %}

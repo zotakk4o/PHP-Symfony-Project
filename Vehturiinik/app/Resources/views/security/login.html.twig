@@ -1,5 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
+    {% import 'macros/formMacros.html.twig' as formMacros %}
     {{ formMacros.loginForm() }}
 {% endblock %}

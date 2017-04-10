@@ -5,6 +5,7 @@ namespace VehturiinikShopBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User
@@ -27,6 +28,15 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="username", type="string", length=255, unique=true)
+     *
+     * @Assert\NotBlank(message="Username is required!")
+     *
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 50,
+     *      minMessage = "Your username must be at least 2 characters long",
+     *      maxMessage = "Your userame cannot be longer than 50 characters"
+     * )
      */
     private $username;
 
@@ -34,6 +44,13 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255)
+     *
+     * @Assert\NotBlank(message="Password is required!")
+     *
+     * @Assert\Length(
+     *      min = 5,
+     *      minMessage = "Your password must be at least 5 characters long",
+     * )
      */
     private $password;
 
@@ -41,6 +58,9 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="fullName", type="string", length=255)
+     *
+     * @Assert\NotBlank(message="Full Name is required!")
+     *
      */
     private $fullName;
 

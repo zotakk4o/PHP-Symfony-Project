@@ -4,6 +4,7 @@ namespace VehturiinikShopBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use VehturiinikShopBundle\Entity\Role;
@@ -25,17 +26,14 @@ class UserController extends Controller
         }
         /** Create user and form of the corresponding type in order later to be processed*/
         $user = new User();
-        $form = $this->createForm(RegisterType::class, $user);
+        $form = $this->createForm(RegisterType::class, $user)
+            ->add('submit',SubmitType::class, ['label' => 'Register','attr' => ['class' => 'btn btn-primary']]);
 
         /** Processing the form */
         $form->handleRequest($request);
 
         /** if the form is submitted - register the user otherwise render the register form */
         if($form->isSubmitted() && $form->isValid()){
-            if($user->getPassword() === null || $user->getFullName() === null || $user->getUsername() === null){
-                $this->addFlash('error','All fields are required!');
-                return $this->redirectToRoute('user_register');
-            }
             /** encode user's password and set it to the user we have instantiated*/
             $password = $this->get('security.password_encoder');
             $userPassword = $password->encodePassword($user,$user->getPassword());
@@ -57,7 +55,6 @@ class UserController extends Controller
                 $this->addFlash('error','Username Already Taken!');
                 return $this->redirectToRoute('user_register');
             }
-
 
             $this->addFlash('notice','You have successfully registered to Vehturiinik!');
             return $this->redirectToRoute('security_login');

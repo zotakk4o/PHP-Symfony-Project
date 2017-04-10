@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
+    {% import 'macros/shopMacros.html.twig' as shopMacros %}
     {% if app.user %}
         <h2>Your Cash is: {{ app.user.money }} vehturiiki</h2>
     {% endif %}
