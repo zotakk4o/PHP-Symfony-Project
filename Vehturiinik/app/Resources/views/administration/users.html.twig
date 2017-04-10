@@ -23,6 +23,7 @@
                 </td>
                 <td>
                     <a href="{{ path('edit_user',{id:user.id}) }}" class="btn btn-primary">Edit</a>
+                    <a href="{{ path('view_user_purchases',{id:user.id}) }}" class="btn btn-primary">Manage Purchases</a>
                 </td>
             </tr>
     {% endfor %}
