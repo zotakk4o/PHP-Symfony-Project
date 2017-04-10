@@ -62,7 +62,7 @@ class User implements UserInterface
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="VehturiinikShopBundle\Entity\Role")
+     * @ORM\ManyToMany(targetEntity="VehturiinikShopBundle\Entity\Role", inversedBy="users")
      * @ORM\JoinTable(name="users_roles",
      *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id")}
