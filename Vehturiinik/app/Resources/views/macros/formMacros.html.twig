@@ -23,15 +23,6 @@
     </form>
 {% endmacro %}
 
-{% macro formInputField(formField, label) %}
-    <div class="form-group">
-        <h3><label class="col-lg-2 control-label">{{ label }}</label></h3>
-        <div class="col-lg-10">
-            {{ form_widget(formField) }}
-        </div>
-    </div>
-{% endmacro %}
-
 {% macro csrfField(name) %}
     <input type="hidden" name="_csrf_token" value="{{ csrf_token(name) }}"/>
 {% endmacro %}
@@ -58,14 +49,6 @@
     <div class="form-group">
         <div class="col-lg-10 col-lg-offset-2">
             <button type="submit" class="btn btn-primary">{{ value }}</button>
-        </div>
-    </div>
-{% endmacro %}
-
-{% macro submitFormButton(formButton) %}
-    <div class="form-group">
-        <div class="col-lg-10 col-lg-offset-2">
-            {{ form_widget(formField) }}
         </div>
     </div>
 {% endmacro %}

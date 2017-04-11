@@ -5,6 +5,7 @@ namespace VehturiinikShopBundle\Controller;
 use Doctrine\Common\Collections\ArrayCollection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
@@ -21,14 +22,11 @@ class ShoppingCartController extends Controller
 {
     /**
      * @Route("/shop/cart", name="view_cart")
+     * @Security("has_role('ROLE_USER')")
      * @return Response
      */
     public function viewCartAction()
     {
-        if(!$this->getUser()){
-            $this->addFlash('error','Log in in order to access your cart!');
-            return $this->redirectToRoute('security_login');
-        }
         $session = $this->get('session');
 
         if(!$session->has('products') || empty($session->get('products'))){
@@ -64,15 +62,11 @@ class ShoppingCartController extends Controller
     /**
      * @param $id int
      * @Route("/shop/add-to-cart/{id}",name="add_product")
+     * @Security("has_role('ROLE_USER')")
      * @return Response
      */
     public function addToCartAction($id)
     {
-        if(!$this->getUser()){
-            $this->addFlash('error','Log in in order to add products to your cart!');
-            return $this->redirectToRoute('security_login');
-        }
-
         $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
 
         $productName = $product->getName();
@@ -113,15 +107,11 @@ class ShoppingCartController extends Controller
     /**
      * @param $productName
      * @Route("/shop/remove-from-cart/{productName}", name="remove_all_from_cart")
+     * @Security("has_role('ROLE_USER')")
      * @return RedirectResponse
      */
     public function removeProductFromCartAction($productName)
     {
-        if(!$this->getUser()){
-            $this->addFlash('error','Log in in order to access your cart!');
-            return $this->redirectToRoute('security_login');
-        }
-
         $session = $this->get('session');
         $products = $session->get('products');
         $quantities = $session->get('quantities');
@@ -140,15 +130,11 @@ class ShoppingCartController extends Controller
      * @param Request $request
      * @Route("/shop/add-quantity", name="set_quantity")
      * @Method({"POST"})
+     * @Security("has_role('ROLE_USER')")
      * @return RedirectResponse
      */
     public function setQuantityAction(Request $request)
     {
-        $user = $this->getUser();
-        if(!$user){
-            $this->addFlash('error','Log in in order to manage to your cart!');
-            return $this->redirectToRoute('security_login');
-        }
         $productName = $request->request->get('productName');
         $quantity = $request->request->get('quantity');
         $submittedToken = $request->request->get('_csrf_token');
@@ -182,6 +168,7 @@ class ShoppingCartController extends Controller
 
     /**
      * @Route("/shop/cart/clear", name="clear_cart")
+     * @Security("has_role('ROLE_USER')")
      * @return RedirectResponse
      */
     public function clearCartAction()
@@ -204,15 +191,11 @@ class ShoppingCartController extends Controller
 
     /**
      * @Route("/shop/cart/checkout", name="checkout_cart")
+     * @Security("has_role('ROLE_USER')")
      */
     public function checkOutCartAction()
     {
         $user = $this->getUser();
-
-        if(!$user){
-            $this->addFlash('error','Log in in order to buy products from the shop!');
-            return $this->redirectToRoute('security_login');
-        }
 
         $session = $this->get('session');
         $total = $session->get('total');

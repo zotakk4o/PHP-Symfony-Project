@@ -2,6 +2,7 @@
 
 namespace VehturiinikShopBundle\Controller\Administration;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,6 +14,11 @@ use VehturiinikShopBundle\Entity\User;
 use VehturiinikShopBundle\Form\PurchaseType;
 use VehturiinikShopBundle\Form\UserType;
 
+/**
+ * Class EditUserController
+ * @package VehturiinikShopBundle\Controller\Administration
+ * @Security("has_role('ROLE_ADMIN')")
+ */
 class EditUserController extends Controller
 {
 
@@ -22,10 +28,6 @@ class EditUserController extends Controller
      */
     public function viewUsersAction()
     {
-        if(!$this->authenticate()){
-            $this->addFlash('error','Access Denied!');
-            return $this->redirectToRoute('home_index');
-        }
 
         $users = $this->getDoctrine()->getRepository(User::class)->findAll();
 
@@ -41,11 +43,6 @@ class EditUserController extends Controller
      */
     public function editUserAction(int $id, Request $request)
     {
-        if(!$this->authenticate()){
-            $this->addFlash('error','Access Denied!');
-            return $this->redirectToRoute('home_index');
-        }
-
         $user = $this->getDoctrine()->getRepository(User::class)->find($id);
         if($user === null){
             $this->addFlash('error','This User Doesn\'t Exist!');
@@ -82,10 +79,6 @@ class EditUserController extends Controller
      */
     public function viewUserPurchasesAction(int $id)
     {
-        if(!$this->authenticate()){
-            $this->addFlash('error','Access Denied!');
-            return $this->redirectToRoute('home_index');
-        }
 
         $user = $this->getDoctrine()->getRepository(User::class)->find($id);
         if($user === null){
@@ -141,7 +134,6 @@ class EditUserController extends Controller
      * @param Request $request
      * @param $userId
      * @param $purchaseId
-     *
      * @Route("/administration/user/{userId}/purchase/edit/{purchaseId}", name="edit_purchase")
      * @return Response
      */
@@ -175,10 +167,6 @@ class EditUserController extends Controller
 
         return $this->render('administration/purchase.html.twig',['purchase' => $purchase, 'form' => $form->createView()]);
 
-    }
-    private function authenticate()
-    {
-        return $this->getUser() && $this->getUser()->isAdmin();
     }
 
 }

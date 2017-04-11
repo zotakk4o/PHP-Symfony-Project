@@ -4,6 +4,7 @@ namespace VehturiinikShopBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -54,13 +55,10 @@ class ShopController extends Controller
 
     /**
      * @Route("/purchases", name="view_purchases")
+     * @Security("has_role('ROLE_USER')")
      */
     public function viewBoughtProductsAction()
     {
-        if(!$this->getUser()){
-            $this->addFlash('error','Log in in order view your purchases!');
-            return $this->redirectToRoute('security_login');
-        }
         $userId = $this->getUser()->getId();
 
         $purchases = $this->getDoctrine()->getRepository(Purchase::class)->findBy(['userId' => $userId]);
@@ -84,6 +82,7 @@ class ShopController extends Controller
     /**
      * @param $purchaseId int
      * @Route("/purchases/sell/purchase/{purchaseId}", name="sell_product")
+     * @Security("has_role('ROLE_USER')")
      * @return Response
      */
     public function sellPurchaseAction($purchaseId)
@@ -91,11 +90,6 @@ class ShopController extends Controller
 
         /**@var User $user*/
         $user = $this->getUser();
-        if(!$user){
-            $this->addFlash('error','Cannot access this page!');
-            return $this->redirectToRoute('security_login');
-        }
-
         $purchase = $this->getDoctrine()->getRepository(Purchase::class)->find($purchaseId);
         $product = $purchase->getProduct();
 
@@ -135,16 +129,12 @@ class ShopController extends Controller
      * @param Request $request
      * @Route("/purchases/sell/set-quantity", name="set_sell_quantity")
      * @Method({"POST"})
+     * @Security("has_role('ROLE_USER')")
      * @return Response
      */
     public function setSellQuantity(Request $request)
     {
-        $user = $this->getUser();
-        if(!$user){
-            $this->addFlash('error','Log in in order to manage your purchases!');
-            return $this->redirectToRoute('security_login');
-        }
-        $userId = $user->getId();
+        $userId = $this->getUser()->getId();
         $params = $request->request->all()['purchase_quantity'];
         $quantity = $params['quantityForSale'];
         $productId = $params['productId'];
@@ -156,7 +146,6 @@ class ShopController extends Controller
             $this->addFlash('error','Invalid CSRF Token!');
             return $this->redirectToRoute('home_index');
         }
-
 
         $purchase = $this->getDoctrine()->getRepository(Purchase::class)->findOneByUserIdAndProductId($productId, $userId);
 
