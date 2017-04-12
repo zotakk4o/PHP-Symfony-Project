@@ -51,7 +51,7 @@ class ShoppingCartController extends Controller
             /**@var Product $product*/
             $totalAmount += floatval($product->getPrice()) * $quantities[$product->getName()];
         }
-        $totalAmount = number_format($totalAmount, 2, '.', ' ');
+
         $session->set('total', $totalAmount);
 
 
@@ -208,7 +208,6 @@ class ShoppingCartController extends Controller
             $this->addFlash('warning','You Have No Items In Your Cart!');
             return $this->redirectToRoute('view_shop');
         }
-
         if($total > $user->getMoney()){
             $this->addFlash('warning','Not Enough Money In The Pocket!');
             return $this->redirectToRoute('view_cart');

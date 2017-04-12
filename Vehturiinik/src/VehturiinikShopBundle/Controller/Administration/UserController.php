@@ -155,16 +155,6 @@ class UserController extends Controller
         }
 
         $form = $this->createForm(PurchaseType::class, $purchase)
-            ->add('userId',ChoiceType::class, array(
-                'multiple' => false,
-                'choices' => $userIds,
-                'expanded' => false,
-            ))
-            ->add('productId',ChoiceType::class, array(
-                'multiple' => false,
-                'choices' => $productIds,
-                'expanded' => false
-            ))
             ->add('submit',
                 SubmitType::class,array(
                     'label' => 'Edit Purchase',
