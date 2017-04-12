@@ -14,9 +14,9 @@ class RegisterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('username', TextType::class, array('attr' => array('class' => 'form-control', 'placeholder' => 'Username')))
-        ->add('password',PasswordType::class, array('attr' => array('class' => 'form-control', 'placeholder' => 'Password')))
-        ->add('fullName', TextType::class, array('attr' => array('class' => 'form-control', 'placeholder' => 'Full Name')));
+        $builder->add('username', TextType::class)
+        ->add('password',PasswordType::class)
+        ->add('fullName', TextType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -4,6 +4,7 @@ namespace VehturiinikShopBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Product
@@ -26,6 +27,8 @@ class Product
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
+     *
+     * @Assert\NotBlank(message="Name Field Is Required!")
      */
     private $name;
 
@@ -33,6 +36,8 @@ class Product
      * @var string
      *
      * @ORM\Column(name="price", type="float")
+     *
+     * @Assert\NotBlank(message="Price Field Is Required!")
      */
     private $price;
 
@@ -40,6 +45,8 @@ class Product
      * @var string
      *
      * @ORM\Column(name="description", type="text")
+     *
+     * @Assert\NotBlank(message="Description Field Is Required!")
      */
     private $description;
 
@@ -47,6 +54,7 @@ class Product
      * @var string
      *
      * @ORM\Column(name="discount", type="integer", options={"default" = 0})
+     *
      */
     private $discount;
 
@@ -71,6 +79,8 @@ class Product
      * @var int
      *
      * @ORM\Column(name="categoryId", type="integer")
+     *
+     * @Assert\NotBlank(message="Category Id Field Is Required!")
      */
     private $categoryId;
 
@@ -88,6 +98,13 @@ class Product
      * @ORM\Column(name="dateAdded", type="datetime")
      */
     private $dateAdded;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateDeleted", type="datetime", nullable=true)
+     */
+    private $dateDeleted;
 
     public function __construct()
     {
@@ -272,6 +289,32 @@ class Product
     {
         return $this->dateAdded;
     }
+
+    /**
+     * @return bool|string
+     */
+    public function getSummaryOfDescription()
+    {
+        return substr($this->getDescription(), 0, 300);
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getDateDeleted()
+    {
+        return $this->dateDeleted;
+    }
+
+    /**
+     * @param \DateTime|null $dateDeleted
+     */
+    public function setDateDeleted(\DateTime $dateDeleted)
+    {
+        $this->dateDeleted = $dateDeleted;
+    }
+
+
 
 
 

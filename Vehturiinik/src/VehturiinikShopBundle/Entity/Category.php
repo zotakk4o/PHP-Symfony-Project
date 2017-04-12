@@ -3,10 +3,8 @@
 namespace VehturiinikShopBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints\Date;
-use Symfony\Component\Validator\Constraints\DateTime;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Category
@@ -29,6 +27,8 @@ class Category
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
+     *
+     * @Assert\NotBlank(message="Category Name is Mandatory!")
      */
     private $name;
 
@@ -43,6 +43,8 @@ class Category
      * @var string
      *
      * @ORM\Column(name="description", type="text")
+     *
+     * @Assert\NotBlank(message="Category Description is Mandatory!")
      */
     private $description;
 
@@ -52,6 +54,13 @@ class Category
      * @ORM\Column(name="dateAdded", type="datetime")
      */
     private $dateAdded;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateDeleted", type="datetime", nullable=true)
+     */
+    private $dateDeleted;
 
 
     public function __construct()
@@ -99,11 +108,23 @@ class Category
     /**
      * @return Product[]
      */
-    public function getProducts()
+    public function getValidProducts()
     {
         $products = [];
         foreach ($this->products as $product){
-            if(!$product->getQuantity() == 0)$products[] = $product;
+            if(!$product->getQuantity() == 0 && $product->getDateDeleted() === null)$products[] = $product;
+        }
+        return $products;
+    }
+
+    /**
+     * @return Product[]
+     */
+    public function getAllProducts()
+    {
+        $products = [];
+        foreach ($this->products as $product){
+            if($product->getDateDeleted() === null)$products[] = $product;
         }
         return $products;
     }
@@ -120,8 +141,6 @@ class Category
         return $this;
     }
 
-
-
     /**
      * @return mixed
      */
@@ -136,6 +155,41 @@ class Category
     public function getSummaryOfDescription()
     {
         return substr($this->getDescription(), 0, 300);
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getDateDeleted()
+    {
+        return $this->dateDeleted;
+    }
+
+    /**
+     * @param \DateTime|null $dateDeleted
+     */
+    public function setDateDeleted(\DateTime $dateDeleted)
+    {
+        $this->dateDeleted = $dateDeleted;
+    }
+
+    public function getProductsCount()
+    {
+        return count($this->getValidProducts());
+    }
+
+    /**
+     * Set Description
+     *
+     * @param string $description
+     *
+     * @return Category
+     */
+    public function setDescription(string $description)
+    {
+        $this->description = $description;
+
+        return $this;
     }
 
 

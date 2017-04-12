@@ -70,9 +70,9 @@ class ShoppingCartController extends Controller
         $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
 
         $productName = $product->getName();
-        if($product === null){
+        if($product === null || $product->getCategory()->getDateDeleted() !== null){
             $this->addFlash('error','This product doesn\'t exist');
-            $this->redirectToRoute('view_shop');
+            return $this->redirectToRoute('view_shop');
         }
 
         $category = $this->getDoctrine()->getRepository(Category::class)->findOneBy(['id' => $product->getCategoryId()]);
@@ -114,6 +114,10 @@ class ShoppingCartController extends Controller
     {
         $session = $this->get('session');
         $products = $session->get('products');
+        if(!array_key_exists($productName, $products)){
+            $this->addFlash('error','Product not in cart!');
+            return $this->redirectToRoute('home_index');
+        }
         $quantities = $session->get('quantities');
         unset($products[$productName]);
         unset($quantities[$productName]);
@@ -147,7 +151,7 @@ class ShoppingCartController extends Controller
 
         $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['name' => $productName]);
 
-        if($product === null){
+        if($product === null || $product->getDateDeleted() !== null){
             $this->addFlash('warning','Invalid Product!');
             return $this->redirectToRoute('view_cart');
         }elseif ($quantity <= 0 || $product->getQuantity() < $quantity){

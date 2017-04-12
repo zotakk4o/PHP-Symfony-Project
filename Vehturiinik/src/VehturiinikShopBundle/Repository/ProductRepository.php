@@ -2,7 +2,8 @@
 
 namespace VehturiinikShopBundle\Repository;
 
-use Proxies\__CG__\VehturiinikShopBundle\Entity\Product;
+use VehturiinikShopBundle\Entity\Product;
+
 
 /**
  * ProductRepository
@@ -20,8 +21,10 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
        return $this->getEntityManager()
             ->getRepository(Product::class)
             ->createQueryBuilder('p')
-            ->select('p')
+            ->innerJoin('p.category','c')
             ->where('p.quantity > 0')
+            ->andWhere('p.dateDeleted IS NULL')
+            ->andWhere('c.dateDeleted IS NULL')
             ->orderBy('p.dateAdded','DESC')
             ->setMaxResults(5)
             ->getQuery()

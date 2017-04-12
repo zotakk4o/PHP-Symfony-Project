@@ -26,9 +26,10 @@ class ShopController extends Controller
     public function viewCategoriesAction()
    {
        $validCategories = [];
-       $categories = $this->getDoctrine()->getRepository(Category::class)->findAll();
+       $categories = $this->getDoctrine()->getRepository(Category::class)->findAllAvailable();
+
        foreach ($categories as $category){
-           if(!empty($category->getProducts()))$validCategories[] = $category;
+           if($category->getProductsCount() > 0)$validCategories[] = $category;
        }
 
        return $this->render('shop/categories.html.twig',['categories' => $validCategories]);
@@ -43,12 +44,12 @@ class ShopController extends Controller
    {
         $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
 
-        if($category === null){
+        if($category === null || $category->getDateDeleted() !== null || $category->getProductsCount() == 0){
             $this->addFlash('error','This category doesn\'t exist!');
             return $this->redirectToRoute('view_shop');
         }
 
-        $products = $category->getProducts();
+        $products = $category->getValidProducts();
 
         return $this->render('shop/products.html.twig', ['products' => $products]);
    }

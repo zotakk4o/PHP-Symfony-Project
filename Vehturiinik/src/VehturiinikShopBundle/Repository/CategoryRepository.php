@@ -2,6 +2,8 @@
 
 namespace VehturiinikShopBundle\Repository;
 
+use VehturiinikShopBundle\Entity\Category;
+
 /**
  * CategoryRepository
  *
@@ -10,4 +12,17 @@ namespace VehturiinikShopBundle\Repository;
  */
 class CategoryRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @return Category[]
+     */
+    public function findAllAvailable()
+    {
+        return $this->getEntityManager()
+            ->getRepository(Category::class)
+            ->createQueryBuilder('c')
+            ->select('c')
+            ->where('c.dateDeleted IS NULL')
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -2,8 +2,9 @@
 
 {% block body %}
     <div class="jumbotron">
-        <h1>{{ exception.message }}</h1>
-        <h2>The server returned a "{{ status_code }} {{ status_text }}"</h2>
+        <h2>{{ exception.message }}</h2>
+        <h3>The server returned a "{{ status_code }} {{ status_text }}"</h3>
         <p><a href="{{ path('home_index') }}" class="btn-lg btn-primary">Return to the homepage</a></p>
     </div>
+    {% include '@Twig/Exception/exception.html.twig' %}
 {% endblock %}
