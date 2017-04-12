@@ -3,7 +3,7 @@
 namespace VehturiinikShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints\DateTime;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Purchase
@@ -25,14 +25,24 @@ class Purchase
     /**
      * @var int
      *
-     * @ORM\Column(name="quantity", type="integer", options={"default" = 0})
+     * @ORM\Column(name="quantity", type="integer")
+     *
+     * @Assert\GreaterThanOrEqual(value = 0, message="Quantity Should be Equal or Greater Than Zero")
+     *
+     * @Assert\NotBlank(message="Quantity Cannot be Empty")
+     *
      */
     private $quantity;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="quantityForSale", type="integer", options={"default" = 0})
+     * @ORM\Column(name="quantityForSale", type="integer")
+     *
+     * @Assert\GreaterThanOrEqual(value = 0, message="Quantity for Sale Should be Equal or Greater Than Zero")
+     *
+     * @Assert\NotBlank(message="Quantity for Sale Cannot be Empty")
+     *
      */
     private $quantityForSale;
 
@@ -51,6 +61,8 @@ class Purchase
      * @var int
      *
      * @ORM\Column(name="userId", type="integer")
+     *
+     * @Assert\NotBlank(message="Quantity for Sale Cannot be Empty")
      */
     private $userId;
 
@@ -58,6 +70,7 @@ class Purchase
      * @var Product
      *
      * @ORM\ManyToOne(targetEntity="VehturiinikShopBundle\Entity\Product", inversedBy="buyings")
+     *
      * @ORM\JoinColumn(name="productId", referencedColumnName="id")
      *
      */
@@ -67,6 +80,8 @@ class Purchase
      * @var int
      *
      * @ORM\Column(name="productId", type="integer")
+     *
+     * @Assert\NotBlank(message="Quantity for Sale Cannot be Empty")
      */
     private $productId;
 
@@ -225,11 +240,6 @@ class Purchase
 
         return $this;
     }
-
-
-
-
-
 
 }
 

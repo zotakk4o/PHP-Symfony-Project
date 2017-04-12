@@ -4,10 +4,12 @@ namespace VehturiinikShopBundle\Controller\Administration;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use VehturiinikShopBundle\Entity\Product;
 use VehturiinikShopBundle\Entity\Purchase;
 use VehturiinikShopBundle\Entity\Role;
 use VehturiinikShopBundle\Entity\User;
@@ -135,16 +137,42 @@ class UserController extends Controller
     {
         $purchase = $this->getDoctrine()->getRepository(Purchase::class)->find($purchaseId);
 
+        $users = $this->getDoctrine()->getRepository(User::class)->findAll();
+        $userIds = [];
+
+        $products = $this->getDoctrine()->getRepository(Product::class)->findAll();
+        $productIds = [];
+        foreach ($users as $user){
+            $userIds[$user->getFullName()] = $user->getId();
+        }
+        foreach($products as $product)
+        {
+            $productIds[$product->getName()] = $product->getId();
+        }
         if($purchase === null || $purchase->getUserId() != $userId){
             $this->addFlash('warning','This User Hasn\'t Bought This Product!');
             return $this->redirectToRoute('view_user_purchases',['id' => $userId]);
         }
 
         $form = $this->createForm(PurchaseType::class, $purchase)
-            ->add('submit',SubmitType::class,array('label' => 'Edit Purchase','attr' => ['class' => 'btn btn-primary']));
+            ->add('userId',ChoiceType::class, array(
+                'multiple' => false,
+                'choices' => $userIds,
+                'expanded' => false,
+            ))
+            ->add('productId',ChoiceType::class, array(
+                'multiple' => false,
+                'choices' => $productIds,
+                'expanded' => false
+            ))
+            ->add('submit',
+                SubmitType::class,array(
+                    'label' => 'Edit Purchase',
+                    'attr' => ['class' => 'btn btn-primary']
+                ));
 
         $form->handleRequest($request);
-
+        // TODO: VALIDATE INFORMATION
         if($form->isSubmitted() && $form->isValid()){
             $em = $this->getDoctrine()->getManager();
             $em->persist($purchase);

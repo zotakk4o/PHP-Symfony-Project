@@ -11,10 +11,11 @@ class PurchaseType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('userId',NumberType::class)
-            ->add('productId',NumberType::class)
-            ->add('quantity',NumberType::class)
-            ->add('quantityForSale',NumberType::class);
+        $builder
+            ->add('userId', NumberType::class,['disabled' => true])
+            ->add('productId', NumberType::class,['disabled' => true])
+            ->add('quantity')
+            ->add('quantityForSale');
     }
 
     public function configureOptions(OptionsResolver $resolver)

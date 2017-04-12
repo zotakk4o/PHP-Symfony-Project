@@ -47,53 +47,51 @@ CREATE TABLE IF NOT EXISTS `products` (
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `price` double NOT NULL,
   `description` longtext COLLATE utf8_unicode_ci NOT NULL,
-  `discount` int(11) NOT NULL DEFAULT '0',
-  `quantity` int(11) NOT NULL DEFAULT '0',
+  `discount` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
   `categoryId` int(11) NOT NULL,
   `dateAdded` datetime NOT NULL,
   `dateDeleted` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_B3BA5A5A9C370B71` (`categoryId`),
   CONSTRAINT `FK_B3BA5A5A9C370B71` FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping data for table vehturiinik.products: ~9 rows (approximately)
+-- Dumping data for table vehturiinik.products: ~8 rows (approximately)
 DELETE FROM `products`;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
 INSERT INTO `products` (`id`, `name`, `price`, `description`, `discount`, `quantity`, `categoryId`, `dateAdded`, `dateDeleted`) VALUES
-	(2, 'Audi s8', 3500, 'Mnogo si e burzo nqma kvo da sel afim', 0, 46, 3, '0000-00-00 00:00:00', NULL),
+	(2, 'Audi s8', 3500, 'Mnogo si e burzo nqma kvo da sel afim', 0, 45, 3, '0000-00-00 00:00:00', NULL),
 	(3, 'Kompec', 1000, 'E ne e s gtx 1080 ama pak staa', 0, 11, 2, '0000-00-00 00:00:00', '2017-04-12 10:21:32'),
 	(5, 'Furna za jenata', 150, 'Da ne vi trovi nervite', 0, 19, 1, '0000-00-00 00:00:00', NULL),
-	(6, 'BMW M6', 2500, 'Da vozite prizlujnicata', 0, 10, 3, '0000-00-00 00:00:00', NULL),
+	(6, 'BMW M6', 2500, 'Da vozite prizlujnicata', 0, 13, 3, '0000-00-00 00:00:00', NULL),
 	(10, 'Novata Kola na mitko', 11, 'Bezcenna ama aide', 0, 0, 3, '0000-00-00 00:00:00', NULL),
 	(11, 'New Product', 12345, 'New ProductNew ProductNew ProductNew ProductNew Product', 0, 0, 3, '2017-04-12 10:58:22', NULL),
-	(12, 'New Product', 123123, 'sdadasdas', 21, 12, 5, '2017-04-12 11:08:49', '2017-04-12 11:09:34'),
-	(13, 'New Product', 12313, '1231', 123, 123, 4, '2017-04-12 11:11:54', '2017-04-12 11:12:03'),
-	(14, 'AAide tii i tiq kato teeb', 213, 'vsichkite ... da go ... duhatee', 321, 123, 5, '2017-04-12 11:35:51', NULL);
+	(12, 'New Product', 123123, 'sdadasdas', 21, 12, 5, '2017-04-12 11:08:49', '2017-04-12 11:09:34');
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 
 -- Dumping structure for table vehturiinik.purchases
 DROP TABLE IF EXISTS `purchases`;
 CREATE TABLE IF NOT EXISTS `purchases` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `quantity` int(11) NOT NULL DEFAULT '0',
+  `quantity` int(11) NOT NULL,
   `userId` int(11) NOT NULL,
   `productId` int(11) NOT NULL,
   `datePurchased` datetime NOT NULL,
-  `quantityForSale` int(11) NOT NULL DEFAULT '0',
+  `quantityForSale` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_AA6431FE64B64DCC` (`userId`),
   KEY `IDX_AA6431FE36799605` (`productId`),
   CONSTRAINT `FK_AA6431FE36799605` FOREIGN KEY (`productId`) REFERENCES `products` (`id`),
   CONSTRAINT `FK_AA6431FE64B64DCC` FOREIGN KEY (`userId`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping data for table vehturiinik.purchases: ~1 rows (approximately)
+-- Dumping data for table vehturiinik.purchases: ~2 rows (approximately)
 DELETE FROM `purchases`;
 /*!40000 ALTER TABLE `purchases` DISABLE KEYS */;
 INSERT INTO `purchases` (`id`, `quantity`, `userId`, `productId`, `datePurchased`, `quantityForSale`) VALUES
-	(13, 3, 17, 5, '2017-04-10 08:29:25', 2),
-	(15, 1, 4, 2, '2017-04-10 20:40:59', 1);
+	(15, 1, 4, 2, '2017-04-10 20:40:59', 1),
+	(16, 5, 3, 12, '2017-04-12 13:56:29', 5);
 /*!40000 ALTER TABLE `purchases` ENABLE KEYS */;
 
 -- Dumping structure for table vehturiinik.roles
@@ -131,12 +129,12 @@ DELETE FROM `users`;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id`, `username`, `password`, `fullName`, `money`) VALUES
 	(2, 'Zotakk', '$2y$13$wo1.NDtBGVGkmAxAflBuL.MDOoDULichB/BYyzxRB/rrbBsqpkWM2', 'Zotakk Funbazov', 28700),
-	(3, 'Gega', '$2y$13$95HZyDdQCpt/miBb/eVNs.y9rJOUTWY1bHTEZUuyvfIaOD9esyi9S', 'Gegata Nashiq', 4200),
+	(3, 'Gega', '$2y$13$95HZyDdQCpt/miBb/eVNs.y9rJOUTWY1bHTEZUuyvfIaOD9esyi9S', 'Gegata Nashiq', 700),
 	(4, 'Tarikat', '$2y$13$28Buad2dLjSQROi6WyAaW.hooUxi3RpVoj5iQUIkgMAJ7jtBTCZdm', 'Tarikat', 7700),
 	(5, 'draganka', '$2y$13$NdSgrZ3BYwi4IV/27SDVc.ZnTRey08t8YyzAi.sFnYCfpOvTg3HKu', 'Dragana Mirkovic', 4200),
 	(16, 'asd', '$2y$13$estKpS.mETxQ35MNIIC21ux6giyuSQ6sXB9lBmd0Ky1ea7YjUruj6', 'Tarikat', 4200),
 	(17, 'funbazov', '$2y$13$cy7srP39nNNCcgbtePvT0eKw0FN/MpxBCvIK1PAqvD.kj7Zm1.TWe', 'Lubomir Borisov', 3750),
-	(18, 'G', '$2y$13$tsNGwo/SrRx.8ifEUC9Ss.ej2ykMR96XAVwEnfoe54wrUTTW1uPR.', 'g', 4200);
+	(18, 'G', '$2y$13$tsNGwo/SrRx.8ifEUC9Ss.ej2ykMR96XAVwEnfoe54wrUTTW1uPR.', 'g', 11700);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 -- Dumping structure for table vehturiinik.users_roles

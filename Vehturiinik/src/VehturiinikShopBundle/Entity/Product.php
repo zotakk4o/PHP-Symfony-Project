@@ -38,6 +38,8 @@ class Product
      * @ORM\Column(name="price", type="float")
      *
      * @Assert\NotBlank(message="Price Field Is Required!")
+     *
+     * @Assert\GreaterThan(value=0, message="Price Cannot be Zero")
      */
     private $price;
 
@@ -53,15 +55,20 @@ class Product
     /**
      * @var string
      *
-     * @ORM\Column(name="discount", type="integer", options={"default" = 0})
+     * @ORM\Column(name="discount", type="integer")
      *
+     * @Assert\GreaterThanOrEqual(value = 0, message="Discount Should be Equal or Greater Than Zero")
+     *
+     * @Assert\LessThanOrEqual(value=99, message="Discount Cannot be More Than 99%")
      */
     private $discount;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="quantity", type="integer", options={"default" = 0})
+     * @ORM\Column(name="quantity", type="integer")
+     *
+     * @Assert\GreaterThanOrEqual(value = 0, message="Quantity Should be Equal or Greater Than Zero")
      */
     private $quantity;
 
