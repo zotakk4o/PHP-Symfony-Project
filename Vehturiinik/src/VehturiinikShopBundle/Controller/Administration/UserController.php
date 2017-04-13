@@ -174,6 +174,37 @@ class UserController extends Controller
         if($requestParams['username'] === '' || $requestParams['fullName'] === ''){
             $form->addError(new FormError('Username and Full Name Cannot be Empty!'));
         }
+        if(array_key_exists('roles',$requestParams))
+        {
+            if(count($requestParams['roles']) == 1)
+            {
+                if($requestParams['roles'][0] !== 'ROLE_ADMIN' && $requestParams['roles'][0] !== 'ROLE_EDITOR'){
+                    $form->addError(new FormError('Invalid User Roles!'));
+                }
+                else
+                {
+                    $form->submit($request->request->get($form->getName()));
+                }
+            }elseif(count($requestParams['roles']) == 2)
+            {
+                if(
+                    $requestParams['roles'][0] !== 'ROLE_ADMIN'
+                    && $requestParams['roles'][0] !== 'ROLE_EDITOR'
+                    || $requestParams['roles'][1] !== 'ROLE_EDITOR'
+                    && $requestParams['roles'][1] !== 'ROLE_ADMIN')
+                {
+                    $form->addError(new FormError('Invalid User Roles!'));
+                }
+                else
+                {
+                    $form->submit($request->request->get($form->getName()));
+                }
+            }
+            elseif(count($requestParams['roles']) > 2)
+            {
+                $form->addError(new FormError('Invalid User Roles!'));
+            }
+        }
         else
         {
             $form->submit($request->request->get($form->getName()));

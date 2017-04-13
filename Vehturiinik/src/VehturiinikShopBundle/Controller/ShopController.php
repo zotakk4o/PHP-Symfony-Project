@@ -92,12 +92,13 @@ class ShopController extends Controller
         /**@var User $user*/
         $user = $this->getUser();
         $purchase = $this->getDoctrine()->getRepository(Purchase::class)->find($purchaseId);
-        $product = $purchase->getProduct();
 
         if($purchase === null){
             $this->addFlash('warning','You haven\'t bought this product!');
             return $this->redirectToRoute('view_purchases');
         }
+
+        $product = $purchase->getProduct();
         $quantity = $purchase->getQuantityForSale();
 
         if($quantity <= 0){
