@@ -100,6 +100,11 @@ class ShopController extends Controller
         }
         $quantity = $purchase->getQuantityForSale();
 
+        if($quantity <= 0){
+            $this->addFlash('warning','Cannot Sell Nothing!');
+            return $this->redirectToRoute('view_purchases');
+        }
+
         $em = $this->getDoctrine()->getManager();
 
         $user->setMoney($user->getMoney() + $quantity * $product->getPrice());

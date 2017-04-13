@@ -204,8 +204,8 @@ class UserController extends Controller
         }
         elseif(intval($requestParams['quantity']) > $purchase->getProduct()->getQuantity()
             || intval($requestParams['quantityForSale']) > $purchase->getProduct()->getQuantity()
-            || $requestParams['quantity'] < 0
-            || $requestParams['quantityForSale'] < 0
+            || $requestParams['quantity'] <= 0
+            || $requestParams['quantityForSale'] <= 0
             || !is_numeric($requestParams['quantityForSale'])
             || !is_numeric($requestParams['quantity']))
         {
