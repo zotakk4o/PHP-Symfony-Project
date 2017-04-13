@@ -1,7 +1,7 @@
 {% macro loginForm() %}
     {% import _self as helpers %}
     <div>
-        <form class="form-horizontal" name="login" method="post" action="{{ path('security_login') }}">
+        <form class="form-horizontal" name="login" method="post" action="{{ path('security_login') }}" novalidate>
             <fieldset>
                 <legend>Login</legend>
                 {{ helpers.udInputField('Username','text','_username') }}

@@ -43,6 +43,8 @@ class Purchase
      *
      * @Assert\NotBlank(message="Quantity for Sale Cannot be Empty")
      *
+     * @Assert\Length(min=1)
+     *
      */
     private $quantityForSale;
 
@@ -62,7 +64,9 @@ class Purchase
      *
      * @ORM\Column(name="userId", type="integer")
      *
-     * @Assert\NotBlank(message="Quantity for Sale Cannot be Empty")
+     * @Assert\NotBlank(message="User Id Cannot be Empty")
+     *
+     * @Assert\GreaterThan(value = 0, message="User Id Should be Greater Than Zero")
      */
     private $userId;
 
@@ -81,7 +85,9 @@ class Purchase
      *
      * @ORM\Column(name="productId", type="integer")
      *
-     * @Assert\NotBlank(message="Quantity for Sale Cannot be Empty")
+     * @Assert\NotBlank(message="Product Id Cannot be Empty")
+     *
+     * @Assert\GreaterThan(value = 0, message="Product Id Should be Greater Than Zero")
      */
     private $productId;
 

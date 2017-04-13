@@ -39,7 +39,7 @@ class Product
      *
      * @Assert\NotBlank(message="Price Field Is Required!")
      *
-     * @Assert\GreaterThan(value=0, message="Price Cannot be Zero")
+     * @Assert\GreaterThan(value=0, message="Price Cannot be Zero or Negative")
      */
     private $price;
 

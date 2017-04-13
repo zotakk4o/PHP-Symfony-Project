@@ -17,7 +17,8 @@ class ProductType extends AbstractType
             ->add('description', TextareaType::class)
             ->add('price', NumberType::class)
             ->add('discount', NumberType::class,['empty_data' => 0])
-            ->add('quantity', NumberType::class,['empty_data' => 0]);
+            ->add('quantity', NumberType::class,['empty_data' => 0])
+            ->add('categoryId', NumberType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)

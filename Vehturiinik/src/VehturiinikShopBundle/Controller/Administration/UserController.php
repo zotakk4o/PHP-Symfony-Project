@@ -6,6 +6,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,12 +22,13 @@ use VehturiinikShopBundle\Form\UserType;
  * Class UserController
  * @package VehturiinikShopBundle\Controller\Administration
  * @Security("has_role('ROLE_ADMIN')")
+ * @Route("/administration")
  */
 class UserController extends Controller
 {
 
     /**
-     * @Route("/administration/users", name="view_users_panel")
+     * @Route("/users", name="view_users_panel")
      * @return Response
      */
     public function viewUsersAction()
@@ -40,7 +43,7 @@ class UserController extends Controller
     /**
      * @param int $id
      * @param Request $request
-     * @Route("/administration/user/{id}", name="edit_user")
+     * @Route("/user/{id}", name="edit_user")
      * @return Response
      */
     public function editUserAction(int $id, Request $request)
@@ -53,20 +56,21 @@ class UserController extends Controller
 
         $form = $this->createForm(UserType::class, $user);
 
-        $form->handleRequest($request);
+        if($request->isMethod('POST')){
+            $this->validateUserForm($request, $form);
+            if($form->isSubmitted() && $form->isValid()){
+                $roles = [];
+                foreach ($form->getData()->getRoles() as $roleName)$roles[] = $this->getDoctrine()->getRepository(Role::class)->findOneBy(['name' => $roleName]);
+                $user->setRoles($roles);
+                $user->addRole($this->getDoctrine()->getRepository(Role::class)->findOneBy(['name'=>'ROLE_USER']));
 
-        if($form->isSubmitted() && $form->isValid()){
-            $roles = [];
-            foreach ($form->getData()->getRoles() as $roleName)$roles[] = $this->getDoctrine()->getRepository(Role::class)->findOneBy(['name' => $roleName]);
-            $user->setRoles($roles);
-            $user->addRole($this->getDoctrine()->getRepository(Role::class)->findOneBy(['name'=>'ROLE_USER']));
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($user);
+                $em->flush();
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-
-            $this->addFlash('notice','User Successfully Updated!');
-            return $this->redirectToRoute('view_users_panel');
+                $this->addFlash('notice','User Successfully Updated!');
+                return $this->redirectToRoute('view_users_panel');
+            }
         }
 
         return $this->render('administration/users/user.html.twig',['user' => $user, 'form' => $form->createView()]);
@@ -75,7 +79,7 @@ class UserController extends Controller
 
     /**
      * @param int $id
-     * @Route("/administration/user/{id}/purchases", name="view_user_purchases")
+     * @Route("/user/{id}/purchases", name="view_user_purchases")
      * @return Response
      */
     public function viewUserPurchasesAction(int $id)
@@ -99,7 +103,7 @@ class UserController extends Controller
     /**
      * @param int $userId
      * @param int $purchaseId
-     * @Route("/administration/user/{userId}/purchase/{purchaseId}", name="remove_purchase")
+     * @Route("/user/{userId}/purchase/{purchaseId}", name="remove_purchase")
      * @return Response
      */
     public function removePurchaseAction($userId, $purchaseId)
@@ -130,25 +134,13 @@ class UserController extends Controller
      * @param Request $request
      * @param $userId
      * @param $purchaseId
-     * @Route("/administration/user/{userId}/purchase/edit/{purchaseId}", name="edit_purchase")
+     * @Route("/user/{userId}/purchase/edit/{purchaseId}", name="edit_purchase")
      * @return Response
      */
     public function editUserPurchaseAction(Request $request,$userId, $purchaseId)
     {
         $purchase = $this->getDoctrine()->getRepository(Purchase::class)->find($purchaseId);
 
-        $users = $this->getDoctrine()->getRepository(User::class)->findAll();
-        $userIds = [];
-
-        $products = $this->getDoctrine()->getRepository(Product::class)->findAll();
-        $productIds = [];
-        foreach ($users as $user){
-            $userIds[$user->getFullName()] = $user->getId();
-        }
-        foreach($products as $product)
-        {
-            $productIds[$product->getName()] = $product->getId();
-        }
         if($purchase === null || $purchase->getUserId() != $userId){
             $this->addFlash('warning','This User Hasn\'t Bought This Product!');
             return $this->redirectToRoute('view_user_purchases',['id' => $userId]);
@@ -161,19 +153,72 @@ class UserController extends Controller
                     'attr' => ['class' => 'btn btn-primary']
                 ));
 
-        $form->handleRequest($request);
-        // TODO: VALIDATE INFORMATION
-        if($form->isSubmitted() && $form->isValid()){
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($purchase);
-            $em->flush();
+        if($request->isMethod('POST')){
+            $this->validatePurchaseForm($request, $form, $purchase);
+            if($form->isSubmitted() && $form->isValid()){
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($purchase);
+                $em->flush();
 
-            $this->addFlash('notice','Purchase Successfully Edited!');
-            return $this->redirectToRoute('view_user_purchases',['id' => $userId]);
+                $this->addFlash('notice','Purchase Successfully Edited!');
+                return $this->redirectToRoute('view_user_purchases',['id' => $userId]);
+            }
         }
-
         return $this->render('administration/users/purchase.html.twig',['purchase' => $purchase, 'form' => $form->createView()]);
 
+    }
+
+    private function validateUserForm(Request $request, FormInterface $form)
+    {
+        $requestParams = $request->request->all()['user'];
+        if($requestParams['username'] === '' || $requestParams['fullName'] === ''){
+            $form->addError(new FormError('Username and Full Name Cannot be Empty!'));
+        }
+        else
+        {
+            $form->submit($request->request->get($form->getName()));
+        }
+    }
+
+    private function validatePurchaseForm(Request $request, FormInterface $form, Purchase $purchase)
+    {
+        $users = $this->getDoctrine()->getRepository(User::class)->findAll();
+        $userIds = [];
+        $products = $this->getDoctrine()->getRepository(Product::class)->findAll();
+        $productIds = [];
+
+        foreach ($users as $user){
+            $userIds[$user->getFullName()] = $user->getId();
+        }
+        foreach($products as $product)
+        {
+            $productIds[$product->getName()] = $product->getId();
+        }
+        $requestParams = $request->request->all()['purchase'];
+        if($requestParams['quantity'] === ''
+            || $requestParams['quantityForSale'] === ''
+            || $requestParams['userId'] === ''
+            || $requestParams['productId'] === '')
+        {
+            $form->addError(new FormError('Form Data Cannot be Empty!'));
+        }
+        elseif(intval($requestParams['quantity']) > $purchase->getProduct()->getQuantity()
+            || intval($requestParams['quantityForSale']) > $purchase->getProduct()->getQuantity()
+            || $requestParams['quantity'] < 0
+            || $requestParams['quantityForSale'] < 0
+            || !is_numeric($requestParams['quantityForSale'])
+            || !is_numeric($requestParams['quantity']))
+        {
+            $form->addError(new FormError('Invalid Quantity or Quantity For Sale!'));
+        }
+        elseif(!in_array($requestParams['userId'],$userIds) || !in_array($requestParams['productId'],$productIds))
+        {
+            $form->addError(new FormError('Invalid UserId or ProductId!'));
+        }
+        else
+        {
+            $form->submit($request->request->get($form->getName()));
+        }
     }
 
 }
