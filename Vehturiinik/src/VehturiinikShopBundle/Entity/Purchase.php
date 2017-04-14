@@ -247,5 +247,6 @@ class Purchase
         return $this;
     }
 
+
 }
 

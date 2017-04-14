@@ -15,7 +15,7 @@
             {{ product.description }}
             <div>
                 {% if product.discount %}
-                    Price: <h4 class="price discount">{{ product.price - (product.price * product.discount / 100)  }} vehturiiki</h4>
+                    Price: <h4 class="price discount">{{ product.price  }} vehturiiki</h4>
                     Discount: {{ product.discount }}%
                 {% else %}
                     Price: <h4 class="price">{{ product.price }} vehturiiki</h4>

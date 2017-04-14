@@ -2,7 +2,7 @@
 
 {% block main %}
     {% import 'macros/purchasesMacros.html.twig' as purchasesMacros %}
-    <h2>Your Cash is: {{ app.user.money }}</h2>
+    <h2>Your Cash is: {{ app.user.money }} vehturiiki</h2>
     {% for purchase in purchases %}
         {{ purchasesMacros.purchaseProduct(purchase, forms[purchase.product.name]) }}
     {% endfor %}

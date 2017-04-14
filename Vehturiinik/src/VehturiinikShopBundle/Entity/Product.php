@@ -26,7 +26,7 @@ class Product
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255)
+     * @ORM\Column(name="name", type="string", length=255, unique=true)
      *
      * @Assert\NotBlank(message="Name Field Is Required!")
      */
@@ -62,6 +62,24 @@ class Product
      * @Assert\LessThanOrEqual(value=99, message="Discount Cannot be More Than 99%")
      */
     private $discount;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="discountAdded", type="boolean")
+     *
+     */
+    private $discountAdded;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateDiscountExpires", type="datetime", nullable=true)
+     *
+     * @Assert\DateTime()
+     *
+     */
+    private $dateDiscountExpires;
 
     /**
      * @var int
@@ -115,6 +133,7 @@ class Product
 
     public function __construct()
     {
+        $this->discountAdded = false;
         $this->users = new ArrayCollection();
         $this->dateAdded = new \DateTime('now');
     }
@@ -170,7 +189,8 @@ class Product
      */
     public function getPrice()
     {
-        return $this->price;
+        if($this->getDiscount() == 0)return $this->price;
+        return $this->price - ($this->price * $this->getDiscount() / 100);
     }
 
     /**
@@ -206,6 +226,11 @@ class Product
      */
     public function setDiscount($discount)
     {
+        if(!$this->isDiscountAdded()){
+            $this->setDateDiscountExpires(null);
+            $discount = 0;
+        }
+
         $this->discount = $discount;
 
         return $this;
@@ -218,6 +243,10 @@ class Product
      */
     public function getDiscount()
     {
+        if($this->getDateDiscountExpires() !== null && new \DateTime('now') > $this->getDateDiscountExpires()){
+            $this->setDateDiscountExpires(null);
+            $this->setDiscount(0);
+        }
         return $this->discount;
     }
 
@@ -321,8 +350,42 @@ class Product
         $this->dateDeleted = $dateDeleted;
     }
 
+    /**
+     * @return bool
+     */
+    public function isDiscountAdded(): bool
+    {
+        return $this->discountAdded;
+    }
 
+    /**
+     * @param bool $discountAdded
+     */
+    public function setDiscountAdded(bool $discountAdded)
+    {
+        $this->discountAdded = $discountAdded;
+    }
 
+    /**
+     * @return \DateTime|null
+     */
+    public function getDateDiscountExpires()
+    {
+        return $this->dateDiscountExpires;
+    }
+
+    /**
+     * @param \DateTime|null $dateDiscountExpires
+     */
+    public function setDateDiscountExpires($dateDiscountExpires)
+    {
+        if(!$this->isDiscountAdded())$dateDiscountExpires = null;
+
+        elseif($dateDiscountExpires === null && $this->dateDiscountExpires !== null){
+            $this->setDiscount(0);
+        }
+        $this->dateDiscountExpires = $dateDiscountExpires;
+    }
 
 
 }

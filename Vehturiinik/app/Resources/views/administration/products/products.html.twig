@@ -9,6 +9,8 @@
             <th>Description</th>
             <th>Price</th>
             <th>Discount</th>
+            <th>At Discount</th>
+            <th>Date Expires</th>
             <th>Quantity</th>
             <th>Category</th>
             <th>Options</th>
@@ -22,6 +24,16 @@
                 <td>{{ product.description}}</td>
                 <td>{{ product.price }}</td>
                 <td>{{ product.discount }}</td>
+                {% if product.discountAdded %}
+                    <td>Yes</td>
+                {% else %}
+                    <td>No</td>
+                {% endif %}
+                {% if product.dateDiscountExpires is not null %}
+                <td>{{ product.dateDiscountExpires|date('Y-m-d')}}</td>
+                {% else %}
+                    <td>Not Set</td>
+                {% endif %}
                 <td>{{ product.quantity }}</td>
                 <td>{{ product.category.name }}</td>
                 <td>

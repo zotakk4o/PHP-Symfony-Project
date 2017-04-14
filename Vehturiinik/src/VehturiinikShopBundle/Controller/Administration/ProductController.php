@@ -110,7 +110,6 @@ class ProductController extends Controller
 
         $form = $this->createForm(ProductType::class,$product)
             ->add('submit', SubmitType::class, ['label' => 'Add','attr' => ['class' => 'btn btn-primary']]);
-
         if($request->isMethod('POST')){
             $this->validateForm($request,$form);
             if($form->isSubmitted() && $form->isValid()){
@@ -123,7 +122,6 @@ class ProductController extends Controller
             }
         }
         return $this->render('administration/products/createAndEdit.html.twig',['form' => $form->createView()]);
-
     }
 
     /**
@@ -169,7 +167,8 @@ class ProductController extends Controller
             $categoryIds[] = $category->getId();
         }
         $requestParams = $request->request->all()['product'];
-        if($requestParams['name'] === ''
+        if(array_key_exists('discountAdded',$requestParams) && new \DateTime(implode('-',$requestParams['dateDiscountExpires'])) <= new \DateTime('now'))$form->addError(new FormError('Invalid Date!'));
+        elseif($requestParams['name'] === ''
             || $requestParams['description'] === ''
             || $requestParams['price'] === ''
             || $requestParams['discount'] === ''

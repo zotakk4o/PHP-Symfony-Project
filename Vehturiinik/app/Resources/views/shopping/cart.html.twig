@@ -2,7 +2,7 @@
 
 {% block main %}
     {% import 'macros/cartMacros.html.twig' as cartMacros %}
-    <h2>Your Cash is: {{ app.user.money }}</h2>
+    <h2>Your Cash is: {{ app.user.money }} vehturiiki</h2>
     {% for product in products %}
         {{ cartMacros.cartProduct(product, quantities[product.name]) }}
     {% endfor %}

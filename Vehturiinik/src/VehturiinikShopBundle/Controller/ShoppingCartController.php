@@ -34,6 +34,7 @@ class ShoppingCartController extends Controller
             return $this->redirectToRoute('view_shop');
         }
 
+        /**@var Product[] $products*/
         $products = $session->get('products');
         $quantities = $session->get('quantities');
 
@@ -48,7 +49,6 @@ class ShoppingCartController extends Controller
         $totalAmount = 0;
 
         foreach ($products as $product){
-            /**@var Product $product*/
             $totalAmount += floatval($product->getPrice()) * $quantities[$product->getName()];
         }
 
