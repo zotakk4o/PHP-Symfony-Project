@@ -10,12 +10,24 @@
         </div>
         <div class="panel-body">
             {{ purchase.product.description }}
-            <div>
-                Cost: <h4 class="price">{{ purchase.product.price  * purchase.quantity }} vehturiiki</h4>
-            </div>
-            <div>
-                You Will Earn: <h4 class="price">{{ purchase.product.price  * purchase.quantityForSale }} vehturiiki</h4>
-            </div>
+            {% if purchase.discount and not purchase.product.discount %}
+                <div>
+                    Cost: <h4 class="price discount">{{ (purchase.product.price - (purchase.product.price * purchase.discount / 100))  * purchase.quantity }} vehturiiki</h4>
+                </div>
+                <div>
+                    Discount bought at: <h4 class="price discount">{{ purchase.discount }}%</h4>
+                </div>
+                <div>
+                    You Will Earn: <h4 class="price discount">{{ (purchase.product.price - (purchase.product.price * purchase.discount / 100))  * purchase.quantityForSale }} vehturiiki</h4>
+                </div>
+            {% else %}
+                <div>
+                    Cost: <h4 class="price">{{ purchase.product.price  * purchase.quantity }} vehturiiki</h4>
+                </div>
+                <div>
+                    You Will Earn: <h4 class="price">{{ purchase.product.price  * purchase.quantityForSale }} vehturiiki</h4>
+                </div>
+            {% endif %}
             <div>
                 Quantity bought: <h4 class="quantity">{{ purchase.quantity }}</h4>
             </div>

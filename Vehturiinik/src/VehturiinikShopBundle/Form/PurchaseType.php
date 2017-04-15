@@ -16,7 +16,8 @@ class PurchaseType extends AbstractType
             ->add('userId', NumberType::class)
             ->add('productId', NumberType::class)
             ->add('quantity',NumberType::class)
-            ->add('quantityForSale',NumberType::class);
+            ->add('quantityForSale',NumberType::class)
+            ->add('discount', NumberType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)

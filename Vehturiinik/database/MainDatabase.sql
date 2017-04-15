@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   CONSTRAINT `FK_B3BA5A5A9C370B71` FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Dumping data for table vehturiinik.products: ~9 rows (approximately)
+-- Dumping data for table vehturiinik.products: ~10 rows (approximately)
 DELETE FROM `products`;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
 INSERT INTO `products` (`id`, `name`, `price`, `description`, `discount`, `quantity`, `categoryId`, `dateAdded`, `dateDeleted`, `dateDiscountExpires`, `discountAdded`) VALUES
@@ -73,7 +73,7 @@ INSERT INTO `products` (`id`, `name`, `price`, `description`, `discount`, `quant
 	(11, 'New Product', 12345, 'New ProductNew ProductNew ProductNew ProductNew Product', 0, 12, 3, '2017-04-12 10:58:22', NULL, NULL, 0),
 	(12, 'New Product 2', 200, 'test', 0, 14, 5, '2017-04-12 11:08:49', NULL, NULL, 0),
 	(14, 'BipoliarenTranzistor', 420, 'Mnogo gotini procesorcheta se pravqt s tezi bipoliarni tranzistori', 0, 42, 6, '2017-04-13 13:40:16', '2017-04-14 08:37:40', NULL, 0),
-	(15, 'Test', 50, 'Test', 0, 2, 6, '2017-04-14 08:43:59', NULL, NULL, 0),
+	(15, 'Test', 500, 'Test', 0, 2, 6, '2017-04-14 08:43:59', NULL, NULL, 0),
 	(16, 'AAide tii i tiq kato teeb', 420, 'Dnes bez teb sum i na kef sum', 0, 20, 5, '2017-04-14 11:56:10', NULL, NULL, 0);
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 
@@ -86,12 +86,13 @@ CREATE TABLE IF NOT EXISTS `purchases` (
   `productId` int(11) NOT NULL,
   `datePurchased` datetime NOT NULL,
   `quantityForSale` int(11) NOT NULL,
+  `discount` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX_AA6431FE64B64DCC` (`userId`),
   KEY `IDX_AA6431FE36799605` (`productId`),
   CONSTRAINT `FK_AA6431FE36799605` FOREIGN KEY (`productId`) REFERENCES `products` (`id`),
   CONSTRAINT `FK_AA6431FE64B64DCC` FOREIGN KEY (`userId`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- Dumping data for table vehturiinik.purchases: ~0 rows (approximately)
 DELETE FROM `purchases`;
@@ -137,7 +138,7 @@ INSERT INTO `users` (`id`, `username`, `password`, `fullName`, `money`) VALUES
 	(4, 'Tarikat', '$2y$13$28Buad2dLjSQROi6WyAaW.hooUxi3RpVoj5iQUIkgMAJ7jtBTCZdm', 'Tarikat', 7700),
 	(5, 'draganka', '$2y$13$NdSgrZ3BYwi4IV/27SDVc.ZnTRey08t8YyzAi.sFnYCfpOvTg3HKu', 'Dragana Mirkovic', 4200),
 	(16, 'asd', '$2y$13$estKpS.mETxQ35MNIIC21ux6giyuSQ6sXB9lBmd0Ky1ea7YjUruj6', 'Tarikat', 4200),
-	(17, 'funbazov', '$2y$13$cy7srP39nNNCcgbtePvT0eKw0FN/MpxBCvIK1PAqvD.kj7Zm1.TWe', 'Lubomir Borisov', 503420),
+	(17, 'funbazov', '$2y$13$cy7srP39nNNCcgbtePvT0eKw0FN/MpxBCvIK1PAqvD.kj7Zm1.TWe', 'Lubomir Borisov', 503320),
 	(18, 'G', '$2y$13$tsNGwo/SrRx.8ifEUC9Ss.ej2ykMR96XAVwEnfoe54wrUTTW1uPR.', 'g', 11700),
 	(19, 'Username Shall Not Pass', '$2y$13$kUSVW3thwFAzqh4OUKX4qeybe5QwYspb9zdxXkBrmf0epIKINfRUO', 'Kolko po gotin full name ot nicknamea mi', 4200);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;

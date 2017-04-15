@@ -92,6 +92,13 @@ class Purchase
     private $productId;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="discount",type="integer")
+     */
+    private $discount;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="datePurchased", type="datetime")
@@ -246,6 +253,24 @@ class Purchase
 
         return $this;
     }
+
+    /**
+     * @return int
+     */
+    public function getDiscount(): int
+    {
+        return $this->discount;
+    }
+
+    /**
+     * @param int $discount
+     */
+    public function setDiscount(int $discount)
+    {
+        $this->discount = $discount;
+    }
+
+
 
 
 }

@@ -108,7 +108,11 @@ class ShopController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $user->setMoney($user->getMoney() + $quantity * $product->getPrice());
+        if($purchase->getDiscount() !== 0 && $product->getDiscount() == 0){
+            $user->setMoney($user->getMoney() + $quantity * ($product->getPrice() - ($product->getPrice() * $purchase->getDiscount() / 100)));
+        }else{
+            $user->setMoney($user->getMoney() + $quantity * $product->getPrice());
+        }
 
         $em->persist($user);
         $em->flush();

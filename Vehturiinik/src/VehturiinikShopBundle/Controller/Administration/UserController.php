@@ -242,6 +242,10 @@ class UserController extends Controller
         {
             $form->addError(new FormError('Invalid Quantity or Quantity For Sale!'));
         }
+        elseif($requestParams['discount'] < 0 || $requestParams['discount'] >= 99)
+        {
+            $form->addError(new FormError('Discount Should be Between 0% and 99%!'));
+        }
         elseif(!in_array($requestParams['userId'],$userIds) || !in_array($requestParams['productId'],$productIds))
         {
             $form->addError(new FormError('Invalid UserId or ProductId!'));

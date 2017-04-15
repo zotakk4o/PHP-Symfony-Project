@@ -244,6 +244,9 @@ class ShoppingCartController extends Controller
                 $user->addPurchase($purchase);
             }
 
+            if($product->getDiscount() !== 0)$purchase->setDiscount($product->getDiscount());
+            else $purchase->setDiscount(0);
+
             $em->persist($purchase);
             $em->flush();
 
