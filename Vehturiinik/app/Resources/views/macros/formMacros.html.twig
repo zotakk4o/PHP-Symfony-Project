@@ -15,7 +15,7 @@
 
 {% macro quantityForm(product, quantity) %}
     {% import _self as helpers %}
-    <form action="{{ path('set_quantity') }}" name="quantity" method="post">
+    <form action="{{ path('set_quantity') }}" name="quantity_form" method="post">
         <input type="submit" class="btn-success" value="Set Quantity">
         <input type="text" class="quantity-field" name="quantity" value="{{ quantity }}"/>
         <input type="hidden" name="productName" value="{{ product.name }}"/>

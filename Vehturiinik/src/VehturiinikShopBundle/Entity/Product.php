@@ -76,8 +76,6 @@ class Product
      *
      * @ORM\Column(name="dateDiscountExpires", type="datetime", nullable=true)
      *
-     * @Assert\DateTime()
-     *
      */
     private $dateDiscountExpires;
 
@@ -97,6 +95,7 @@ class Product
      * @ORM\ManyToOne(targetEntity="VehturiinikShopBundle\Entity\Category", inversedBy="products")
      *
      * @ORM\JoinColumn(name="categoryId", referencedColumnName="id")
+     *
      */
     private $category;
 
@@ -106,6 +105,8 @@ class Product
      * @ORM\Column(name="categoryId", type="integer")
      *
      * @Assert\NotBlank(message="Category Id Field Is Required!")
+     *
+     * @Assert\GreaterThanOrEqual(value = 0, message="Quantity Should be Equal or Greater Than Zero")
      */
     private $categoryId;
 

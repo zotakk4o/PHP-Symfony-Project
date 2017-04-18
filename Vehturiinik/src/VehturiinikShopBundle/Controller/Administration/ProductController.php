@@ -2,16 +2,22 @@
 
 namespace VehturiinikShopBundle\Controller\Administration;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use function Sodium\add;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Range;
 use VehturiinikShopBundle\Entity\Category;
 use VehturiinikShopBundle\Entity\Product;
 use VehturiinikShopBundle\Form\ProductType;
@@ -159,18 +165,62 @@ class ProductController extends Controller
 
     }
 
+    /**
+     * @param $request Request
+     * @Route("/discount/all", name="discount_all_products" )
+     * @return Response
+     */
+    public function discountAllProductsAction(Request $request)
+    {
+        /**@var $form FormInterface*/
+        $form = $this->createFormBuilder()
+        ->add('discount',NumberType::class,['constraints'=>[new Range(['min' => '1','max' => '99']), new NotBlank(['message' => 'Cannot Be Blank!'])]])
+        ->add('dateDiscountExpires',DateType::class,['years' => range(2017,2020),'constraints'=>[new Range(['min'=>'+1 day','max'=>'+3 years +11 months'])]])
+        ->add('submit',SubmitType::class,['label'=>'Discount','attr'=>['class'=>'btn btn-primary']])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $data = $form->getData();
+            $em = $this->getDoctrine()->getManager();
+            $products = $this->getDoctrine()->getRepository(Product::class)->findAll();
+            foreach ($products as $product){
+                if($product->getDiscount() < $data['discount']){
+                    $product->setDiscount($data['discount']);
+                    $product->setDateDiscountExpires($data['dateDiscountExpires']);
+                    $product->setDiscountAdded(true);
+
+                    $em->persist($product);
+                    $em->flush();
+                }
+            }
+            $this->addFlash('notice','All Products are at Discount!');
+            return $this->redirectToRoute('view_products_in_categories_panel');
+        }
+
+        return $this->render('administration/products/discountAllForm.html.twig',['form' => $form->createView()]);
+
+    }
+
     private function validateForm(Request $request, FormInterface $form)
     {
         $categoryIds = [];
         $categs = $this->getDoctrine()->getRepository(Category::class)->findAll();
-        foreach ($categs as $category){
+        foreach ($categs as $category) {
             $categoryIds[] = $category->getId();
         }
         $requestParams = $request->request->all()['product'];
-        if(array_key_exists('discountAdded',$requestParams) && new \DateTime(implode('-',$requestParams['dateDiscountExpires'])) <= new \DateTime('now'))$form->addError(new FormError('Invalid Date!'));
+        if (array_key_exists('discountAdded', $requestParams)
+            && new \DateTime(implode('-', $requestParams['dateDiscountExpires'])) <= new \DateTime('now')
+            || date_format(new \DateTime(implode('-', $requestParams['dateDiscountExpires'])),'Y') < 2017
+            || date_format(new \DateTime(implode('-', $requestParams['dateDiscountExpires'])),'Y') > 2020)
+        {
+            $form->addError(new FormError('Invalid Date! Date Range(2017 - 2020)'));
+        }
         elseif($requestParams['name'] === ''
-            || $requestParams['description'] === ''
             || $requestParams['price'] === ''
+            || $requestParams['description'] === ''
             || $requestParams['discount'] === ''
             || $requestParams['quantity'] === ''
             || $requestParams['categoryId'] === '')

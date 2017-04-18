@@ -143,7 +143,7 @@ class ShoppingCartController extends Controller
         $quantity = $request->request->get('quantity');
         $submittedToken = $request->request->get('_csrf_token');
 
-        $csrfToken = new CsrfToken('quantity', $submittedToken);
+        $csrfToken = new CsrfToken('quantity_form', $submittedToken);
         if(!$this->get('security.csrf.token_manager')->isTokenValid($csrfToken)){
             $this->addFlash('error','Invalid CSRF Token!');
             return $this->redirectToRoute('home_index');
