@@ -11,7 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use VehturiinikShopBundle\Entity\Category;
+use VehturiinikShopBundle\Entity\Product;
 use VehturiinikShopBundle\Form\CategoryType;
+use VehturiinikShopBundle\Form\DiscountType;
 
 /**
  * Class CategoryController
@@ -118,6 +120,44 @@ class CategoryController extends Controller
             }
         }
         return $this->render('administration/categories/addAndDelete.html.twig',['form' => $form->createView()]);
+    }
+
+    /**
+     * @param $request Request
+     * @param int $id
+     * @Route("/{id}/discount/all", name="discount_category" )
+     * @return Response
+     */
+    public function discountCategoryAction(Request $request, int $id)
+    {
+
+        $form = $this->createForm(DiscountType::class);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $data = $form->getData();
+            $em = $this->getDoctrine()->getManager();
+            $products = $this->getDoctrine()->getRepository(Product::class)->findBy(['categoryId' => $id]);
+            if(empty($products)){
+                $this->addFlash('error','Incorrect Category Id!');
+                return $this->redirectToRoute('view_category_panel');
+            }
+            foreach ($products as $product){
+                if($product->getDiscount() < $data['discount']){
+                    $product->setDiscount($data['discount']);
+                    $product->setDateDiscountExpires($data['dateDiscountExpires']);
+                    $product->setDiscountAdded(true);
+
+                    $em->persist($product);
+                    $em->flush();
+                }
+            }
+            $this->addFlash('notice','All Products are at Discount!');
+            return $this->redirectToRoute('view_category_panel');
+        }
+
+        return $this->render('administration/categories/discountForm.html.twig',['form' => $form->createView()]);
+
     }
 
     private function validateForm(Request $request, FormInterface $form)

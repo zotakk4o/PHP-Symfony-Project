@@ -20,6 +20,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 use VehturiinikShopBundle\Entity\Category;
 use VehturiinikShopBundle\Entity\Product;
+use VehturiinikShopBundle\Form\DiscountType;
 use VehturiinikShopBundle\Form\ProductType;
 
 /**
@@ -172,13 +173,8 @@ class ProductController extends Controller
      */
     public function discountAllProductsAction(Request $request)
     {
-        /**@var $form FormInterface*/
-        $form = $this->createFormBuilder()
-        ->add('discount',NumberType::class,['constraints'=>[new Range(['min' => '1','max' => '99']), new NotBlank(['message' => 'Cannot Be Blank!'])]])
-        ->add('dateDiscountExpires',DateType::class,['years' => range(2017,2020),'constraints'=>[new Range(['min'=>'+1 day','max'=>'+3 years +11 months'])]])
-        ->add('submit',SubmitType::class,['label'=>'Discount','attr'=>['class'=>'btn btn-primary']])
-            ->getForm();
 
+        $form = $this->createForm(DiscountType::class);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
