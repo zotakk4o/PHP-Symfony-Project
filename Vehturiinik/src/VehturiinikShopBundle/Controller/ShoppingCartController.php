@@ -3,6 +3,8 @@
 namespace VehturiinikShopBundle\Controller;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -12,6 +14,8 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use VehturiinikShopBundle\Entity\Category;
 use VehturiinikShopBundle\Entity\Product;
@@ -28,7 +32,6 @@ class ShoppingCartController extends Controller
     public function viewCartAction()
     {
         $session = $this->get('session');
-
         if(!$session->has('products') || empty($session->get('products'))){
             $this->addFlash('warning','You have no products in your cart!');
             return $this->redirectToRoute('view_shop');
@@ -47,14 +50,11 @@ class ShoppingCartController extends Controller
         }
 
         $totalAmount = 0;
-
         foreach ($products as $product){
             $totalAmount += floatval($product->getPrice()) * $quantities[$product->getName()];
         }
 
         $session->set('total', $totalAmount);
-
-
         return $this->render('shopping/cart.html.twig', ['products' => $products,'quantities' => $quantities,'total'=>$totalAmount]);
     }
 
@@ -68,18 +68,12 @@ class ShoppingCartController extends Controller
     public function addToCartAction($id)
     {
         $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
-
-        $productName = $product->getName();
         if($product === null || $product->getCategory()->getDateDeleted() !== null){
             $this->addFlash('error','This product doesn\'t exist');
             return $this->redirectToRoute('view_shop');
         }
 
-        $category = $this->getDoctrine()->getRepository(Category::class)->findOneBy(['id' => $product->getCategoryId()]);
-        $product->setCategory($category);
-
         $session = $this->get('session');
-
         if(!$session->has('products') && !$session->has('quantities')){
             $session->set('products', []);
             $session->set('quantities',[]);
@@ -88,20 +82,18 @@ class ShoppingCartController extends Controller
         $products = $session->get('products');
         $quantities = $session->get('quantities');
 
-        if(!array_key_exists($productName,$products)){
-            $products[$productName] = $product;
-            $quantities[$productName] = 1;
+        if(!array_key_exists($product->getName(),$products)){
+            $products[$product->getName()] = $product;
+            $quantities[$product->getName()] = 1;
         }else{
-            $quantities[$productName]++;
+            $quantities[$product->getName()]++;
         }
+
         $session->set('products', $products);
         $session->set('quantities', $quantities);
 
-        $this->addFlash('notice', strtoupper($productName) . " successfully added to your cart!");
-
+        $this->addFlash('notice', strtoupper($product->getName()) . " successfully added to your cart!");
         return $this->redirectToRoute('view_products_in_category',['id' => $product->getCategory()->getId()]);
-
-
     }
 
     /**
@@ -150,7 +142,6 @@ class ShoppingCartController extends Controller
         }
 
         $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['name' => $productName]);
-
         if($product === null || $product->getDateDeleted() !== null){
             $this->addFlash('warning','Invalid Product!');
             return $this->redirectToRoute('view_cart');
@@ -160,9 +151,7 @@ class ShoppingCartController extends Controller
         }
 
         $session = $this->get('session');
-
         $quantities = $session->get('quantities');
-
         $quantities[$productName] = $quantity;
         $session->set('quantities',$quantities);
 
@@ -199,67 +188,55 @@ class ShoppingCartController extends Controller
      */
     public function checkOutCartAction()
     {
-        $user = $this->getUser();
-
         $session = $this->get('session');
-        $total = $session->get('total');
-
         if(!$session->has('products')){
             $this->addFlash('warning','You Have No Items In Your Cart!');
             return $this->redirectToRoute('view_shop');
         }
-        if($total > $user->getMoney()){
+        if($session->get('total') > $this->getUser()->getMoney()){
             $this->addFlash('warning','Not Enough Money In The Pocket!');
             return $this->redirectToRoute('view_cart');
         }
 
-        $quantities = $session->get('quantities');
-        $products = $session->get('products');
-
-        $productNames = array_keys($quantities);
-
-
         $em = $this->getDoctrine()->getManager();
+        $products = $session->get('products');
+        $quantities = $session->get('quantities');
 
-        foreach ($productNames as $productName){
-            $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['name'=>$productName]);
-            $quantity = $quantities[$product->getName()];
-            $productPrice = $product->getPrice();
-
-            $purchase = $this->getDoctrine()->getRepository(Purchase::class)->findOneByUserIdAndProductId($product->getId(), $user->getId());
-
-            $user->setMoney($user->getMoney() - $productPrice * $quantity);
-            $product->setQuantity($product->getQuantity() - $quantity);
-            if($purchase !== null){
-                $purchase
-                    ->setQuantity($purchase->getQuantity() + $quantity)
-                    ->setQuantityForSale($purchase->getQuantity());
-            }else{
-                $purchase = new Purchase();
-                $purchase
-                    ->setProduct($product)
-                    ->setUser($user)
-                    ->setQuantity($quantity)
-                    ->setQuantityForSale($quantity);
-                $user->addPurchase($purchase);
-            }
-
-            if($product->getDiscount() !== 0)$purchase->setDiscount($product->getDiscount());
-            else $purchase->setDiscount(0);
-
-            $em->persist($purchase);
-            $em->flush();
-
-            unset($products[$product->getName()]);
-            unset($quantities[$product->getName()]);
-            $session->set('products',$products);
-            $session->set('quantities',$quantities);
-
+        /**@var Product[] $products*/
+        foreach ($products as $product){
+           $this->buyProduct($product->getName(), $em, $session, $products, $quantities);
         }
 
         $this->addFlash('notice','You have successfully made your purchase');
         return $this->redirectToRoute('view_purchases');
-
     }
 
+    private function buyProduct(string $productName,ObjectManager $em, SessionInterface $session, array $products, array $quantities)
+    {
+        $user = $this->getUser();
+        $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['name'=>$productName]);
+
+        $purchase = $this->getDoctrine()->getRepository(Purchase::class)->findOneByUserIdAndProductId($product->getId(), $user->getId());
+        $user->setMoney($user->getMoney() - $product->getPrice() * $quantities[$productName]);
+        $product->setQuantity($product->getQuantity() - $quantities[$productName]);
+
+        if($purchase !== null){
+            $purchase->setQuantity($purchase->getQuantity() + $quantities[$productName])->setQuantityForSale($purchase->getQuantity());
+        }else{
+            $purchase = new Purchase();
+            $purchase->setProduct($product)->setUser($user)->setQuantity($quantities[$productName])->setQuantityForSale($quantities[$productName]);
+            $user->addPurchase($purchase);
+        }
+
+        if($product->getDiscount() !== 0)$purchase->setDiscount($product->getDiscount());
+        else $purchase->setDiscount(0);
+
+        $em->persist($purchase);
+        $em->flush();
+
+        unset($products[$product->getName()]);
+        unset($quantities[$product->getName()]);
+        $session->set('products',$products);
+        $session->set('quantities',$quantities);
+    }
 }

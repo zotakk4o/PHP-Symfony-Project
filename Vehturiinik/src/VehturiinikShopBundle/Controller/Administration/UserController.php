@@ -60,7 +60,6 @@ class UserController extends Controller
         }
 
         $form = $this->createForm(UserType::class, $user);
-
         if($request->isMethod('POST')){
             $this->validateUserForm($request, $form);
             if($form->isSubmitted() && $form->isValid()){
@@ -77,9 +76,7 @@ class UserController extends Controller
                 return $this->redirectToRoute('view_users_panel');
             }
         }
-
         return $this->render('administration/users/user.html.twig',['user' => $user, 'form' => $form->createView()]);
-
     }
 
     /**

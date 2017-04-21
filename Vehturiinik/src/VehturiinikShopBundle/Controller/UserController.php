@@ -26,12 +26,10 @@ class UserController extends Controller
             $this->addFlash('warning','Logout in order to register again!');
             return $this->redirectToRoute('home_index');
         }
-        /** Create user and form of the corresponding type in order later to be processed*/
         $user = new User();
         $form = $this->createForm(RegisterType::class, $user)
             ->add('submit',SubmitType::class, ['label' => 'Register','attr' => ['class' => 'btn btn-primary']]);
 
-        /** Processing the form */
         if($request->isMethod('POST')){
             $this->validateUserForm($request, $form);
             /** if the form is submitted - register the user otherwise render the register form */
@@ -41,14 +39,10 @@ class UserController extends Controller
                 $userPassword = $password->encodePassword($user,$user->getPassword());
                 $user->setPassword($userPassword);
 
-                /**Retrieve default role from database and add it to the user*/
                 $role = $this->getDoctrine()->getRepository(Role::class)->findOneBy(['name' => 'ROLE_USER']);
                 $user->addRole($role);
-
-                /**Give user some money to spend later on our vehturiiki*/
                 $user->setMoney(4200);
 
-                /** save user to the database*/
                 $em = $this->getDoctrine()->getManager();
                 try{
                     $em->persist($user);

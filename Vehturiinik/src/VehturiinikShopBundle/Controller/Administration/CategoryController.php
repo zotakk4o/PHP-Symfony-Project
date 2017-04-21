@@ -52,7 +52,6 @@ class CategoryController extends Controller
     public function removeCategoryAction($id)
     {
         $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
-
         if($category === null || $category->getDateDeleted() !== null){
             $this->addFlash('warning','Category Doesn\'t Exist!');
             return $this->redirectToRoute('view_category_panel');
@@ -77,7 +76,6 @@ class CategoryController extends Controller
     public function editCategoryAction($id, Request $request)
     {
         $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
-
         if($category === null || $category->getDateDeleted() !== null){
             $this->addFlash('warning','Category Doesn\'t Exist!');
             return $this->redirectToRoute('view_category_panel');
@@ -135,10 +133,8 @@ class CategoryController extends Controller
      */
     public function discountCategoryAction(Request $request, int $id)
     {
-
         $form = $this->createForm(DiscountType::class);
         $form->handleRequest($request);
-
         if($form->isSubmitted() && $form->isValid()){
             $data = $form->getData();
             $em = $this->getDoctrine()->getManager();
@@ -160,9 +156,7 @@ class CategoryController extends Controller
             $this->addFlash('notice','All Products are at Discount!');
             return $this->redirectToRoute('view_category_panel');
         }
-
         return $this->render('administration/categories/discountForm.html.twig',['form' => $form->createView()]);
-
     }
 
     private function validateForm(Request $request, FormInterface $form)

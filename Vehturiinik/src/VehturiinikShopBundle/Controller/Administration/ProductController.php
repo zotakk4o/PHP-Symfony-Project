@@ -61,7 +61,6 @@ class ProductController extends Controller
     public function viewProductsInCategoryAction($id, Request $request)
     {
         $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
-
         if($category === null || $category->getDateDeleted() !== null){
             $this->addFlash('error','This Category Doesn\'t Exist!');
             return $this->redirectToRoute('view_products_in_categories_panel');
@@ -72,7 +71,6 @@ class ProductController extends Controller
             $request->query->getInt('page',1),
             10
         );
-
         if(empty($products->getItems())){
             $this->addFlash('error','This Category is empty');
             return $this->redirectToRoute('add_product_admin',['id' => $id]);
@@ -90,7 +88,6 @@ class ProductController extends Controller
     public function removeProductAction(Request $request, $id)
     {
         $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
-
         if($product === null || $product->getCategory()->getDateDeleted() !== null || $product->getDateDeleted() !== null){
             $this->addFlash('warning','Product Doesn\'t Exist!');
             return $this->redirectToRoute('view_products_panel');
@@ -115,7 +112,6 @@ class ProductController extends Controller
     public function addProductAction($id, Request $request)
     {
         $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
-
         if($category === null || $category->getDateDeleted() !== null){
             $this->addFlash('error','This Category Doesn\'t Exist!');
             return $this->redirectToRoute('view_products_panel',['id' => $id]);
@@ -150,7 +146,6 @@ class ProductController extends Controller
     public function editProductAction($id, Request $request)
     {
         $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
-
         if($product === null || $product->getDateDeleted() !== null){
             $this->addFlash('error','Product Doesn\' Exist!');
             return $this->redirectToRoute('view_products_in_categories_panel');
@@ -158,7 +153,6 @@ class ProductController extends Controller
 
         $form = $this->createForm(ProductType::class, $product)
             ->add('submit', SubmitType::class,['label' => 'Edit','attr' => ['class' => 'btn btn-primary']]);
-
         if($request->isMethod('POST')){
             $this->validateForm($request, $form);
             if($form->isSubmitted() && $form->isValid()){
@@ -183,7 +177,6 @@ class ProductController extends Controller
      */
     public function discountAllProductsAction(Request $request)
     {
-
         $form = $this->createForm(DiscountType::class);
         $form->handleRequest($request);
 

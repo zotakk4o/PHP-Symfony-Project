@@ -114,11 +114,9 @@ class ShopController extends Controller
      */
     public function sellPurchaseAction($purchaseId)
     {
-
         /**@var User $user*/
         $user = $this->getUser();
         $purchase = $this->getDoctrine()->getRepository(Purchase::class)->find($purchaseId);
-
         if($purchase === null){
             $this->addFlash('warning','You haven\'t bought this product!');
             return $this->redirectToRoute('view_purchases');
@@ -126,27 +124,21 @@ class ShopController extends Controller
 
         $product = $purchase->getProduct();
         $quantity = $purchase->getQuantityForSale();
-
         if($quantity <= 0){
             $this->addFlash('warning','Cannot Sell Nothing!');
             return $this->redirectToRoute('view_purchases');
         }
 
         $em = $this->getDoctrine()->getManager();
-
         if($purchase->getDiscount() !== 0 && $product->getDiscount() == 0){
             $user->setMoney($user->getMoney() + $quantity * ($product->getPrice() - ($product->getPrice() * $purchase->getDiscount() / 100)));
         }else{
             $user->setMoney($user->getMoney() + $quantity * $product->getPrice());
         }
 
-        $em->persist($user);
-        $em->flush();
-
         $purchase->getProduct()->setQuantity($purchase->getQuantityForSale() + $purchase->getProduct()->getQuantity());
         $purchase->setQuantity($purchase->getQuantity() - $quantity);
         $purchase->setQuantityForSale($purchase->getQuantity());
-
 
         if($purchase->getQuantity() == 0){
             $em->remove($purchase);
@@ -155,11 +147,8 @@ class ShopController extends Controller
             $em->persist($purchase);
             $em->flush();
         }
-
         $this->addFlash('notice','You have successfully sold ' . strtoupper($product->getName()));
         return $this->redirectToRoute('home_index');
-
-
     }
 
     /**
@@ -198,7 +187,6 @@ class ShopController extends Controller
         }
 
         $em = $this->getDoctrine()->getManager();
-
         $purchase->setQuantityForSale($quantity);
 
         $em->persist($purchase);
@@ -206,8 +194,6 @@ class ShopController extends Controller
 
         $this->addFlash('notice',"Quantity For Sale successfully set to ". strtoupper($quantity));
         return $this->redirectToRoute('view_purchases');
-
-
     }
 
 }
