@@ -32,14 +32,19 @@ use VehturiinikShopBundle\Form\ProductType;
 class ProductController extends Controller
 {
     /**
+     * @param Request $request
      * @Route("/", name="view_products_in_categories_panel")
      * @return Response
      */
-    public function viewProductsInCategories()
+    public function viewProductsInCategories(Request $request)
     {
-        $categories = $this->getDoctrine()->getRepository(Category::class)->findAllAvailable();
+        $categories = $this->get('knp_paginator')->paginate(
+            $this->getDoctrine()->getRepository(Category::class)->findAllAvailable(),
+            $request->query->getInt('page',1),
+            10
+        );
 
-        if(empty($categories)){
+        if(empty($categories->getItems())){
             $this->addFlash('warning','No Categories Found');
             return $this->redirectToRoute('add_category');
         }
@@ -49,10 +54,11 @@ class ProductController extends Controller
 
     /**
      * @param $id
+     * @param Request $request
      * @Route("/category/{id}", name="view_products_panel")
      * @return Response
      */
-    public function viewProductsInCategoryAction($id)
+    public function viewProductsInCategoryAction($id, Request $request)
     {
         $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
 
@@ -61,9 +67,13 @@ class ProductController extends Controller
             return $this->redirectToRoute('view_products_in_categories_panel');
         }
 
-        $products = $category->getAllProducts();
+        $products = $this->get('knp_paginator')->paginate(
+            $category->getAllProducts(),
+            $request->query->getInt('page',1),
+            10
+        );
 
-        if(empty($products)){
+        if(empty($products->getItems())){
             $this->addFlash('error','This Category is empty');
             return $this->redirectToRoute('add_product_admin',['id' => $id]);
         }
@@ -209,8 +219,10 @@ class ProductController extends Controller
         $requestParams = $request->request->all()['product'];
         if (array_key_exists('discountAdded', $requestParams)
             && new \DateTime(implode('-', $requestParams['dateDiscountExpires'])) <= new \DateTime('now')
-            || date_format(new \DateTime(implode('-', $requestParams['dateDiscountExpires'])),'Y') < 2017
-            || date_format(new \DateTime(implode('-', $requestParams['dateDiscountExpires'])),'Y') > 2020)
+            || array_key_exists('discountAdded', $requestParams)
+            && date_format(new \DateTime(implode('-', $requestParams['dateDiscountExpires'])),'Y') < 2017
+            || array_key_exists('discountAdded', $requestParams)
+            && date_format(new \DateTime(implode('-', $requestParams['dateDiscountExpires'])),'Y') > 2020)
         {
             $form->addError(new FormError('Invalid Date! Date Range(2017 - 2020)'));
         }

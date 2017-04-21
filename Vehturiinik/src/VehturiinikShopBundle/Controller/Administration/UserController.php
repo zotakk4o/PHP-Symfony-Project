@@ -28,13 +28,18 @@ class UserController extends Controller
 {
 
     /**
+     * @param Request $request
      * @Route("/users", name="view_users_panel")
      * @return Response
      */
-    public function viewUsersAction()
+    public function viewUsersAction(Request $request)
     {
 
-        $users = $this->getDoctrine()->getRepository(User::class)->findAll();
+        $users = $this->get('knp_paginator')->paginate(
+            $this->getDoctrine()->getRepository(User::class)->findAll(),
+            $request->query->getInt('page',1),
+            10
+        );
 
         return $this->render('administration/users/users.html.twig',['users' => $users]);
 

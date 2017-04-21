@@ -25,5 +25,8 @@
         {% endfor %}
         </tbody>
     </table>
-    <a href="{{ path('add_category') }}" class="btn btn-primary">Add Category</a>
+    <h1>
+        <a href="{{ path('add_category') }}" class="btn btn-primary">Add Category</a>
+    </h1>
+    {{ knp_pagination_render(categories) }}
 {% endblock %}

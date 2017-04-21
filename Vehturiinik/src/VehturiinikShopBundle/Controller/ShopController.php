@@ -21,26 +21,35 @@ class ShopController extends Controller
 {
 
     /**
+     * @param Request $request
      * @Route("/shop", name="view_shop")
+     * @return Response
      */
-    public function viewCategoriesAction()
+    public function viewCategoriesAction(Request $request)
    {
        $validCategories = [];
-       $categories = $this->getDoctrine()->getRepository(Category::class)->findAllAvailable();
+       $categories = $this->get('knp_paginator')->paginate(
+           $this->getDoctrine()->getRepository(Category::class)->findAllAvailable(),
+           $request->query->getInt('page',1),
+           10
+       );
 
-       foreach ($categories as $category){
+       foreach ($categories->getItems() as $category){
+           /**@var $category Category*/
            if($category->getProductsCount() > 0)$validCategories[] = $category;
        }
+       $categories->setItems($validCategories);
 
-       return $this->render('shop/categories.html.twig',['categories' => $validCategories]);
+       return $this->render('shop/categories.html.twig',['categories' => $categories]);
    }
 
     /**
      * @param $id
+     * @param Request $request
      * @Route("shop/category/{id}", name="view_products_in_category")
      * @return Response
      */
-    public function viewProductsInCategoryAction($id)
+    public function viewProductsInCategoryAction($id, Request $request)
    {
         $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
 
@@ -49,26 +58,43 @@ class ShopController extends Controller
             return $this->redirectToRoute('view_shop');
         }
 
-        $products = $category->getValidProducts();
+       $products = $this->get('knp_paginator')->paginate(
+           $category->getAllProducts(),
+           $request->query->getInt('page',1),
+           10
+       );
 
-        return $this->render('shop/products.html.twig', ['products' => $products]);
+       if(empty($products->getItems())) {
+           $this->addFlash('error', 'This Category is empty');
+           return $this->redirectToRoute('add_product_admin', ['id' => $id]);
+       }
+
+       return $this->render('shop/products.html.twig', ['products' => $products]);
    }
 
     /**
+     * @param Request $request
      * @Route("/purchases", name="view_purchases")
      * @Security("has_role('ROLE_USER')")
+     * @return Response
      */
-    public function viewBoughtProductsAction()
+    public function viewBoughtProductsAction(Request $request)
     {
         $userId = $this->getUser()->getId();
 
-        $purchases = $this->getDoctrine()->getRepository(Purchase::class)->findBy(['userId' => $userId]);
-        if(empty($purchases)){
+        $purchases = $this->get('knp_paginator')->paginate(
+            $this->getDoctrine()->getRepository(Purchase::class)->findBy(['userId' => $userId]),
+            $request->query->getInt('page',1),
+            2
+        );
+
+        if(empty($purchases->getItems())){
             $this->addFlash('warning','You haven\'t bought any products!');
             return $this->redirectToRoute('view_shop');
         }
         $forms = [];
         foreach ($purchases as $purchase){
+            /**@var Purchase $purchase*/
             $forms[$purchase->getProduct()->getName()] = $this->createForm(PurchaseQuantityType::class,
                 $purchase,
                 ['action' => $this->generateUrl('set_sell_quantity')])

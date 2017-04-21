@@ -226,7 +226,7 @@ class ShoppingCartController extends Controller
             $quantity = $quantities[$product->getName()];
             $productPrice = $product->getPrice();
 
-            $purchase = $this->getDoctrine()->getRepository(Purchase::class)->findOneByUserIdAndProductId($user->getId(), $product->getId());
+            $purchase = $this->getDoctrine()->getRepository(Purchase::class)->findOneByUserIdAndProductId($product->getId(), $user->getId());
 
             $user->setMoney($user->getMoney() - $productPrice * $quantity);
             $product->setQuantity($product->getQuantity() - $quantity);

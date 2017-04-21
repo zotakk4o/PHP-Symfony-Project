@@ -2,6 +2,8 @@
 
 namespace VehturiinikShopBundle\Repository;
 
+use VehturiinikShopBundle\Entity\User;
+
 /**
  * UserRepository
  *
@@ -10,4 +12,5 @@ namespace VehturiinikShopBundle\Repository;
  */
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {
+
 }

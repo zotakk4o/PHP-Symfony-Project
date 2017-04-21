@@ -8,4 +8,5 @@
     {% for product in products %}
        {{ shopMacros.shopProduct(product) }}
     {% endfor %}
+    {{ knp_pagination_render(products) }}
 {% endblock %}

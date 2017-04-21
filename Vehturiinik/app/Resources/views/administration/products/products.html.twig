@@ -44,5 +44,6 @@
         {% endfor %}
         </tbody>
     </table>
-    <a href="{{ path('add_product_admin', {'id': categoryId}) }}" class="btn btn-primary">Add Product</a>
+    {{ knp_pagination_render(products) }}
+    <h1><a href="{{ path('add_product_admin', {'id': categoryId}) }}" class="btn btn-primary">Add Product</a></h1>
 {% endblock %}

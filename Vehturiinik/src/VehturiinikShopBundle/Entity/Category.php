@@ -45,6 +45,7 @@ class Category
      * @ORM\Column(name="description", type="text")
      *
      * @Assert\NotBlank(message="Category Description is Mandatory!")
+     *
      */
     private $description;
 

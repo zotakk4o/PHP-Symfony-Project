@@ -24,14 +24,19 @@ use VehturiinikShopBundle\Form\DiscountType;
 class CategoryController extends Controller
 {
     /**
+     * @param $request Request
      * @Route("/", name="view_category_panel")
      * @return Response
      */
-    public function viewCategoriesAction()
+    public function viewCategoriesAction(Request $request)
     {
-        $categories = $this->getDoctrine()->getRepository(Category::class)->findAllAvailable();
+        $categories = $this->get('knp_paginator')->paginate(
+            $this->getDoctrine()->getRepository(Category::class)->findAllAvailable(),
+            $request->query->getInt('page',1),
+            10
+        );
 
-        if(empty($categories)){
+        if(empty($categories->getItems())){
             $this->addFlash('warning','No Categories Found');
             return $this->redirectToRoute('add_category');
         }

@@ -33,5 +33,4 @@ class PurchaseRepository extends \Doctrine\ORM\EntityRepository
         return empty($query) == true ? null : $query[0];
     }
 
-
 }

@@ -23,9 +23,9 @@ class ProductType extends AbstractType
             ->add('description', TextareaType::class)
             ->add('price', NumberType::class)
             ->add('discountAdded', CheckboxType::class,['label' => 'Discount'])
-            ->add('discount', NumberType::class,['empty_data' => 0])
+            ->add('discount', NumberType::class,['data' => 0])
             ->add('dateDiscountExpires', DateType::class,['years' => range(2017, 2020)])
-            ->add('quantity', NumberType::class,['empty_data' => 0])
+            ->add('quantity', NumberType::class,['data' => 0])
             ->add('categoryId', NumberType::class);
     }
 
