@@ -51,7 +51,10 @@ class ShoppingCartController extends Controller
 
         $totalAmount = 0;
         foreach ($products as $product){
-            $totalAmount += floatval($product->getPrice()) * $quantities[$product->getName()];
+            $price = floatval($product->getPrice()) * $quantities[$product->getName()];
+            if($product->getDiscount() == 0 && $this->getUser()->isRegularCustomer() || $product->getDiscount() == 0 && $this->getUser()->getMoney() >= User::MONEY_TO_BE_DISCOUNTED)
+                $totalAmount += $price - ($price * User::USER_DISCOUNT / 100);
+            else $totalAmount += $price;
         }
 
         $session->set('total', $totalAmount);
@@ -207,17 +210,19 @@ class ShoppingCartController extends Controller
            $this->buyProduct($product->getName(), $em, $session, $products, $quantities);
         }
 
+        $this->getUser()->setMoney($this->getUser()->getMoney() - $this->get('session')->get('total'));
+        $em->flush();
+
         $this->addFlash('notice','You have successfully made your purchase');
         return $this->redirectToRoute('view_purchases');
     }
 
-    private function buyProduct(string $productName,ObjectManager $em, SessionInterface $session, array $products, array $quantities)
+    private function buyProduct(string $productName,ObjectManager $em, SessionInterface $session, array &$products, array &$quantities)
     {
         $user = $this->getUser();
         $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['name'=>$productName]);
 
         $purchase = $this->getDoctrine()->getRepository(Purchase::class)->findOneByUserIdAndProductId($product->getId(), $user->getId());
-        $user->setMoney($user->getMoney() - $product->getPrice() * $quantities[$productName]);
         $product->setQuantity($product->getQuantity() - $quantities[$productName]);
 
         if($purchase !== null){
@@ -229,6 +234,7 @@ class ShoppingCartController extends Controller
         }
 
         if($product->getDiscount() !== 0)$purchase->setDiscount($product->getDiscount());
+        elseif($user->isRegularCustomer() || $user->getMoney() >= User::MONEY_TO_BE_DISCOUNTED)$purchase->setDiscount(User::USER_DISCOUNT);
         else $purchase->setDiscount(0);
 
         $em->persist($purchase);

@@ -15,6 +15,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface
 {
+    const REGULAR_CUSTOMER_PERIOD = 2;
+    const USER_DISCOUNT = 10;
+    const MONEY_TO_BE_DISCOUNTED = 10000;
+
     /**
      * @var int
      *
@@ -90,10 +94,18 @@ class User implements UserInterface
      */
     private $roles;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateRegistered", type="datetime")
+     */
+    private $dateRegistered;
+
     public function __construct()
     {
         $this->purchases = new ArrayCollection();
         $this->roles = new ArrayCollection();
+        $this->dateRegistered = new \DateTime('now');
     }
 
 
@@ -196,29 +208,6 @@ class User implements UserInterface
     }
 
     /**
-     * Returns the salt that was originally used to encode the password.
-     *
-     * This can return null if the password was not encoded using a salt.
-     *
-     * @return string|null The salt
-     */
-    public function getSalt()
-    {
-        // TODO: Implement getSalt() method.
-    }
-
-    /**
-     * Removes sensitive data from the user.
-     *
-     * This is important if, at any given point, sensitive information like
-     * the plain-text password is stored on this object.
-     */
-    public function eraseCredentials()
-    {
-        // TODO: Implement eraseCredentials() method.
-    }
-
-    /**
      * @return mixed
      */
     public function getPurchases()
@@ -289,7 +278,61 @@ class User implements UserInterface
         $this->roles = $roles;
     }
 
+    /**
+     * @return \DateTime
+     */
+    public function getDateRegistered(): \DateTime
+    {
+        return $this->dateRegistered;
+    }
 
+    /**
+     * @param \DateTime $dateRegistered
+     */
+    public function setDateRegistered(\DateTime $dateRegistered)
+    {
+        $this->dateRegistered = $dateRegistered;
+    }
 
+    /**
+     * @return bool
+     */
+    public function isRegularCustomer()
+    {
+        $currentYear = new \DateTime('now');
+        $currentYear = $currentYear->format('Y');
+        return $currentYear - $this->getDateRegistered()->format('Y')  >= self::REGULAR_CUSTOMER_PERIOD;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPurchasesCount()
+    {
+        return count($this->getPurchases());
+    }
+
+    /**
+     * Returns the salt that was originally used to encode the password.
+     *
+     * This can return null if the password was not encoded using a salt.
+     *
+     * @return string|null The salt
+     */
+    public function getSalt()
+    {
+        // TODO: Implement getSalt() method.
+    }
+
+    /**
+     * Removes sensitive data from the user.
+     *
+     * This is important if, at any given point, sensitive information like
+     * the plain-text password is stored on this object.
+     */
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
 }
 

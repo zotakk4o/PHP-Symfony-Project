@@ -32,9 +32,7 @@ class UserController extends Controller
 
         if($request->isMethod('POST')){
             $this->validateUserForm($request, $form);
-            /** if the form is submitted - register the user otherwise render the register form */
             if($form->isSubmitted() && $form->isValid()){
-                /** encode user's password and set it to the user we have instantiated*/
                 $password = $this->get('security.password_encoder');
                 $userPassword = $password->encodePassword($user,$user->getPassword());
                 $user->setPassword($userPassword);

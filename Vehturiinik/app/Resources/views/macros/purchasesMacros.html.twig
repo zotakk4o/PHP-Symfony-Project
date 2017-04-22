@@ -20,6 +20,16 @@
                 <div>
                     You Will Earn: <h4 class="price discount">{{ (purchase.product.price - (purchase.product.price * purchase.discount / 100))  * purchase.quantityForSale }} vehturiiki</h4>
                 </div>
+            {% elseif purchase.product.discount %}
+                <div>
+                    Cost: <h4 class="price discount">{{ (purchase.product.price)  * purchase.quantity }} vehturiiki</h4>
+                </div>
+                <div>
+                    Discount bought at: <h4 class="price discount">{{  purchase.product.discount }}%</h4>
+                </div>
+                <div>
+                    You Will Earn: <h4 class="price discount">{{ (purchase.product.price)  * purchase.quantityForSale }} vehturiiki</h4>
+                </div>
             {% else %}
                 <div>
                     Cost: <h4 class="price">{{ purchase.product.price  * purchase.quantity }} vehturiiki</h4>

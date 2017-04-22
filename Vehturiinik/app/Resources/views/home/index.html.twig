@@ -3,6 +3,9 @@
 {% block main %}
     {% import 'macros/shopMacros.html.twig' as shopMacros %}
     <h2 class="text-center">Newest Products in Vehturiinik</h2>
+    {% if app.user and app.user.money >= constant('VehturiinikShopBundle\\Entity\\User::MONEY_TO_BE_DISCOUNTED') or app.user and app.user.isRegularCustomer() %}
+        <h3>You have bonus discount on NOT discounted products - 10%</h3>
+    {% endif %}
     {% for product in products %}
         {{ shopMacros.shopProduct(product, 'true') }}
     {% endfor %}
