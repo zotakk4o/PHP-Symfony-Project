@@ -397,6 +397,9 @@ class Product
         $this->dateDiscountExpires = $dateDiscountExpires;
     }
 
+    /**
+     * @return float
+     */
     public function getOriginalPrice()
     {
         return $this->price;

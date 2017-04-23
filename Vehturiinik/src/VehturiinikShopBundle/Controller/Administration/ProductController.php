@@ -20,6 +20,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 use VehturiinikShopBundle\Entity\Category;
 use VehturiinikShopBundle\Entity\Product;
+use VehturiinikShopBundle\Entity\User;
 use VehturiinikShopBundle\Form\DiscountType;
 use VehturiinikShopBundle\Form\ProductType;
 
@@ -144,6 +145,10 @@ class ProductController extends Controller
      */
     public function editProductAction($id, Request $request)
     {
+        $categoryIds = [];
+        foreach ($this->getDoctrine()->getRepository(Category::class)->findAll() as $category)
+            $categoryIds[] = $category->getId();
+
         $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
         if($product === null || $product->getDateDeleted() !== null){
             $this->addFlash('error','Product Doesn\' Exist!');
@@ -155,13 +160,17 @@ class ProductController extends Controller
 
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
+            if(!in_array($form->getData()->getCategoryId(),$categoryIds)){
+                $this->addFlash('warning','Invalid Category Id!');
+                return $this->render('administration/products/createAndEdit.html.twig',['form' => $form->createView()]);
+            }
+            $product->setCategory($this->getDoctrine()->getRepository(Category::class)->find($product->getCategoryId()));
             $em = $this->getDoctrine()->getManager();
             $em->persist($product);
             $em->flush();
 
             $this->addFlash('notice','Product Successfully Edited!');
             return $this->redirectToRoute('view_products_panel',['id' => $product->getCategoryId()]);
-
         }
         return $this->render('administration/products/createAndEdit.html.twig',['form' => $form->createView()]);
     }
