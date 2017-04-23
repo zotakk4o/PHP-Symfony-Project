@@ -29,11 +29,13 @@ class Product
      * @ORM\Column(name="name", type="string", length=255, unique=true)
      *
      * @Assert\NotBlank(message="Name Field Is Required!")
+     *
+     * @Assert\Length(min="3")
      */
     private $name;
 
     /**
-     * @var string
+     * @var float
      *
      * @ORM\Column(name="price", type="float")
      *
@@ -49,6 +51,8 @@ class Product
      * @ORM\Column(name="description", type="text")
      *
      * @Assert\NotBlank(message="Description Field Is Required!")
+     *
+     * @Assert\Length(min="5")
      */
     private $description;
 
@@ -56,6 +60,8 @@ class Product
      * @var string
      *
      * @ORM\Column(name="discount", type="integer")
+     *
+     * @Assert\NotBlank()
      *
      * @Assert\GreaterThanOrEqual(value = 0, message="Discount Should be Equal or Greater Than Zero")
      *
@@ -76,6 +82,7 @@ class Product
      *
      * @ORM\Column(name="dateDiscountExpires", type="datetime", nullable=true)
      *
+     * @Assert\Range(min="+1 day", max="+3 years +11 months")
      */
     private $dateDiscountExpires;
 
@@ -83,6 +90,8 @@ class Product
      * @var int
      *
      * @ORM\Column(name="quantity", type="integer")
+     *
+     * @Assert\NotBlank()
      *
      * @Assert\GreaterThanOrEqual(value = 0, message="Quantity Should be Equal or Greater Than Zero")
      */
@@ -148,7 +157,7 @@ class Product
     /**
      * Set name
      *
-     * @param string $name
+     * @param mixed $name
      *
      * @return Product
      */
@@ -172,7 +181,7 @@ class Product
     /**
      * Set price
      *
-     * @param string $price
+     * @param mixed $price
      *
      * @return Product
      */
@@ -197,7 +206,7 @@ class Product
     /**
      * Set description
      *
-     * @param string $description
+     * @param mixed $description
      *
      * @return Product
      */
@@ -221,7 +230,7 @@ class Product
     /**
      * Set discount
      *
-     * @param string $discount
+     * @param mixed $discount
      *
      * @return Product
      */
@@ -272,7 +281,7 @@ class Product
     }
 
     /**
-     * @return mixed
+     * @return Category
      */
     public function getCategory()
     {
@@ -300,11 +309,11 @@ class Product
     }
 
     /**
-     * @param int $categoryId
+     * @param int|null $categoryId
      *
      * @return Product
      */
-    public function setCategoryId(int $categoryId)
+    public function setCategoryId($categoryId)
     {
         $this->categoryId = $categoryId;
 
@@ -388,6 +397,10 @@ class Product
         $this->dateDiscountExpires = $dateDiscountExpires;
     }
 
+    public function getOriginalPrice()
+    {
+        return $this->price;
+    }
 
 }
 

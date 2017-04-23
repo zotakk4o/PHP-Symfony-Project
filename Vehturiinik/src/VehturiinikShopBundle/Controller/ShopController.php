@@ -122,7 +122,6 @@ class ShopController extends Controller
             return $this->redirectToRoute('view_purchases');
         }
 
-        $product = $purchase->getProduct();
         $quantity = $purchase->getQuantityForSale();
         if($quantity <= 0){
             $this->addFlash('warning','Cannot Sell Nothing!');
@@ -130,11 +129,8 @@ class ShopController extends Controller
         }
 
         $em = $this->getDoctrine()->getManager();
-        if($purchase->getDiscount() !== 0 && $product->getDiscount() == 0){
-            $user->setMoney($user->getMoney() + $quantity * ($product->getPrice() - ($product->getPrice() * $purchase->getDiscount() / 100)));
-        }else{
-            $user->setMoney($user->getMoney() + $quantity * $product->getPrice());
-        }
+
+        $user->setMoney($user->getMoney() + $quantity * ($purchase->getPricePerPiece() - ($purchase->getPricePerPiece() * $purchase->getDiscount() / 100)));
 
         $purchase->getProduct()->setQuantity($purchase->getQuantityForSale() + $purchase->getProduct()->getQuantity());
         $purchase->setQuantity($purchase->getQuantity() - $quantity);
@@ -147,7 +143,7 @@ class ShopController extends Controller
             $em->persist($purchase);
             $em->flush();
         }
-        $this->addFlash('notice','You have successfully sold ' . strtoupper($product->getName()));
+        $this->addFlash('notice','You have successfully sold ' . strtoupper($purchase->getProduct()->getName()));
         return $this->redirectToRoute('home_index');
     }
 

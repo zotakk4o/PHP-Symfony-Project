@@ -30,42 +30,28 @@ class UserController extends Controller
         $form = $this->createForm(RegisterType::class, $user)
             ->add('submit',SubmitType::class, ['label' => 'Register','attr' => ['class' => 'btn btn-primary']]);
 
-        if($request->isMethod('POST')){
-            $this->validateUserForm($request, $form);
-            if($form->isSubmitted() && $form->isValid()){
-                $password = $this->get('security.password_encoder');
-                $userPassword = $password->encodePassword($user,$user->getPassword());
-                $user->setPassword($userPassword);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $password = $this->get('security.password_encoder');
+            $userPassword = $password->encodePassword($user,$user->getPassword());
+            $user->setPassword($userPassword);
 
-                $role = $this->getDoctrine()->getRepository(Role::class)->findOneBy(['name' => 'ROLE_USER']);
-                $user->addRole($role);
-                $user->setMoney(4200);
+            $role = $this->getDoctrine()->getRepository(Role::class)->findOneBy(['name' => 'ROLE_USER']);
+            $user->addRole($role);
+            $user->setMoney(4200);
 
-                $em = $this->getDoctrine()->getManager();
-                try{
-                    $em->persist($user);
-                    $em->flush();
-                }catch(\Exception $e){
-                    $this->addFlash('error','Username Already Taken!');
-                    return $this->redirectToRoute('user_register');
-                }
-
-                $this->addFlash('notice','You have successfully registered to Vehturiinik!');
-                return $this->redirectToRoute('security_login');
+            $em = $this->getDoctrine()->getManager();
+            try{
+                $em->persist($user);
+                $em->flush();
+            }catch(\Exception $e){
+                $this->addFlash('error','Username Already Taken!');
+                return $this->redirectToRoute('user_register');
             }
+
+            $this->addFlash('notice','You have successfully registered to Vehturiinik!');
+            return $this->redirectToRoute('security_login');
         }
         return $this->render('user/register.html.twig', ['form' => $form->createView()]);
-    }
-
-    private function validateUserForm(Request $request, FormInterface $form)
-    {
-        $requestParams = $request->request->all()['register'];
-        if($requestParams['username'] === '' || $requestParams['fullName'] === '' || $requestParams['password'] === ''){
-            $form->addError(new FormError('Form Data Cannot be Empty!'));
-        }
-        else
-        {
-            $form->submit($request->request->get($form->getName()));
-        }
     }
 }

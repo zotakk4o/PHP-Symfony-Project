@@ -43,8 +43,6 @@ class Purchase
      *
      * @Assert\NotBlank(message="Quantity for Sale Cannot be Empty")
      *
-     * @Assert\Length(min=1)
-     *
      */
     private $quantityForSale;
 
@@ -95,6 +93,12 @@ class Purchase
      * @var int
      *
      * @ORM\Column(name="discount",type="integer")
+     *
+     * @Assert\NotBlank()
+     *
+     * @Assert\LessThanOrEqual(value="99")
+     *
+     * @Assert\GreaterThanOrEqual(value="0")
      */
     private $discount;
 
@@ -104,6 +108,17 @@ class Purchase
      * @ORM\Column(name="datePurchased", type="datetime")
      */
     private $datePurchased;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="pricePerPiece", type="float")
+     *
+     * @Assert\NotBlank(message="Price Field Is Required!")
+     *
+     * @Assert\GreaterThan(value=0, message="Price Cannot be Zero or Negative")
+     */
+    private $pricePerPiece;
 
     public function __construct()
     {
@@ -215,11 +230,11 @@ class Purchase
     }
 
     /**
-     * @param int $productId
+     * @param mixed $productId
      *
      * @return Purchase
      */
-    public function setProductId(int $productId)
+    public function setProductId( $productId)
     {
         $this->productId = $productId;
 
@@ -243,11 +258,11 @@ class Purchase
     }
 
     /**
-     * @param int $quantityForSale
+     * @param mixed $quantityForSale
      *
      * @return Purchase
      */
-    public function setQuantityForSale(int $quantityForSale)
+    public function setQuantityForSale($quantityForSale)
     {
         $this->quantityForSale = $quantityForSale;
 
@@ -263,12 +278,37 @@ class Purchase
     }
 
     /**
-     * @param int $discount
+     * @param mixed $discount
+     *
+     * @return Purchase
      */
-    public function setDiscount(int $discount)
+    public function setDiscount($discount)
     {
         $this->discount = $discount;
+
+        return $this;
     }
+
+    /**
+     * @return float
+     */
+    public function getPricePerPiece(): float
+    {
+        return $this->pricePerPiece;
+    }
+
+    /**
+     * @param mixed $pricePerPiece
+     *
+     * @return Purchase
+     */
+    public function setPricePerPiece($pricePerPiece)
+    {
+        $this->pricePerPiece = $pricePerPiece;
+
+        return $this;
+    }
+
 
 
 

@@ -123,16 +123,15 @@ class ProductController extends Controller
 
         $form = $this->createForm(ProductType::class,$product)
             ->add('submit', SubmitType::class, ['label' => 'Add','attr' => ['class' => 'btn btn-primary']]);
-        if($request->isMethod('POST')){
-            $this->validateForm($request,$form);
-            if($form->isSubmitted() && $form->isValid()){
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($product);
-                $em->flush();
 
-                $this->addFlash('notice','Product Successfully Created!');
-                return $this->redirectToRoute('view_products_panel',['id' => $id]);
-            }
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($product);
+            $em->flush();
+
+            $this->addFlash('notice','Product Successfully Created!');
+            return $this->redirectToRoute('view_products_panel',['id' => $id]);
         }
         return $this->render('administration/products/createAndEdit.html.twig',['form' => $form->createView()]);
     }
@@ -153,21 +152,18 @@ class ProductController extends Controller
 
         $form = $this->createForm(ProductType::class, $product)
             ->add('submit', SubmitType::class,['label' => 'Edit','attr' => ['class' => 'btn btn-primary']]);
-        if($request->isMethod('POST')){
-            $this->validateForm($request, $form);
-            if($form->isSubmitted() && $form->isValid()){
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($product);
-                $em->flush();
 
-                $this->addFlash('notice','Product Successfully Edited!');
-                return $this->redirectToRoute('view_products_panel',['id' => $product->getCategoryId()]);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($product);
+            $em->flush();
 
-            }
+            $this->addFlash('notice','Product Successfully Edited!');
+            return $this->redirectToRoute('view_products_panel',['id' => $product->getCategoryId()]);
+
         }
         return $this->render('administration/products/createAndEdit.html.twig',['form' => $form->createView()]);
-
-
     }
 
     /**
@@ -178,8 +174,8 @@ class ProductController extends Controller
     public function discountAllProductsAction(Request $request)
     {
         $form = $this->createForm(DiscountType::class);
-        $form->handleRequest($request);
 
+        $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
             $data = $form->getData();
             $em = $this->getDoctrine()->getManager();
@@ -201,59 +197,4 @@ class ProductController extends Controller
         return $this->render('administration/products/discountAllForm.html.twig',['form' => $form->createView()]);
 
     }
-
-    private function validateForm(Request $request, FormInterface $form)
-    {
-        $categoryIds = [];
-        $categs = $this->getDoctrine()->getRepository(Category::class)->findAll();
-        foreach ($categs as $category) {
-            $categoryIds[] = $category->getId();
-        }
-        $requestParams = $request->request->all()['product'];
-        if (array_key_exists('discountAdded', $requestParams)
-            && new \DateTime(implode('-', $requestParams['dateDiscountExpires'])) <= new \DateTime('now')
-            || array_key_exists('discountAdded', $requestParams)
-            && date_format(new \DateTime(implode('-', $requestParams['dateDiscountExpires'])),'Y') < 2017
-            || array_key_exists('discountAdded', $requestParams)
-            && date_format(new \DateTime(implode('-', $requestParams['dateDiscountExpires'])),'Y') > 2020)
-        {
-            $form->addError(new FormError('Invalid Date! Date Range(2017 - 2020)'));
-        }
-        elseif($requestParams['name'] === ''
-            || $requestParams['price'] === ''
-            || $requestParams['description'] === ''
-            || $requestParams['discount'] === ''
-            || $requestParams['quantity'] === ''
-            || $requestParams['categoryId'] === '')
-        {
-            $form->addError(new FormError('Form Data Cannot be Empty!'));
-        }
-        elseif(!is_numeric($requestParams['quantity'])
-            || !is_numeric($requestParams['price'])
-            || !is_numeric($requestParams['discount']))
-        {
-            $form->addError(new FormError('Quantity, Price and Discount Should be Valid Numbers!'));
-        }
-        elseif($requestParams['price'] <= 0)
-        {
-            $form->addError(new FormError('Price Cannot be Negative or Zero!'));
-        }
-        elseif($requestParams['discount'] < 0 || $requestParams['discount'] >= 99)
-        {
-            $form->addError(new FormError('Discount Should be Between 0% and 99%!'));
-        }
-        elseif($requestParams['quantity'] < 0)
-        {
-            $form->addError(new FormError('Product Quantity Cannot be Negative!'));
-        }
-        elseif(!in_array($requestParams['categoryId'], $categoryIds))
-        {
-            $form->addError(new FormError('Invalid Category Id!'));
-        }
-        else
-        {
-            $form->submit($request->request->get($form->getName()));
-        }
-    }
-
 }

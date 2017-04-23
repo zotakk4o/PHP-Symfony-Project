@@ -37,9 +37,9 @@ class User implements UserInterface
      *
      * @Assert\Length(
      *      min = 2,
-     *      max = 50,
+     *      max = 100,
      *      minMessage = "Your username must be at least 2 characters long",
-     *      maxMessage = "Your userame cannot be longer than 50 characters"
+     *      maxMessage = "Your userame cannot be longer than 100 characters"
      * )
      */
     private $username;

@@ -226,10 +226,10 @@ class ShoppingCartController extends Controller
         $product->setQuantity($product->getQuantity() - $quantities[$productName]);
 
         if($purchase !== null){
-            $purchase->setQuantity($purchase->getQuantity() + $quantities[$productName])->setQuantityForSale($purchase->getQuantity());
+            $purchase->setQuantity($purchase->getQuantity() + $quantities[$productName])->setQuantityForSale($purchase->getQuantity())->setPricePerPiece($product->getOriginalPrice());
         }else{
             $purchase = new Purchase();
-            $purchase->setProduct($product)->setUser($user)->setQuantity($quantities[$productName])->setQuantityForSale($quantities[$productName]);
+            $purchase->setProduct($product)->setUser($user)->setQuantity($quantities[$productName])->setQuantityForSale($quantities[$productName])->setPricePerPiece($product->getOriginalPrice());
             $user->addPurchase($purchase);
         }
 

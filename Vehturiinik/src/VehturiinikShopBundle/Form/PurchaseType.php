@@ -2,11 +2,11 @@
 
 namespace VehturiinikShopBundle\Form;
 
+use function Sodium\add;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class PurchaseType extends AbstractType
 {
@@ -17,7 +17,8 @@ class PurchaseType extends AbstractType
             ->add('productId', NumberType::class)
             ->add('quantity',NumberType::class)
             ->add('quantityForSale',NumberType::class)
-            ->add('discount', NumberType::class);
+            ->add('discount', NumberType::class)
+            ->add('pricePerPiece', NumberType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)

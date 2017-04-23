@@ -29,6 +29,8 @@ class Category
      * @ORM\Column(name="name", type="string", length=255, unique=true)
      *
      * @Assert\NotBlank(message="Category Name is Mandatory!")
+     *
+     * @Assert\Length(min="3")
      */
     private $name;
 
@@ -45,6 +47,8 @@ class Category
      * @ORM\Column(name="description", type="text")
      *
      * @Assert\NotBlank(message="Category Description is Mandatory!")
+     *
+     * @Assert\Length(min="5")
      *
      */
     private $description;
@@ -85,7 +89,7 @@ class Category
     /**
      * Set name
      *
-     * @param string $name
+     * @param mixed $name
      *
      * @return Category
      */
@@ -182,11 +186,11 @@ class Category
     /**
      * Set Description
      *
-     * @param string $description
+     * @param mixed $description
      *
      * @return Category
      */
-    public function setDescription(string $description)
+    public function setDescription($description)
     {
         $this->description = $description;
 

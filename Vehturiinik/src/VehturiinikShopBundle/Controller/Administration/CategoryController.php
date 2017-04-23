@@ -84,16 +84,14 @@ class CategoryController extends Controller
         $form = $this->createForm(CategoryType::class, $category)
             ->add('submit', SubmitType::class,['label' => 'Edit','attr' => ['class' => 'btn btn-primary']]);
 
-        if($request->isMethod('POST')){
-            $this->validateForm($request,$form);
-            if($form->isSubmitted() && $form->isValid()){
-                $em = $this->getDoctrine()->getManager();
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $em = $this->getDoctrine()->getManager();
                 $em->persist($category);
                 $em->flush();
 
                 $this->addFlash('notice','Category Successfully Edited!');
                 return $this->redirectToRoute('view_category_panel');
-            }
         }
         return $this->render('administration/categories/addAndDelete.html.twig',['form' => $form->createView()]);
     }
@@ -110,17 +108,15 @@ class CategoryController extends Controller
         $form = $this->createForm(CategoryType::class, $category)
             ->add('submit',SubmitType::class,['label' => 'Add', 'attr' => ['class' => 'btn btn-primary']]);
 
-        if($request->isMethod('POST')) {
-            $this->validateForm($request, $form);
-            if ($form->isSubmitted() && $form->isValid()) {
-                $em = $this->getDoctrine()->getManager();
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
 
-                $em->persist($category);
-                $em->flush();
+            $em->persist($category);
+            $em->flush();
 
-                $this->addFlash('notice', 'Category Successfully Created!');
-                return $this->redirectToRoute('view_category_panel');
-            }
+            $this->addFlash('notice', 'Category Successfully Created!');
+            return $this->redirectToRoute('view_category_panel');
         }
         return $this->render('administration/categories/addAndDelete.html.twig',['form' => $form->createView()]);
     }
@@ -134,6 +130,7 @@ class CategoryController extends Controller
     public function discountCategoryAction(Request $request, int $id)
     {
         $form = $this->createForm(DiscountType::class);
+
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
             $data = $form->getData();
@@ -157,18 +154,5 @@ class CategoryController extends Controller
             return $this->redirectToRoute('view_category_panel');
         }
         return $this->render('administration/categories/discountForm.html.twig',['form' => $form->createView()]);
-    }
-
-    private function validateForm(Request $request, FormInterface $form)
-    {
-        $requestParams = $request->request->all()['category'];
-        if($requestParams['name'] === '' || $requestParams['description'] === '')
-        {
-            $form->addError(new FormError('Form Data Cannot be Empty!'));
-        }
-        else
-        {
-            $form->submit($request->request->get($form->getName()));
-        }
     }
 }
