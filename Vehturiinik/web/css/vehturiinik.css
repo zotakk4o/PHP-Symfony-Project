@@ -1,12 +1,9 @@
-body{
-    padding-top: 0;
+body {
+    padding-bottom: 75px;
 }
 .dropdown:hover .dropdown-menu {
     display: block;
     margin-top: 0;
-}
-.footer-mooter{
-    text-align: center;
 }
 .purchases-actions{
     padding-left: 15px;

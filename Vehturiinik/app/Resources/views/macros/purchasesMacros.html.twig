@@ -18,6 +18,9 @@
                     Discount bought at: <h4 class="price discount">{{ purchase.discount }}%</h4>
                 </div>
                 <div>
+                    You saved: <h4 class="price discount">{{ purchase.product.originalPrice * purchase.quantity - (purchase.pricePerPiece - (purchase.pricePerPiece * purchase.discount / 100)) * purchase.quantity }} vehturiiki</h4>
+                </div>
+                <div>
                     You Will Earn: <h4 class="price discount">{{ (purchase.pricePerPiece - (purchase.pricePerPiece * purchase.discount / 100))  * purchase.quantityForSale }} vehturiiki</h4>
                 </div>
             {% else %}

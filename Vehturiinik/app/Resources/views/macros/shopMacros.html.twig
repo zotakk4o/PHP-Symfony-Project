@@ -15,8 +15,15 @@
             {{ product.description }}
             <div>
                 {% if product.discount %}
-                    Price: <h4 class="price discount">{{ product.price  }} vehturiiki</h4>
-                    Discount: {{ product.discount }}%
+                    <div>
+                        Price: <h4 class="price discount">{{ product.price  }} vehturiiki</h4>
+                    </div>
+                    <div>
+                        Discount: {{ product.discount }}%
+                    </div>
+                    <div>
+                        You save: <h4 class="price discount">{{ product.originalPrice - product.price }} vehturiiki</h4>
+                    </div>
                 {% else %}
                     Price: <h4 class="price">{{ product.price }} vehturiiki</h4>
                 {% endif %}

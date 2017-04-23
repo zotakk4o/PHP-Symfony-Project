@@ -12,7 +12,7 @@
     <body>
         {% block header %}
             <header>
-                <nav class="navbar navbar-default">
+                <nav class="navbar navbar-default navbar-fixed-top">
                     <div class="container-fluid">
                         <div class="navbar-header">
                             <a class="navbar-brand" href="{{ path('home_index') }}">Vehturiinik</a>
@@ -47,34 +47,36 @@
                         </div>
                     </div>
                 </nav>
-            </header>
-            {% for type, flash_messages in app.session.flashBag.all %}
-                {% for flash_message in flash_messages %}
-                    {{  mixedMacros.flash(type, flash_message) }}
+                {% for type, flash_messages in app.session.flashBag.all %}
+                    {% for flash_message in flash_messages %}
+                        {{  mixedMacros.flash(type, flash_message) }}
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
+            </header>
         {% endblock %}
         <div class="container body-container">
             {% block body %}
                 {% block main %}{% endblock %}
             {% endblock %}
         </div>
+    </body>
+    <footer>
         {% block footer %}
-            <footer>
-                <nav class="navbar navbar-default navbar-fixed-bottom ">
-                    <div class="container-fluid">
-                        <div class="navbar-header">
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <div class="container">
                             <a class="navbar-brand" href="{{ path('home_index') }}">&copy; Vehturiinik - A SoftUni Project With Symfony And Bootstrap</a>
                         </div>
                     </div>
-                </nav>
-            </footer>
+                </div>
+            </nav>
         {% endblock %}
-        {% block javascripts %}
-            <script src="{{ asset('js/tether.min.js') }}"></script>
-            <script src="{{ asset("js/jquery-3.1.1.js") }}"></script>
-            <script src="{{ asset('js/vehturiinik.js') }}"></script>
-            <script src="{{ asset('js/bootstrap.min.js') }}"></script>
-        {% endblock %}
-    </body>
+    </footer>
+    {% block javascripts %}
+        <script src="{{ asset('js/tether.min.js') }}"></script>
+        <script src="{{ asset("js/jquery-3.1.1.js") }}"></script>
+        <script src="{{ asset('js/vehturiinik.js') }}"></script>
+        <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    {% endblock %}
 </html>

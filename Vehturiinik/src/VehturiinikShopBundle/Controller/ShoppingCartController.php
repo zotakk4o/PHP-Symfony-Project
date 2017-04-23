@@ -171,9 +171,9 @@ class ShoppingCartController extends Controller
     {
         $session = $this->get('session');
 
-        if(!$session->has('products')){
+        if(!$session->has('products') || empty($session->get('products'))){
             $this->addFlash('warning','You have no items in your cart!');
-            return $this->redirectToRoute('home_index');
+            return $this->redirectToRoute('view_shop');
         }
 
         $session->remove('products');
