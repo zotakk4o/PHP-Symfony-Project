@@ -3,6 +3,7 @@
 namespace VehturiinikShopBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormError;
@@ -53,5 +54,16 @@ class UserController extends Controller
             return $this->redirectToRoute('security_login');
         }
         return $this->render('user/register.html.twig', ['form' => $form->createView()]);
+    }
+
+    /**
+     * @param int $id
+     * @Route("/product/{id}/add-comment")
+     * @Security("has_role('ROLE_USER')")
+     */
+    public function addCommentAction(int $id)
+    {
+
+
     }
 }

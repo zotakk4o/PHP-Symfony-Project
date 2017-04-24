@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Category
  *
- * @ORM\Table(name="category")
+ * @ORM\Table(name="categories")
  * @ORM\Entity(repositoryClass="VehturiinikShopBundle\Repository\CategoryRepository")
  */
 class Category
@@ -66,6 +66,8 @@ class Category
      * @ORM\Column(name="dateDeleted", type="datetime", nullable=true)
      */
     private $dateDeleted;
+
+
 
 
     public function __construct()

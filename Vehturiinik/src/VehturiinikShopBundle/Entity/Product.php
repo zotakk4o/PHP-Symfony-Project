@@ -115,7 +115,6 @@ class Product
      *
      * @Assert\NotBlank(message="Category Id Field Is Required!")
      *
-     * @Assert\GreaterThanOrEqual(value = 0, message="Quantity Should be Equal or Greater Than Zero")
      */
     private $categoryId;
 
@@ -126,6 +125,13 @@ class Product
      *
      */
     private $buyings;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="VehturiinikShopBundle\Entity\Comment", mappedBy="product")
+     */
+    private $comments;
 
     /**
      * @var \DateTime
@@ -144,10 +150,10 @@ class Product
     public function __construct()
     {
         $this->discountAdded = false;
-        $this->users = new ArrayCollection();
+        $this->buyings = new ArrayCollection();
+        $this->comments = new ArrayCollection();
         $this->dateAdded = new \DateTime('now');
     }
-
 
     public function getId()
     {
@@ -339,9 +345,10 @@ class Product
     /**
      * @return bool|string
      */
-    public function getSummaryOfDescription()
+    public function getSummaryOfDescription($length = 300)
     {
-        return substr($this->getDescription(), 0, 300);
+        if(strlen($this->getDescription()) <= $length) return $this->getDescription();
+        return substr($this->getDescription(), 0, $length) . "...";
     }
 
     /**
@@ -404,6 +411,27 @@ class Product
     {
         return $this->price;
     }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getComments(): ArrayCollection
+    {
+        return $this->comments;
+    }
+
+    /**
+     * @param Comment $comment
+     * @return Product
+     */
+    public function addComment(Comment $comment)
+    {
+        $this->comments[] = $comment;
+
+        return $this;
+    }
+
+
 
 }
 

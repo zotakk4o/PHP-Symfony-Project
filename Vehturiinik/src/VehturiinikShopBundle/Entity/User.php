@@ -95,6 +95,14 @@ class User implements UserInterface
     private $roles;
 
     /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="VehturiinikShopBundle\Entity\Comment", mappedBy="author")
+     *
+     */
+    private $comments;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="dateRegistered", type="datetime")
@@ -105,6 +113,7 @@ class User implements UserInterface
     {
         $this->purchases = new ArrayCollection();
         $this->roles = new ArrayCollection();
+        $this->comments = new ArrayCollection();
         $this->dateRegistered = new \DateTime('now');
     }
 
@@ -311,6 +320,24 @@ class User implements UserInterface
     {
         return count($this->getPurchases());
     }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getComments(): ArrayCollection
+    {
+        return $this->comments;
+    }
+
+    /**
+     * @param Comment $comment
+     */
+    public function addComment(Comment $comment)
+    {
+        $this->comments[] = $comment;
+    }
+
+
 
     /**
      * Returns the salt that was originally used to encode the password.
