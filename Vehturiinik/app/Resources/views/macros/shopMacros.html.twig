@@ -30,6 +30,12 @@
                 <div>
                     Quantity in Stock: <h4 class="quantity">{{ product.quantity }}</h4>
                 </div>
+                <div class="pull-right">
+                    {% if app.user %}
+                        <a href="{{ path('comment_product', {'id': product.id}) }}" class="btn btn-primary">Comment</a>
+                    {% endif %}
+                    <a href="{{ path('view_product_comments', {'id': product.id}) }}" class="btn btn-primary">View Comments</a>
+                </div>
             </div>
         </div>
     </div>

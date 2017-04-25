@@ -3,6 +3,7 @@
 namespace VehturiinikShopBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -150,8 +151,6 @@ class Product
     public function __construct()
     {
         $this->discountAdded = false;
-        $this->buyings = new ArrayCollection();
-        $this->comments = new ArrayCollection();
         $this->dateAdded = new \DateTime('now');
     }
 
@@ -327,9 +326,9 @@ class Product
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getBuyings(): ArrayCollection
+    public function getBuyings(): Collection
     {
         return $this->buyings;
     }
@@ -413,9 +412,9 @@ class Product
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getComments(): ArrayCollection
+    public function getComments(): Collection
     {
         return $this->comments;
     }
@@ -431,7 +430,10 @@ class Product
         return $this;
     }
 
-
+    public function isAvailable()
+    {
+        return $this->getDateDeleted() === null && $this->getQuantity() > 0;
+    }
 
 }
 

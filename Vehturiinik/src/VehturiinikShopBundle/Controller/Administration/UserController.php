@@ -26,6 +26,7 @@ use VehturiinikShopBundle\Form\UserType;
  */
 class UserController extends Controller
 {
+    const PAGE_COUNT = 15;
 
     /**
      * @param Request $request
@@ -38,7 +39,7 @@ class UserController extends Controller
         $users = $this->get('knp_paginator')->paginate(
             $this->getDoctrine()->getRepository(User::class)->findAll(),
             $request->query->getInt('page',1),
-            10
+            self::PAGE_COUNT
         );
 
         return $this->render('administration/users/users.html.twig',['users' => $users]);
@@ -175,6 +176,5 @@ class UserController extends Controller
         }
 
         return $this->render('administration/users/purchase.html.twig',['purchase' => $purchase, 'form' => $form->createView()]);
-
     }
 }

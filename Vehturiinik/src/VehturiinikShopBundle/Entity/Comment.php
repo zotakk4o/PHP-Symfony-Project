@@ -26,6 +26,10 @@ class Comment
      * @var string
      *
      * @ORM\Column(name="content", type="text")
+     *
+     * @Assert\NotBlank(message="Content Field Is Required!")
+     *
+     * @Assert\Length(min="5")
      */
     private $content;
 
@@ -80,7 +84,7 @@ class Comment
     /**
      * Set content
      *
-     * @param string $content
+     * @param mixed $content
      *
      * @return Comment
      */

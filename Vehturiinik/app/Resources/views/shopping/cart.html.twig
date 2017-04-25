@@ -9,6 +9,9 @@
     {% for product in products %}
         {{ cartMacros.cartProduct(product, quantities[product.name]) }}
     {% endfor %}
+    <div class="pagination">
+        {{ knp_pagination_render(products) }}
+    </div>
     <h4>Total Amount: {{ total }} vehturiiki</h4>
     <a href="{{ path('checkout_cart') }}" class="btn btn-primary">Buy All Products</a>
 {% endblock %}

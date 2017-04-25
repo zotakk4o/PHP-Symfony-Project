@@ -23,6 +23,7 @@ use VehturiinikShopBundle\Form\DiscountType;
  */
 class CategoryController extends Controller
 {
+    const PAGE_COUNT = 10;
     /**
      * @param $request Request
      * @Route("/", name="view_category_panel")
@@ -33,7 +34,7 @@ class CategoryController extends Controller
         $categories = $this->get('knp_paginator')->paginate(
             $this->getDoctrine()->getRepository(Category::class)->findAllAvailable(),
             $request->query->getInt('page',1),
-            10
+            self::PAGE_COUNT
         );
 
         if(empty($categories->getItems())){
@@ -52,7 +53,7 @@ class CategoryController extends Controller
     public function removeCategoryAction($id)
     {
         $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
-        if($category === null || $category->getDateDeleted() !== null){
+        if($category === null || !$category->isAvailable()){
             $this->addFlash('warning','Category Doesn\'t Exist!');
             return $this->redirectToRoute('view_category_panel');
         }
@@ -76,7 +77,7 @@ class CategoryController extends Controller
     public function editCategoryAction($id, Request $request)
     {
         $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
-        if($category === null || $category->getDateDeleted() !== null){
+        if($category === null || !$category->isAvailable()){
             $this->addFlash('warning','Category Doesn\'t Exist!');
             return $this->redirectToRoute('view_category_panel');
         }
@@ -137,7 +138,7 @@ class CategoryController extends Controller
             $em = $this->getDoctrine()->getManager();
             $products = $this->getDoctrine()->getRepository(Product::class)->findBy(['categoryId' => $id]);
             if(empty($products)){
-                $this->addFlash('error','Incorrect Category Id!');
+                $this->addFlash('warning','The Category Has NO Products!');
                 return $this->redirectToRoute('view_category_panel');
             }
             foreach ($products as $product){

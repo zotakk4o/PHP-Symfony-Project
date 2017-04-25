@@ -19,6 +19,7 @@ use VehturiinikShopBundle\Form\PurchaseQuantityType;
 
 class ShopController extends Controller
 {
+    const PAGE_COUNT = 10;
 
     /**
      * @param Request $request
@@ -31,7 +32,7 @@ class ShopController extends Controller
        $categories = $this->get('knp_paginator')->paginate(
            $this->getDoctrine()->getRepository(Category::class)->findAllAvailable(),
            $request->query->getInt('page',1),
-           10
+            self::PAGE_COUNT
        );
 
        foreach ($categories->getItems() as $category){
@@ -53,7 +54,7 @@ class ShopController extends Controller
    {
         $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
 
-        if($category === null || $category->getDateDeleted() !== null || $category->getProductsCount() == 0){
+        if($category === null || !$category->isAvailable() || $category->getProductsCount() == 0){
             $this->addFlash('error','This category doesn\'t exist!');
             return $this->redirectToRoute('view_shop');
         }
@@ -61,12 +62,12 @@ class ShopController extends Controller
        $products = $this->get('knp_paginator')->paginate(
            $category->getAllProducts(),
            $request->query->getInt('page',1),
-           10
+           self::PAGE_COUNT
        );
 
        if(empty($products->getItems())) {
            $this->addFlash('error', 'This Category is empty');
-           return $this->redirectToRoute('add_product_admin', ['id' => $id]);
+           return $this->redirectToRoute('view_shop');
        }
 
        return $this->render('shop/products.html.twig', ['products' => $products]);
@@ -85,7 +86,7 @@ class ShopController extends Controller
         $purchases = $this->get('knp_paginator')->paginate(
             $this->getDoctrine()->getRepository(Purchase::class)->findBy(['userId' => $userId]),
             $request->query->getInt('page',1),
-            2
+            self::PAGE_COUNT
         );
 
         if(empty($purchases->getItems())){

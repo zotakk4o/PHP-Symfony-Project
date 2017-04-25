@@ -32,6 +32,7 @@ use VehturiinikShopBundle\Form\ProductType;
  */
 class ProductController extends Controller
 {
+    const PAGE_COUNT = 10;
     /**
      * @param Request $request
      * @Route("/", name="view_products_in_categories_panel")
@@ -42,7 +43,7 @@ class ProductController extends Controller
         $categories = $this->get('knp_paginator')->paginate(
             $this->getDoctrine()->getRepository(Category::class)->findAllAvailable(),
             $request->query->getInt('page',1),
-            10
+            self::PAGE_COUNT
         );
 
         if(empty($categories->getItems())){
@@ -62,7 +63,7 @@ class ProductController extends Controller
     public function viewProductsInCategoryAction($id, Request $request)
     {
         $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
-        if($category === null || $category->getDateDeleted() !== null){
+        if($category === null || !$category->isAvailable()){
             $this->addFlash('error','This Category Doesn\'t Exist!');
             return $this->redirectToRoute('view_products_in_categories_panel');
         }
@@ -70,7 +71,7 @@ class ProductController extends Controller
         $products = $this->get('knp_paginator')->paginate(
             $category->getAllProducts(),
             $request->query->getInt('page',1),
-            10
+            self::PAGE_COUNT
         );
         if(empty($products->getItems())){
             $this->addFlash('error','This Category is empty');
@@ -89,7 +90,7 @@ class ProductController extends Controller
     public function removeProductAction(Request $request, $id)
     {
         $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
-        if($product === null || $product->getCategory()->getDateDeleted() !== null || $product->getDateDeleted() !== null){
+        if($product === null || !$product->getCategory()->isAvailable() || !$product->isAvailable()){
             $this->addFlash('warning','Product Doesn\'t Exist!');
             return $this->redirectToRoute('view_products_panel');
         }
@@ -112,8 +113,12 @@ class ProductController extends Controller
      */
     public function addProductAction($id, Request $request)
     {
+        $categoryIds = [];
+        foreach ($this->getDoctrine()->getRepository(Category::class)->findAll() as $category)
+            $categoryIds[] = $category->getId();
+
         $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
-        if($category === null || $category->getDateDeleted() !== null){
+        if($category === null || !$category->isAvailable()){
             $this->addFlash('error','This Category Doesn\'t Exist!');
             return $this->redirectToRoute('view_products_panel',['id' => $id]);
         }
@@ -127,6 +132,10 @@ class ProductController extends Controller
 
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
+            if(!in_array($form->getData()->getCategoryId(),$categoryIds)){
+                $this->addFlash('warning','Invalid Category Id!');
+                return $this->render('administration/products/createAndEdit.html.twig',['form' => $form->createView()]);
+            }
             $em = $this->getDoctrine()->getManager();
             $em->persist($product);
             $em->flush();

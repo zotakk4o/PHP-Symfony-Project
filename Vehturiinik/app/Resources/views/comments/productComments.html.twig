@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    {% for comment in comments %}
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{ comment.author.username }}</h3>
+            </div>
+            <div class="panel-body">
+                {{ comment.content }}
+                <div class="pull-right">
+                    <a href="{{ path('view_shop') }}" class="btn btn-primary">Shop</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <div class="pagination">
+        {{ knp_pagination_render(comments) }}
+    </div>
+{% endblock %}

@@ -131,7 +131,7 @@ class Category
     {
         $products = [];
         foreach ($this->products as $product){
-            if($product->getDateDeleted() === null)$products[] = $product;
+            if($product->isAvailable())$products[] = $product;
         }
         return $products;
     }
@@ -197,6 +197,11 @@ class Category
         $this->description = $description;
 
         return $this;
+    }
+
+    public function isAvailable()
+    {
+        return $this->getDateDeleted() === null;
     }
 
 
