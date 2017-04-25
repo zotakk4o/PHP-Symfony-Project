@@ -9,6 +9,9 @@
             <div class="panel-body">
                 {{ comment.content }}
                 <div class="pull-right">
+                    {% if app.user and app.user.id == comment.author.id %}
+                        <a href="{{ path('edit_product_comment', {'id': comment.id}) }}" class="btn btn-primary">Edit</a>
+                    {% endif %}
                     <a href="{{ path('view_shop') }}" class="btn btn-primary">Shop</a>
                 </div>
             </div>

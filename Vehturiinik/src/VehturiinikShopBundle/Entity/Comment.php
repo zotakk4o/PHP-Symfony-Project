@@ -72,6 +72,21 @@ class Comment
     private $productId;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateAdded", type="datetime")
+     *
+     */
+    private $dateAdded;
+
+
+    public function __construct()
+    {
+        $this->dateAdded = new \DateTime('now');
+    }
+
+
+    /**
      * Get id
      *
      * @return int
@@ -176,6 +191,15 @@ class Comment
     public function setAuthorId($authorId)
     {
         $this->authorId = $authorId;
+    }
+
+    /**
+     * @param User|null $user
+     * @return bool
+     */
+    public function isAuthor(User $user = null):bool
+    {
+        return $user && $user->getId() == $this->getAuthorId();
     }
 
 

@@ -2,7 +2,8 @@
 
 namespace VehturiinikShopBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
+
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -33,18 +34,11 @@ class Role
     private $name;
 
     /**
-     * @var ArrayCollection
+     * @var Collection
      *
      * @ORM\ManyToMany(targetEntity="VehturiinikShopBundle\Entity\User", mappedBy="roles")
      */
     private $users;
-
-    public function __construct()
-    {
-        $this->users = new ArrayCollection();
-
-    }
-
 
     /**
      * Get id
@@ -81,9 +75,9 @@ class Role
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getUsers()
+    public function getUsers(): Collection
     {
         return $this->users;
     }

@@ -2,7 +2,7 @@
 
 namespace VehturiinikShopBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -76,7 +76,7 @@ class User implements UserInterface
     private $money;
 
     /**
-     * @var ArrayCollection
+     * @var Collection
      *
      * @ORM\OneToMany(targetEntity="VehturiinikShopBundle\Entity\Purchase", mappedBy="user")
      *
@@ -84,7 +84,7 @@ class User implements UserInterface
     private $purchases;
 
     /**
-     * @var ArrayCollection
+     * @var Collection
      *
      * @ORM\ManyToMany(targetEntity="VehturiinikShopBundle\Entity\Role", inversedBy="users")
      * @ORM\JoinTable(name="users_roles",
@@ -95,7 +95,7 @@ class User implements UserInterface
     private $roles;
 
     /**
-     * @var ArrayCollection
+     * @var Collection
      *
      * @ORM\OneToMany(targetEntity="VehturiinikShopBundle\Entity\Comment", mappedBy="author")
      *
@@ -111,9 +111,6 @@ class User implements UserInterface
 
     public function __construct()
     {
-        $this->purchases = new ArrayCollection();
-        $this->roles = new ArrayCollection();
-        $this->comments = new ArrayCollection();
         $this->dateRegistered = new \DateTime('now');
     }
 
@@ -202,7 +199,7 @@ class User implements UserInterface
 
     /**
      *
-     * @return string[]|ArrayCollection
+     * @return string[]|Collection
      */
     public function getRoles()
     {
@@ -322,9 +319,9 @@ class User implements UserInterface
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getComments(): ArrayCollection
+    public function getComments(): Collection
     {
         return $this->comments;
     }

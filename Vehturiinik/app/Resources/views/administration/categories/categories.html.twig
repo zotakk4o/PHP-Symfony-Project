@@ -15,7 +15,7 @@
             <tr>
                 <td>{{ category.id }}</td>
                 <td>{{ category.name}}</td>
-                <td>{{ category.description}}</td>
+                <td>{{ category.summaryOfDescription}}</td>
                 <td>
                     <a href="{{ path('remove_category', {'id': category.id}) }}" class="btn btn-primary">Remove</a>
                     <a href="{{ path('edit_category', {'id': category.id}) }}" class="btn btn-primary">Edit</a>

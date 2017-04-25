@@ -266,7 +266,7 @@ class UserController extends Controller
      * @param int $id
      * @param Request $request
      * @Security("has_role('ROLE_USER')")
-     * @Route("/product/add/{id}", name="comment_product")
+     * @Route("comments/product/{id}/add/comment", name="comment_product")
      * @return Response
      */
     public function addCommentAction(int $id, Request $request)
@@ -282,16 +282,12 @@ class UserController extends Controller
         $comment->setProductId($product->getId());
         $comment->setAuthor($author);
         $comment->setProduct($product);
-        $product->addComment($comment);
-        $author->addComment($comment);
 
         $form = $this->createForm(CommentType::class,$comment)
             ->add('submit', SubmitType::class,['label'=>'Comment','attr'=>['class'=>'btn btn-primary']]);
-
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
-
             $em = $this->getDoctrine()->getManager();
             $em->persist($comment);
             $em->flush();
@@ -299,7 +295,37 @@ class UserController extends Controller
             $this->addFlash('notice','You Have Successfully Commented This Product!');
             return $this->redirectToRoute('view_product_comments',['id'=>$id]);
         }
-        return $this->render('comments/addComment.html.twig',['form'=>$form->createView()]);
+        return $this->render('comments/addAndEditComment.html.twig',['form'=>$form->createView()]);
+    }
+
+    /**
+     * @param int $id
+     * @param Request $request
+     * @Security("has_role('ROLE_USER')")
+     * @Route("comments/product/edit/comment/{id}", name="edit_product_comment")
+     * @return Response
+     */
+    public function editCommentAction(int $id, Request $request)
+    {
+        $comment = $this->getDoctrine()->getRepository(Comment::class)->find($id);
+        if($comment === null || $comment->getAuthorId() !== $this->getUser()->getId()){
+            $this->addFlash('warning','Comment Not Found Or Permission Denied!');
+            return $this->redirectToRoute('view_shop');
+        }
+
+        $form = $this->createForm(CommentType::class,$comment)
+            ->add('submit',SubmitType::class,['label'=>'Edit','attr'=>['class'=>'btn btn-primary']]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($comment);
+            $em->flush();
+
+            $this->addFlash('notice','Comment Edited Successfully!');
+            return $this->redirectToRoute('view_product_comments',['id' => $comment->getProductId()]);
+        }
+        return $this->render('comments/addAndEditComment.html.twig',['form'=>$form->createView()]);
     }
 
     private function buyProduct(string $productName,ObjectManager $em, SessionInterface &$session, array &$products, array &$quantities)

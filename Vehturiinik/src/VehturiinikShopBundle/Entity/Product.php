@@ -2,7 +2,6 @@
 
 namespace VehturiinikShopBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -120,7 +119,7 @@ class Product
     private $categoryId;
 
     /**
-     * @var ArrayCollection
+     * @var Collection
      *
      * @ORM\OneToMany(targetEntity="VehturiinikShopBundle\Entity\Purchase", mappedBy="product")
      *
@@ -128,7 +127,7 @@ class Product
     private $buyings;
 
     /**
-     * @var ArrayCollection
+     * @var Collection
      *
      * @ORM\OneToMany(targetEntity="VehturiinikShopBundle\Entity\Comment", mappedBy="product")
      */
@@ -344,7 +343,7 @@ class Product
     /**
      * @return bool|string
      */
-    public function getSummaryOfDescription($length = 300)
+    public function getSummaryOfDescription($length = 150)
     {
         if(strlen($this->getDescription()) <= $length) return $this->getDescription();
         return substr($this->getDescription(), 0, $length) . "...";

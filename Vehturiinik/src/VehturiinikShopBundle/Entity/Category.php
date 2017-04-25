@@ -2,7 +2,8 @@
 
 namespace VehturiinikShopBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
+
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -35,7 +36,7 @@ class Category
     private $name;
 
     /**
-     * @var ArrayCollection
+     * @var Collection
      *
      * @ORM\OneToMany(targetEntity="VehturiinikShopBundle\Entity\Product", mappedBy="category")
      */
@@ -73,8 +74,6 @@ class Category
     public function __construct()
     {
         $this->dateAdded = new \DateTime('now');
-        $this->products = new ArrayCollection();
-
     }
 
 
@@ -159,9 +158,10 @@ class Category
     /**
      * @return bool|string
      */
-    public function getSummaryOfDescription()
+    public function getSummaryOfDescription($length = 100)
     {
-        return substr($this->getDescription(), 0, 300);
+        if(strlen($this->getDescription()) <= $length) return $this->getDescription();
+        return substr($this->getDescription(), 0, $length) . "...";
     }
 
     /**
