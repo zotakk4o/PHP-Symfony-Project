@@ -94,7 +94,7 @@ class CategoryController extends Controller
                 $this->addFlash('notice','Category Successfully Edited!');
                 return $this->redirectToRoute('view_category_panel');
         }
-        return $this->render('administration/categories/addAndDelete.html.twig',['form' => $form->createView()]);
+        return $this->render(':administration/categories:categoryForm.html.twig',['form' => $form->createView()]);
     }
 
     /**
@@ -119,7 +119,7 @@ class CategoryController extends Controller
             $this->addFlash('notice', 'Category Successfully Created!');
             return $this->redirectToRoute('view_category_panel');
         }
-        return $this->render('administration/categories/addAndDelete.html.twig',['form' => $form->createView()]);
+        return $this->render('administration/categories/categoryForm.html.twig',['form' => $form->createView()]);
     }
 
     /**

@@ -134,7 +134,7 @@ class ProductController extends Controller
         if($form->isSubmitted() && $form->isValid()){
             if(!in_array($form->getData()->getCategoryId(),$categoryIds)){
                 $this->addFlash('warning','Invalid Category Id!');
-                return $this->render('administration/products/createAndEdit.html.twig',['form' => $form->createView()]);
+                return $this->render('administration/products/productForm.html.twig',['form' => $form->createView()]);
             }
             $em = $this->getDoctrine()->getManager();
             $em->persist($product);
@@ -143,7 +143,7 @@ class ProductController extends Controller
             $this->addFlash('notice','Product Successfully Created!');
             return $this->redirectToRoute('view_products_panel',['id' => $id]);
         }
-        return $this->render('administration/products/createAndEdit.html.twig',['form' => $form->createView()]);
+        return $this->render('administration/products/productForm.html.twig',['form' => $form->createView()]);
     }
 
     /**
@@ -171,7 +171,7 @@ class ProductController extends Controller
         if($form->isSubmitted() && $form->isValid()){
             if(!in_array($form->getData()->getCategoryId(),$categoryIds)){
                 $this->addFlash('warning','Invalid Category Id!');
-                return $this->render('administration/products/createAndEdit.html.twig',['form' => $form->createView()]);
+                return $this->render('administration/products/productForm.html.twig',['form' => $form->createView()]);
             }
             $product->setCategory($this->getDoctrine()->getRepository(Category::class)->find($product->getCategoryId()));
             $em = $this->getDoctrine()->getManager();
@@ -181,7 +181,7 @@ class ProductController extends Controller
             $this->addFlash('notice','Product Successfully Edited!');
             return $this->redirectToRoute('view_products_panel',['id' => $product->getCategoryId()]);
         }
-        return $this->render('administration/products/createAndEdit.html.twig',['form' => $form->createView()]);
+        return $this->render('administration/products/productForm.html.twig',['form' => $form->createView()]);
     }
 
     /**

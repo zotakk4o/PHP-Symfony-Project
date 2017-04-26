@@ -16,7 +16,9 @@ use VehturiinikShopBundle\Entity\Product;
 use VehturiinikShopBundle\Entity\Purchase;
 use VehturiinikShopBundle\Entity\Role;
 use VehturiinikShopBundle\Entity\User;
+use VehturiinikShopBundle\Form\CommentType;
 use VehturiinikShopBundle\Form\PurchaseType;
+use VehturiinikShopBundle\Form\UserCommentType;
 use VehturiinikShopBundle\Form\UserType;
 
 /**
@@ -76,7 +78,7 @@ class UserController extends Controller
             $this->addFlash('notice','User Successfully Updated!');
             return $this->redirectToRoute('view_users_panel');
         }
-        return $this->render('administration/users/user.html.twig',['user' => $user, 'form' => $form->createView()]);
+        return $this->render('administration/users/userForm.html.twig',['user' => $user, 'form' => $form->createView()]);
     }
 
     /**
@@ -169,8 +171,8 @@ class UserController extends Controller
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
             if(!in_array($form->getData()->getUserId(),$userIds) || !in_array($form->getData()->getProductId(), $productIds)){
-                $this->addFlash('warning','Invalid User Id or Product Id!');
-                return $this->render('administration/users/purchase.html.twig',['purchase' => $purchase, 'form' => $form->createView()]);
+                $form->addError(new FormError('Invalid User Id or Product Id!'));
+                return $this->render('administration/users/purchaseForm.html.twig',['form' => $form->createView()]);
             }
             $em = $this->getDoctrine()->getManager();
             $em->persist($purchase);
@@ -180,7 +182,7 @@ class UserController extends Controller
             return $this->redirectToRoute('view_user_purchases',['id' => $userId]);
         }
 
-        return $this->render('administration/users/purchase.html.twig',['purchase' => $purchase, 'form' => $form->createView()]);
+        return $this->render('administration/users/purchaseForm.html.twig',['purchase' => $purchase, 'form' => $form->createView()]);
     }
 
     /**
@@ -215,7 +217,7 @@ class UserController extends Controller
     /**
      * @param int $userId
      * @param int $commentId
-     * @Route("/user/{userId}/comment/{commentId}", name="edit_user_comment")
+     * @Route("/user/{userId}/comment/remove/{commentId}", name="remove_user_comment")
      * @return Response
      */
     public function removeUserCommentAction(int $userId, int $commentId)
@@ -233,5 +235,45 @@ class UserController extends Controller
 
         $this->addFlash('notice','Comment Successfully Removed!');
         return $this->redirectToRoute('view_user_comments',['id' => $userId]);
+    }
+
+    /**
+     * @param int $userId
+     * @param int $commentId
+     * @param Request $request
+     * @Security("has_role('ROLE_USER')")
+     * @Route("/user/{userId}/comment/edit/{commentId}", name="edit_user_comment")
+     * @return Response
+     */
+    public function editCommentAction(int $userId, int $commentId, Request $request)
+    {
+        $authorIds = [];
+        $productIds = [];
+        foreach ($this->getDoctrine()->getRepository(User::class)->findAll() as $user)
+            $authorIds[] = $user->getId();
+        foreach ($this->getDoctrine()->getRepository(Product::class)->findAll() as $product)
+            $productIds[] = $product->getId();
+        $comment = $this->getDoctrine()->getRepository(Comment::class)->find($commentId);
+        if($comment === null || $comment->isDeleted()){
+            $this->addFlash('warning','Comment Not Found!');
+            return $this->redirectToRoute('view_user_comments',['id' => $userId]);
+        }
+
+        $form = $this->createForm(UserCommentType::class,$comment)
+            ->add('submit',SubmitType::class,['label'=>'Edit','attr'=>['class'=>'btn btn-primary']]);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            if(!in_array($form->getData()->getAuthorId(),$authorIds) || !in_array($form->getData()->getProductId(), $productIds)){
+                $form->addError(new FormError('Invalid Author Id or Product Id!'));
+                return $this->render('comments/addAndEditComment.html.twig',['form'=>$form->createView()]);
+            }
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($comment);
+            $em->flush();
+
+            $this->addFlash('notice','Comment Edited Successfully!');
+            return $this->redirectToRoute('view_user_comments',['id' => $userId]);
+        }
+        return $this->render('comments/addAndEditComment.html.twig',['form'=>$form->createView()]);
     }
 }

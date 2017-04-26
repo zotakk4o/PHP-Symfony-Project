@@ -262,72 +262,6 @@ class UserController extends Controller
         return $this->redirectToRoute('view_purchases');
     }
 
-    /**
-     * @param int $id
-     * @param Request $request
-     * @Security("has_role('ROLE_USER')")
-     * @Route("comments/product/{id}/add/comment", name="comment_product")
-     * @return Response
-     */
-    public function addCommentAction(int $id, Request $request)
-    {
-        $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
-        if($product === null || !$product->isAvailable()){
-            $this->addFlash('warning','Product Unavailable!');
-            return $this->redirectToRoute('home_index');
-        }
-        $author = $this->getUser();
-        $comment = new Comment();
-        $comment->setAuthorId($author->getId());
-        $comment->setProductId($product->getId());
-        $comment->setAuthor($author);
-        $comment->setProduct($product);
-
-        $form = $this->createForm(CommentType::class,$comment)
-            ->add('submit', SubmitType::class,['label'=>'Comment','attr'=>['class'=>'btn btn-primary']]);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()){
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($comment);
-            $em->flush();
-
-            $this->addFlash('notice','You Have Successfully Commented This Product!');
-            return $this->redirectToRoute('view_product_comments',['id'=>$id]);
-        }
-        return $this->render('comments/addAndEditComment.html.twig',['form'=>$form->createView()]);
-    }
-
-    /**
-     * @param int $id
-     * @param Request $request
-     * @Security("has_role('ROLE_USER')")
-     * @Route("comments/product/edit/comment/{id}", name="edit_product_comment")
-     * @return Response
-     */
-    public function editCommentAction(int $id, Request $request)
-    {
-        $comment = $this->getDoctrine()->getRepository(Comment::class)->find($id);
-        if($comment === null || $comment->getAuthorId() !== $this->getUser()->getId()){
-            $this->addFlash('warning','Comment Not Found Or Permission Denied!');
-            return $this->redirectToRoute('view_shop');
-        }
-
-        $form = $this->createForm(CommentType::class,$comment)
-            ->add('submit',SubmitType::class,['label'=>'Edit','attr'=>['class'=>'btn btn-primary']]);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()){
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($comment);
-            $em->flush();
-
-            $this->addFlash('notice','Comment Edited Successfully!');
-            return $this->redirectToRoute('view_product_comments',['id' => $comment->getProductId()]);
-        }
-        return $this->render('comments/addAndEditComment.html.twig',['form'=>$form->createView()]);
-    }
-
     private function buyProduct(string $productName,ObjectManager $em, SessionInterface &$session, array &$products, array &$quantities)
     {
         $user = $this->getUser();
@@ -337,7 +271,12 @@ class UserController extends Controller
         $product->setQuantity($product->getQuantity() - $quantities[$productName]);
 
         if($purchase !== null){
-            $purchase->setCurrentQuantity($purchase->getCurrentQuantity() + $quantities[$productName])->setQuantityForSale($purchase->getCurrentQuantity())->setPricePerPiece($product->getOriginalPrice());
+            $purchase->setQuantityBought($purchase->getCurrentQuantity() + $quantities[$productName])
+                ->setCurrentQuantity($purchase->getCurrentQuantity() + $quantities[$productName])
+                ->setQuantityForSale($purchase->getCurrentQuantity())
+                ->setPricePerPiece($product->getOriginalPrice())
+                ->setDateDeleted(null)
+                ->setDatePurchased(new \DateTime('now'));
         }else{
             $purchase = new Purchase();
             $purchase->setProduct($product)->setUser($user)->setCurrentQuantity($quantities[$productName])->setQuantityForSale($quantities[$productName])->setQuantityBought($quantities[$productName])->setPricePerPiece($product->getOriginalPrice());

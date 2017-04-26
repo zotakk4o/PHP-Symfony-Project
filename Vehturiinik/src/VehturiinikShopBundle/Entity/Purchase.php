@@ -162,7 +162,7 @@ class Purchase
      */
     public function setCurrentQuantity($currentQuantity)
     {
-        if($currentQuantity == 0)$this->setDateDeleted(new \DateTime('now'));
+        if($currentQuantity === 0)$this->setDateDeleted(new \DateTime('now'));
         $this->currentQuantity = $currentQuantity;
 
         return $this;
@@ -359,10 +359,26 @@ class Purchase
 
     /**
      * @param \DateTime|null $dateDeleted
+     *
+     * @return Purchase
      */
     public function setDateDeleted($dateDeleted)
     {
         $this->dateDeleted = $dateDeleted;
+
+        return $this;
+    }
+
+    /**
+     * @param \DateTime $datePurchased
+     *
+     * @return Purchase
+     */
+    public function setDatePurchased(\DateTime $datePurchased)
+    {
+        $this->datePurchased = $datePurchased;
+
+        return $this;
     }
 
     public function isAvailable()

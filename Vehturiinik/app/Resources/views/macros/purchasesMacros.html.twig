@@ -5,7 +5,12 @@
             <h3 class="panel-title text-center"><a href="{{ path('view_products_in_category', {id: purchase.product.category.id}) }}">{{ purchase.product.category.name}}</a></h3>
             <h3 class="panel-title">{{ purchase.product.name }}</h3>
             <h4 class="text-center">
-                {{ formMacros.sellQuantityForm(form) }}
+                {{ form_start(form) }}
+                {{ form_widget(form.submit) }}
+                {{ form_widget(form.quantityForSale) }}
+                {{ form_widget(form.productId) }}
+                {{ form_row(form._token) }}
+                {{ form_end(form) }}
             </h4>
         </div>
         <div class="panel-body">

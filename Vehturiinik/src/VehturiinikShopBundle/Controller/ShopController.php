@@ -132,7 +132,6 @@ class ShopController extends Controller
         $purchase->setCurrentQuantity($purchase->getCurrentQuantity() - $quantity);
         $purchase->setQuantityForSale($purchase->getCurrentQuantity());
 
-        if($purchase->getCurrentQuantity() == 0)$purchase->setDateDeleted(new \DateTime('now'));
         $em->persist($purchase);
         $em->flush();
 

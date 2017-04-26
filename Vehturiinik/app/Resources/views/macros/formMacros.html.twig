@@ -45,13 +45,5 @@
     </div>
 {% endmacro %}
 
-{% macro sellQuantityForm(form) %}
-    {{ form_start(form) }}
-        {{ form_widget(form.submit) }}
-        {{ form_widget(form.quantityForSale) }}
-        {{ form_widget(form.productId) }}
-        {{ form_row(form._token) }}
-    {{ form_end(form) }}
-{% endmacro %}
 
 
