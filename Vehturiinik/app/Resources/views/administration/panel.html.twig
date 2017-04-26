@@ -1,14 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
-    <div class="container">
-        <h2 class="text-center"><a href="{{ path('view_users_panel') }}" class="btn-lg btn-info">Manage Users (Only Admins)</a></h2>
-    </div>
-    <div class="container">
-        <h2 class="text-center"><a href="{{ path('view_category_panel') }}" class="btn-lg btn-info">Manage Categories</a></h2>
-    </div>
-    <div class="container">
-        <h2 class="text-center"><a href="{{ path('view_products_in_categories_panel') }}" class="btn-lg btn-info">Manage Products</a></h2>
-    </div>
+    {% import 'macros/mixedMacros.html.twig' as mixedMacros %}
+    {{ mixedMacros.adminLink('view_users_panel', 'Manage Users (Admins Only)') }}
+    {{ mixedMacros.adminLink('view_category_panel', 'Manage Categories') }}
+    {{ mixedMacros.adminLink('view_products_in_categories_panel', 'Manage Products') }}
 {% endblock %}
 

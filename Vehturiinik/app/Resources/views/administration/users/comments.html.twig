@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+    <table class="table table-striped table-hover ">
+        <thead>
+        <tr>
+            <th>Author</th>
+            <th>Content</th>
+            <th>Options</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for comment in comments %}
+            <tr>
+                <td>{{ comment.author.fullName }}</td>
+                <td>{{ comment.content }}</td>
+                <td>
+                    {{ mixedMacros.adminTableLink('edit_user_comment','Remove',{'userId':comment.author.id, 'commentId':comment.id}) }}
+                    {#{{ mixedMacros.adminTableLink('','Edit') }}#}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination">
+        {{ knp_pagination_render(comments) }}
+    </div>
+{% endblock %}
+

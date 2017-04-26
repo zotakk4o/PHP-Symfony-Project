@@ -337,10 +337,10 @@ class UserController extends Controller
         $product->setQuantity($product->getQuantity() - $quantities[$productName]);
 
         if($purchase !== null){
-            $purchase->setQuantity($purchase->getQuantity() + $quantities[$productName])->setQuantityForSale($purchase->getQuantity())->setPricePerPiece($product->getOriginalPrice());
+            $purchase->setCurrentQuantity($purchase->getCurrentQuantity() + $quantities[$productName])->setQuantityForSale($purchase->getCurrentQuantity())->setPricePerPiece($product->getOriginalPrice());
         }else{
             $purchase = new Purchase();
-            $purchase->setProduct($product)->setUser($user)->setQuantity($quantities[$productName])->setQuantityForSale($quantities[$productName])->setPricePerPiece($product->getOriginalPrice());
+            $purchase->setProduct($product)->setUser($user)->setCurrentQuantity($quantities[$productName])->setQuantityForSale($quantities[$productName])->setQuantityBought($quantities[$productName])->setPricePerPiece($product->getOriginalPrice());
             $user->addPurchase($purchase);
         }
 

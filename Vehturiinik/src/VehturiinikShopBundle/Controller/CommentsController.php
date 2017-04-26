@@ -33,7 +33,7 @@ class CommentsController extends Controller
         if($product === null || !$product->isAvailable()){
             $this->addFlash('warning','Product Not Found!');
             return $this->redirectToRoute('view_shop');
-        }elseif($product->getComments()->isEmpty()){
+        }elseif(empty($product->getComments())){
             $this->addFlash('warning','This Product Has NO Comments!');
             return $this->redirectToRoute('view_shop');
         }

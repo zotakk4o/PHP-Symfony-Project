@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
+    {% import 'macros/mixedMacros.html.twig' as mixedMacros %}
     <table class="table table-striped table-hover ">
         <thead>
         <tr>
@@ -37,13 +38,15 @@
                 <td>{{ product.quantity }}</td>
                 <td>{{ product.category.name }}</td>
                 <td>
-                    <a href="{{ path('remove_product_admin', {'id': product.id}) }}" class="btn btn-primary">Remove</a>
-                    <a href="{{ path('edit_product_admin', {'id': product.id}) }}" class="btn btn-primary">Edit</a>
+                    {{ mixedMacros.adminTableLink('remove_product_admin','Remove',{'id': product.id}) }}
+                    {{ mixedMacros.adminTableLink('edit_product_admin','Edit',{'id': product.id}) }}
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-    {{ knp_pagination_render(products) }}
-    <h1><a href="{{ path('add_product_admin', {'id': categoryId}) }}" class="btn btn-primary">Add Product</a></h1>
+    {{ mixedMacros.adminTableLink('add_product_admin','Add Product',{'id': categoryId}) }}
+    <div class="pagination">
+        {{ knp_pagination_render(products) }}
+    </div>
 {% endblock %}

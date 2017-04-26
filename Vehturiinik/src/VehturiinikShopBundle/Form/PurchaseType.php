@@ -15,7 +15,8 @@ class PurchaseType extends AbstractType
         $builder
             ->add('userId', NumberType::class)
             ->add('productId', NumberType::class)
-            ->add('quantity',NumberType::class)
+            ->add('quantityBought', NumberType::class)
+            ->add('currentQuantity',NumberType::class)
             ->add('quantityForSale',NumberType::class)
             ->add('discount', NumberType::class)
             ->add('pricePerPiece', NumberType::class);

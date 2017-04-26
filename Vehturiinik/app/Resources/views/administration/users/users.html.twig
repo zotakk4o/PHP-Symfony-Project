@@ -24,8 +24,9 @@
                     {% endfor %}
                 </td>
                 <td>
-                    <a href="{{ path('edit_user',{id:user.id}) }}" class="btn btn-primary">Edit</a>
-                    <a href="{{ path('view_user_purchases',{id:user.id}) }}" class="btn btn-primary">Manage Purchases</a>
+                    {{ mixedMacros.adminTableLink('edit_user','Edit',{id:user.id}) }}
+                    {{ mixedMacros.adminTableLink('view_user_purchases','Manage Purchases',{id:user.id}) }}
+                    {{ mixedMacros.adminTableLink('view_user_comments','Manage Comments',{id:user.id})}}
                 </td>
             </tr>
     {% endfor %}

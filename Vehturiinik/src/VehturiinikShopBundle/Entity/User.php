@@ -214,11 +214,15 @@ class User implements UserInterface
     }
 
     /**
-     * @return mixed
+     * @return Purchase[]
      */
     public function getPurchases()
     {
-        return $this->purchases;
+        $purchases = [];
+        foreach ($this->purchases as $purchase) {
+            if($purchase->isAvailable())$purchases[] = $purchase;
+        }
+        return $purchases;
     }
 
     /**
@@ -319,11 +323,17 @@ class User implements UserInterface
     }
 
     /**
-     * @return Collection
+     * @return Comment[]
      */
-    public function getComments(): Collection
+    public function getComments()
     {
-        return $this->comments;
+        $comments = [];
+
+        foreach ($this->comments as $comment){
+            if(!$comment->isDeleted())$comments[] = $comment;
+        }
+
+        return $comments;
     }
 
     /**

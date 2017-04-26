@@ -25,14 +25,26 @@ class Purchase
     /**
      * @var int
      *
-     * @ORM\Column(name="quantity", type="integer")
+     * @ORM\Column(name="quantityBought", type="integer")
      *
      * @Assert\GreaterThanOrEqual(value = 0, message="Quantity Should be Equal or Greater Than Zero")
      *
      * @Assert\NotBlank(message="Quantity Cannot be Empty")
      *
      */
-    private $quantity;
+    private $quantityBought;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="currentQuantity", type="integer")
+     *
+     * @Assert\GreaterThanOrEqual(value = 0, message="Quantity Should be Equal or Greater Than Zero")
+     *
+     * @Assert\NotBlank(message="Quantity Cannot be Empty")
+     *
+     */
+    private $currentQuantity;
 
     /**
      * @var int
@@ -45,8 +57,6 @@ class Purchase
      *
      */
     private $quantityForSale;
-
-
 
     /**
      * @var User
@@ -110,6 +120,13 @@ class Purchase
     private $datePurchased;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateDeleted", type="datetime", nullable=true)
+     */
+    private $dateDeleted;
+
+    /**
      * @var float
      *
      * @ORM\Column(name="pricePerPiece", type="float")
@@ -139,13 +156,14 @@ class Purchase
     /**
      * Set quantity
      *
-     * @param integer $quantity
+     * @param integer $currentQuantity
      *
      * @return Purchase
      */
-    public function setQuantity($quantity)
+    public function setCurrentQuantity($currentQuantity)
     {
-        $this->quantity = $quantity;
+        if($currentQuantity == 0)$this->setDateDeleted(new \DateTime('now'));
+        $this->currentQuantity = $currentQuantity;
 
         return $this;
     }
@@ -155,9 +173,9 @@ class Purchase
      *
      * @return int
      */
-    public function getQuantity()
+    public function getCurrentQuantity()
     {
-        return $this->quantity;
+        return $this->currentQuantity;
     }
 
     /**
@@ -272,6 +290,28 @@ class Purchase
     /**
      * @return int
      */
+    public function getQuantityBought(): int
+    {
+        return $this->quantityBought;
+    }
+
+    /**
+     * @param mixed $quantityBought
+     *
+     * @return Purchase
+     */
+    public function setQuantityBought($quantityBought)
+    {
+        $this->quantityBought = $quantityBought;
+
+        return $this;
+    }
+
+
+
+    /**
+     * @return int
+     */
     public function getDiscount(): int
     {
         return $this->discount;
@@ -309,9 +349,26 @@ class Purchase
         return $this;
     }
 
+    /**
+     * @return \DateTime|null
+     */
+    public function getDateDeleted()
+    {
+        return $this->dateDeleted;
+    }
 
+    /**
+     * @param \DateTime|null $dateDeleted
+     */
+    public function setDateDeleted($dateDeleted)
+    {
+        $this->dateDeleted = $dateDeleted;
+    }
 
-
+    public function isAvailable()
+    {
+        return $this->getDateDeleted() === null;
+    }
 
 }
 

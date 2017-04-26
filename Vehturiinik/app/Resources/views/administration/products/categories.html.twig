@@ -1,13 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
+    {% import 'macros/mixedMacros.html.twig' as mixedMacros %}
     {% for category in categories %}
-        <div class="container">
-            <h3 class="text-center"><a href="{{ path('view_products_panel', {'id': category.id}) }}" class="btn-lg btn-info">{{ category.name }}</a></h3>
-        </div>
+        {{ mixedMacros.adminLink("view_products_panel", category.name, {'id': category.id}) }}
     {% endfor %}
-    {{ knp_pagination_render(categories) }}
-    <div class="container">
-        <h3 class="text-center"><a href="{{ path('discount_all_products') }}" class="btn-lg btn-primary">Discount All</a></h3>
+    {{ mixedMacros.adminLink('discount_all_products','Discount All') }}
+    <div class="pagination">
+        {{ knp_pagination_render(categories) }}
     </div>
 {% endblock %}

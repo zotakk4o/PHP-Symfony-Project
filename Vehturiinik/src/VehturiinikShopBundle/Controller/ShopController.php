@@ -59,16 +59,16 @@ class ShopController extends Controller
             return $this->redirectToRoute('view_shop');
         }
 
-       $products = $this->get('knp_paginator')->paginate(
-           $category->getAllProducts(),
-           $request->query->getInt('page',1),
-           self::PAGE_COUNT
-       );
+        $products = $this->get('knp_paginator')->paginate(
+            $category->getAllProducts(),
+            $request->query->getInt('page',1),
+            self::PAGE_COUNT
+        );
 
-       if(empty($products->getItems())) {
-           $this->addFlash('error', 'This Category is empty');
-           return $this->redirectToRoute('view_shop');
-       }
+        if(empty($products->getItems())) {
+            $this->addFlash('error', 'This Category is empty');
+            return $this->redirectToRoute('view_shop');
+        }
 
        return $this->render('shop/products.html.twig', ['products' => $products]);
    }
@@ -84,7 +84,7 @@ class ShopController extends Controller
         $userId = $this->getUser()->getId();
 
         $purchases = $this->get('knp_paginator')->paginate(
-            $this->getDoctrine()->getRepository(Purchase::class)->findBy(['userId' => $userId]),
+            $this->getDoctrine()->getRepository(Purchase::class)->findUserPurchases($userId),
             $request->query->getInt('page',1),
             self::PAGE_COUNT
         );
@@ -118,32 +118,24 @@ class ShopController extends Controller
         /**@var User $user*/
         $user = $this->getUser();
         $purchase = $this->getDoctrine()->getRepository(Purchase::class)->find($purchaseId);
-        if($purchase === null){
+        if($purchase === null || !$purchase->isAvailable()){
             $this->addFlash('warning','You haven\'t bought this product!');
             return $this->redirectToRoute('view_purchases');
         }
 
         $quantity = $purchase->getQuantityForSale();
-        if($quantity <= 0){
-            $this->addFlash('warning','Cannot Sell Nothing!');
-            return $this->redirectToRoute('view_purchases');
-        }
-
         $em = $this->getDoctrine()->getManager();
 
         $user->setMoney($user->getMoney() + $quantity * ($purchase->getPricePerPiece() - ($purchase->getPricePerPiece() * $purchase->getDiscount() / 100)));
 
         $purchase->getProduct()->setQuantity($purchase->getQuantityForSale() + $purchase->getProduct()->getQuantity());
-        $purchase->setQuantity($purchase->getQuantity() - $quantity);
-        $purchase->setQuantityForSale($purchase->getQuantity());
+        $purchase->setCurrentQuantity($purchase->getCurrentQuantity() - $quantity);
+        $purchase->setQuantityForSale($purchase->getCurrentQuantity());
 
-        if($purchase->getQuantity() == 0){
-            $em->remove($purchase);
-            $em->flush();
-        }else{
-            $em->persist($purchase);
-            $em->flush();
-        }
+        if($purchase->getCurrentQuantity() == 0)$purchase->setDateDeleted(new \DateTime('now'));
+        $em->persist($purchase);
+        $em->flush();
+
         $this->addFlash('notice','You have successfully sold ' . strtoupper($purchase->getProduct()->getName()));
         return $this->redirectToRoute('home_index');
     }
@@ -175,7 +167,7 @@ class ShopController extends Controller
         if($purchase === null) {
             $this->addFlash('warning','You haven\'t bought this product!');
             return $this->redirectToRoute('view_purchases');
-        }elseif($purchase->getQuantity() < $quantity) {
+        }elseif($purchase->getCurrentQuantity() < $quantity) {
             $this->addFlash('warning','Cannot sell more than you have!');
             return $this->redirectToRoute('view_purchases');
         }elseif($quantity <= 0) {

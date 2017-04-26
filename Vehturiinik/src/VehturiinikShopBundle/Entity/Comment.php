@@ -79,6 +79,13 @@ class Comment
      */
     private $dateAdded;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateDeleted", type="datetime", nullable=true)
+     *
+     */
+    private $dateDeleted;
 
     public function __construct()
     {
@@ -202,7 +209,26 @@ class Comment
         return $user && $user->getId() == $this->getAuthorId();
     }
 
+    /**
+     * @return \DateTime|null
+     */
+    public function getDateDeleted()
+    {
+        return $this->dateDeleted;
+    }
 
+    /**
+     * @param \DateTime|null $dateDeleted
+     */
+    public function setDateDeleted($dateDeleted)
+    {
+        $this->dateDeleted = $dateDeleted;
+    }
+
+    public function isDeleted()
+    {
+        return $this->getDateDeleted() !== null;
+    }
 
 }
 

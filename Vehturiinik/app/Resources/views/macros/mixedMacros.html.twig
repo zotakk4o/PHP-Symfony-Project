@@ -5,5 +5,15 @@
     </div>
 {% endmacro %}
 
+{% macro adminLink(pathName,message,params) %}
+    <div class="container">
+        <h2 class="text-center"><a href="{{ path(pathName, params|default([])) }}" class="btn-lg btn-info">{{ message }}</a></h2>
+    </div>
+{% endmacro %}
+
+{% macro adminTableLink(pathName,message,params) %}
+    <a href="{{ path(pathName, params|default([])) }}" class="btn btn-primary">{{ message }}</a>
+{% endmacro %}
+
 
 

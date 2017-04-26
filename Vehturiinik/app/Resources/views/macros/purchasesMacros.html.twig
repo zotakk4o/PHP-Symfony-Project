@@ -12,30 +12,30 @@
             {{ purchase.product.description }}
             {% if purchase.discount %}
                 <div>
-                    Cost: <h4 class="price discount">{{ (purchase.pricePerPiece - (purchase.pricePerPiece * purchase.discount / 100))  * purchase.quantity }} vehturiiki</h4>
+                    Cost: <h4 class="price discount">{{ (purchase.pricePerPiece - (purchase.pricePerPiece * purchase.discount / 100))  * purchase.currentQuantity }} vehturiiki</h4>
                 </div>
                 <div>
                     Discount bought at: <h4 class="price discount">{{ purchase.discount }}%</h4>
                 </div>
                 <div>
-                    You saved: <h4 class="price discount">{{ purchase.product.originalPrice * purchase.quantity - (purchase.pricePerPiece - (purchase.pricePerPiece * purchase.discount / 100)) * purchase.quantity }} vehturiiki</h4>
+                    You saved: <h4 class="price discount">{{ purchase.product.originalPrice * purchase.currentQuantity - (purchase.pricePerPiece - (purchase.pricePerPiece * purchase.discount / 100)) * purchase.currentQuantity }} vehturiiki</h4>
                 </div>
                 <div>
                     You Will Earn: <h4 class="price discount">{{ (purchase.pricePerPiece - (purchase.pricePerPiece * purchase.discount / 100))  * purchase.quantityForSale }} vehturiiki</h4>
                 </div>
             {% else %}
                 <div>
-                    Cost: <h4 class="price">{{ purchase.pricePerPiece  * purchase.quantity }} vehturiiki</h4>
+                    Cost: <h4 class="price">{{ purchase.pricePerPiece  * purchase.currentQuantity }} vehturiiki</h4>
                 </div>
                 <div>
                     You Will Earn: <h4 class="price">{{ purchase.pricePerPiece  * purchase.quantityForSale }} vehturiiki</h4>
                 </div>
             {% endif %}
             <div>
-                Quantity bought: <h4 class="quantity">{{ purchase.quantity }}</h4>
+                Quantity bought: <h4 class="quantity">{{ purchase.currentQuantity }}</h4>
             </div>
             <div class="pull-right">
-                <h4> Comments: {{ product.comments|length }}</h4>
+                <h4> Comments: {{ purchase.product.comments|length }}</h4>
                 <a href="{{ path('comment_product', {'id': purchase.product.id}) }}" class="btn btn-primary">Comment</a>
                 <a href="{{ path('view_product_comments', {'id': purchase.product.id}) }}" class="btn btn-primary">View Comments</a>
                 <a href="{{ path('sell_product', {'purchaseId': purchase.id}) }}" class="btn btn-primary">Sell</a>

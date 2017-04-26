@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use VehturiinikShopBundle\Entity\Comment;
 use VehturiinikShopBundle\Entity\Product;
 use VehturiinikShopBundle\Entity\Purchase;
 use VehturiinikShopBundle\Entity\Role;
@@ -80,25 +81,30 @@ class UserController extends Controller
 
     /**
      * @param int $id
+     * @param Request $request
      * @Route("/user/{id}/purchases", name="view_user_purchases")
      * @return Response
      */
-    public function viewUserPurchasesAction(int $id)
+    public function viewUserPurchasesAction(int $id, Request $request)
     {
+        /** @var User $user */
         $user = $this->getDoctrine()->getRepository(User::class)->find($id);
         if($user === null){
             $this->addFlash('error','This User Doesn\'t Exist!');
             return $this->redirectToRoute('view_users_panel');
         }
-        $purchases = $user->getPurchases();
+        $purchases = $this->get('knp_paginator')->paginate(
+            $user->getPurchases(),
+            $request->query->getInt('page',1),
+            self::PAGE_COUNT
+        );
 
-        if($purchases[0] === null){
+        if(empty($purchases->getItems())){
             $this->addFlash('warning','This User hasn\'t Bought Any Products!');
             return $this->redirectToRoute('view_users_panel');
         }
 
         return $this->render('administration/users/purchases.html.twig',['purchases' => $purchases]);
-
     }
 
     /**
@@ -113,17 +119,16 @@ class UserController extends Controller
         $purchase = $this->getDoctrine()->getRepository(Purchase::class)->find($purchaseId);
         $product = $purchase->getProduct();
 
-        if($purchase === null || $purchase->getUserId() != $userId){
+        if($purchase === null || $purchase->getUserId() != $userId || !$purchase->isAvailable()){
             $this->addFlash('warning','This User Hasn\'t Bought This Product!');
             return $this->redirectToRoute('view_user_purchases',['id' => $userId]);
         }
 
-        $user->setMoney($user->getMoney() + ($purchase->getPricePerPiece() - ($purchase->getPricePerPiece() * $purchase->getDiscount() / 100)) * $purchase->getQuantity());
-
-        $product->setQuantity($product->getQuantity() + $purchase->getQuantity());
+        $user->setMoney($user->getMoney() + ($purchase->getPricePerPiece() - ($purchase->getPricePerPiece() * $purchase->getDiscount() / 100)) * $purchase->getCurrentQuantity());
+        $product->setQuantity($product->getQuantity() + $purchase->getCurrentQuantity());
+        $purchase->setDateDeleted(new \DateTime('now'));
 
         $em = $this->getDoctrine()->getManager();
-        $em->remove($purchase);
         $em->flush();
 
         $this->addFlash('notice','Purchase Successfully Removed!');
@@ -176,5 +181,57 @@ class UserController extends Controller
         }
 
         return $this->render('administration/users/purchase.html.twig',['purchase' => $purchase, 'form' => $form->createView()]);
+    }
+
+    /**
+     * @param int $id
+     * @param Request $request
+     * @Route("/user/{id}/comments", name="view_user_comments")
+     * @return Response
+     */
+    public function viewUserCommentsAction(int $id, Request $request)
+    {
+        /** @var User $user */
+        $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+        if($user === null){
+            $this->addFlash('error','This User Doesn\'t Exist!');
+            return $this->redirectToRoute('view_users_panel');
+        }
+
+        $comments = $this->get('knp_paginator')->paginate(
+            $user->getComments(),
+            $request->query->getInt('page',1),
+            self::PAGE_COUNT
+        );
+
+        if(empty($comments->getItems())){
+            $this->addFlash('warning','This User hasn\'t Commented Any Products!');
+            return $this->redirectToRoute('view_users_panel');
+        }
+
+        return $this->render('administration/users/comments.html.twig',['comments' => $comments]);
+    }
+
+    /**
+     * @param int $userId
+     * @param int $commentId
+     * @Route("/user/{userId}/comment/{commentId}", name="edit_user_comment")
+     * @return Response
+     */
+    public function removeUserCommentAction(int $userId, int $commentId)
+    {
+        $comment = $this->getDoctrine()->getRepository(Comment::class)->find($commentId);
+        if($comment === null || $comment->getAuthorId() != $userId || $comment->isDeleted()){
+            $this->addFlash('warning','This User Hasn\'t Made This Comment!');
+            return $this->redirectToRoute('view_user_comments',['id' => $userId]);
+        }
+
+        $comment->setDateDeleted(new \DateTime('now'));
+
+        $em = $this->getDoctrine()->getManager();
+        $em->flush();
+
+        $this->addFlash('notice','Comment Successfully Removed!');
+        return $this->redirectToRoute('view_user_comments',['id' => $userId]);
     }
 }

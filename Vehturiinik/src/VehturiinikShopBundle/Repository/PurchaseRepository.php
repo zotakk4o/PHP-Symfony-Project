@@ -33,4 +33,20 @@ class PurchaseRepository extends \Doctrine\ORM\EntityRepository
         return empty($query) == true ? null : $query[0];
     }
 
+    /**
+     * @param int $userId
+     *
+     * @return Purchase[]
+     */
+    public function findUserPurchases(int $userId)
+    {
+        return $this->createQueryBuilder('purchase')
+            ->select('purchase')
+            ->where('purchase.userId = ?1')
+            ->andWhere('purchase.dateDeleted IS NULL')
+            ->setParameter(1,$userId)
+            ->getQuery()
+            ->getResult();
+    }
+
 }
