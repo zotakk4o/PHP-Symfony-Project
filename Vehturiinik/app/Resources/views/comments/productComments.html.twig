@@ -21,4 +21,7 @@
     <div class="pagination">
         {{ knp_pagination_render(comments) }}
     </div>
+    {% if app.user %}
+        <a href="{{ path('comment_product', {'id': comments[0].product.id}) }}" class="btn btn-primary">Add Comment</a>
+    {% endif %}
 {% endblock %}

@@ -61,7 +61,7 @@ class User implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="fullName", type="string", length=255)
+     * @ORM\Column(name="full_name", type="string", length=255)
      *
      * @Assert\NotBlank(message="Full Name is required!")
      *
@@ -105,7 +105,7 @@ class User implements UserInterface
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dateRegistered", type="datetime")
+     * @ORM\Column(name="date_registered", type="datetime")
      */
     private $dateRegistered;
 

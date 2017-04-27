@@ -31,7 +31,7 @@
                     <td>No</td>
                 {% endif %}
                 {% if product.dateDiscountExpires is not null %}
-                <td>{{ product.dateDiscountExpires|date('Y-m-d')}}</td>
+                    <td>{{ product.dateDiscountExpires|date('Y-m-d')}}</td>
                 {% else %}
                     <td>Not Set</td>
                 {% endif %}
@@ -40,6 +40,7 @@
                 <td>
                     {{ mixedMacros.adminTableLink('remove_product_admin','Remove',{'id': product.id}) }}
                     {{ mixedMacros.adminTableLink('edit_product_admin','Edit',{'id': product.id}) }}
+                    {{ mixedMacros.adminTableLink('view_product_comments_admin','Comments', {'id': product.id}) }}
                 </td>
             </tr>
         {% endfor %}

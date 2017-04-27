@@ -19,10 +19,12 @@ use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 use VehturiinikShopBundle\Entity\Category;
+use VehturiinikShopBundle\Entity\Comment;
 use VehturiinikShopBundle\Entity\Product;
 use VehturiinikShopBundle\Entity\User;
 use VehturiinikShopBundle\Form\DiscountType;
 use VehturiinikShopBundle\Form\ProductType;
+use VehturiinikShopBundle\Form\AdminCommentType;
 
 /**
  * Class ProductController
@@ -69,7 +71,7 @@ class ProductController extends Controller
         }
 
         $products = $this->get('knp_paginator')->paginate(
-            $category->getAllProducts(),
+            $category->getProducts(),
             $request->query->getInt('page',1),
             self::PAGE_COUNT
         );
@@ -90,9 +92,9 @@ class ProductController extends Controller
     public function removeProductAction(Request $request, $id)
     {
         $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
-        if($product === null || !$product->getCategory()->isAvailable() || !$product->isAvailable()){
+        if($product === null || !$product->getCategory()->isAvailable() || $product->isDeleted()){
             $this->addFlash('warning','Product Doesn\'t Exist!');
-            return $this->redirectToRoute('view_products_panel');
+            return $this->redirectToRoute('view_products_panel',['id' => $product->getCategoryId()]);
         }
 
         $product->setDateDeleted(new \DateTime('now'));
@@ -174,6 +176,8 @@ class ProductController extends Controller
                 return $this->render('administration/products/productForm.html.twig',['form' => $form->createView()]);
             }
             $product->setCategory($this->getDoctrine()->getRepository(Category::class)->find($product->getCategoryId()));
+            if($product->isDiscountAdded() == false)$product->setDiscount(0)->setDateDiscountExpires(null);
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($product);
             $em->flush();
@@ -198,13 +202,16 @@ class ProductController extends Controller
             $data = $form->getData();
             $em = $this->getDoctrine()->getManager();
             $products = $this->getDoctrine()->getRepository(Product::class)->findAll();
+            if(empty($products)){
+                $this->addFlash('warning','NO Products Has Been Found!');
+                return $this->redirectToRoute('view_products_in_categories_panel');
+            }
             foreach ($products as $product){
                 if($product->getDiscount() < $data['discount']){
                     $product->setDiscount($data['discount']);
                     $product->setDateDiscountExpires($data['dateDiscountExpires']);
                     $product->setDiscountAdded(true);
 
-                    $em->persist($product);
                     $em->flush();
                 }
             }
@@ -214,5 +221,98 @@ class ProductController extends Controller
 
         return $this->render('administration/products/discountAllForm.html.twig',['form' => $form->createView()]);
 
+    }
+
+    /**
+     * @param int $id
+     * @param Request $request
+     * @Route("/product/{id}/comments", name="view_product_comments_admin")
+     * @return Response
+     */
+    public function viewProductCommentsAction(int $id, Request $request)
+    {
+        $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
+        if($product === null || $product->isDeleted()){
+            $this->addFlash('error','This Product Doesn\'t Exist!');
+            return $this->redirectToRoute('view_products_in_categories_panel');
+        }
+
+        $comments = $this->get('knp_paginator')->paginate(
+            $product->getComments(),
+            $request->query->getInt('page',1),
+            self::PAGE_COUNT
+        );
+
+        if(empty($comments->getItems())){
+            $this->addFlash('warning','This Product Doesn\'t Have Any Comments!');
+            return $this->redirectToRoute('view_products_panel',['id' => $product->getCategoryId()]);
+        }
+
+        return $this->render('administration/products/comments.html.twig',['comments' => $comments]);
+    }
+
+    /**
+     * @param int $productId
+     * @param int $commentId
+     * @Route("/product/{productId}/comment/remove/{commentId}", name="remove_product_comment_admin")
+     * @return Response
+     */
+    public function removeProductCommentAction(int $productId, int $commentId)
+    {
+        $comment = $this->getDoctrine()->getRepository(Comment::class)->find($commentId);
+        if($comment === null || $comment->isDeleted() || $comment->getProductId() !== $productId){
+            $this->addFlash('warning','This Comment Doesn\'t Exist!');
+            return $this->redirectToRoute('view_product_comments_admin',['id' => $productId]);
+        }
+
+        $comment->setDateDeleted(new \DateTime('now'));
+
+        $em = $this->getDoctrine()->getManager();
+        $em->flush();
+
+        $this->addFlash('notice','Comment Successfully Removed!');
+        return $this->redirectToRoute('view_product_comments_admin',['id' => $productId]);
+    }
+
+    /**
+     * @param int $productId
+     * @param int $commentId
+     * @param Request $request
+     * @Route("/product/{productId}/comment/edit/{commentId}", name="edit_product_comment_admin")
+     * @return Response
+     */
+    public function editProductCommentAciont(int $productId, int $commentId, Request $request)
+    {
+        $comment = $this->getDoctrine()->getRepository(Comment::class)->find($commentId);
+        if($comment === null || $comment->isDeleted() || $comment->getProductId() !== $productId){
+            $this->addFlash('warning','Comment Not Found!');
+            return $this->redirectToRoute('view_product_comments_admin',['id' => $productId]);
+        }
+
+        $authorIds = [];
+        $productIds = [];
+        foreach ($this->getDoctrine()->getRepository(User::class)->findAll() as $user)
+            $authorIds[] = $user->getId();
+        foreach ($this->getDoctrine()->getRepository(Product::class)->findAll() as $product)
+            $productIds[] = $product->getId();
+
+
+
+        $form = $this->createForm(AdminCommentType::class,$comment)
+            ->add('submit',SubmitType::class,['label'=>'Edit','attr'=>['class'=>'btn btn-primary']]);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            if(!in_array($form->getData()->getAuthorId(),$authorIds) || !in_array($form->getData()->getProductId(), $productIds)){
+                $form->addError(new FormError('Invalid Author Id or Product Id!'));
+                return $this->render('administration/products/commentForm.html.twig',['form'=>$form->createView()]);
+            }
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($comment);
+            $em->flush();
+
+            $this->addFlash('notice','Comment Edited Successfully!');
+            return $this->redirectToRoute('view_product_comments_admin',['id' => $productId]);
+        }
+        return $this->render('administration/products/commentForm.html.twig',['form'=>$form->createView()]);
     }
 }

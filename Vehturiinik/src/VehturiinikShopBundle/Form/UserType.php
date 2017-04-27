@@ -4,6 +4,7 @@ namespace VehturiinikShopBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,6 +16,7 @@ class UserType extends AbstractType
     {
         $builder->add('username',TextType::class)
             ->add('fullName', TextType::class)
+            ->add('money', NumberType::class)
             ->add('roles', ChoiceType::class, array(
                 'multiple' => true,
                 'choices' => array(

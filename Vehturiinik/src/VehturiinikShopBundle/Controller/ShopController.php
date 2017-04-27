@@ -60,7 +60,7 @@ class ShopController extends Controller
         }
 
         $products = $this->get('knp_paginator')->paginate(
-            $category->getAllProducts(),
+            $category->getAvailableProducts(),
             $request->query->getInt('page',1),
             self::PAGE_COUNT
         );

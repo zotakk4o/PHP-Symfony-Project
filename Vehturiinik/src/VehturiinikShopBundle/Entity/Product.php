@@ -72,7 +72,7 @@ class Product
     /**
      * @var boolean
      *
-     * @ORM\Column(name="discountAdded", type="boolean")
+     * @ORM\Column(name="discount_added", type="boolean")
      *
      */
     private $discountAdded;
@@ -80,7 +80,7 @@ class Product
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dateDiscountExpires", type="datetime", nullable=true)
+     * @ORM\Column(name="date_discount_expires", type="datetime", nullable=true)
      *
      * @Assert\Range(min="+1 day", max="+3 years +11 months")
      */
@@ -103,7 +103,7 @@ class Product
      *
      * @ORM\ManyToOne(targetEntity="VehturiinikShopBundle\Entity\Category", inversedBy="products")
      *
-     * @ORM\JoinColumn(name="categoryId", referencedColumnName="id")
+     * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
      *
      */
     private $category;
@@ -111,7 +111,7 @@ class Product
     /**
      * @var int
      *
-     * @ORM\Column(name="categoryId", type="integer")
+     * @ORM\Column(name="category_id", type="integer")
      *
      * @Assert\NotBlank(message="Category Id Field Is Required!")
      *
@@ -136,14 +136,14 @@ class Product
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dateAdded", type="datetime")
+     * @ORM\Column(name="date_added", type="datetime")
      */
     private $dateAdded;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dateDeleted", type="datetime", nullable=true)
+     * @ORM\Column(name="date_deleted", type="datetime", nullable=true)
      */
     private $dateDeleted;
 
@@ -240,11 +240,6 @@ class Product
      */
     public function setDiscount($discount)
     {
-        if(!$this->isDiscountAdded()){
-            $this->setDateDiscountExpires(null);
-            $discount = 0;
-        }
-
         $this->discount = $discount;
 
         return $this;
@@ -257,10 +252,6 @@ class Product
      */
     public function getDiscount()
     {
-        if($this->getDateDiscountExpires() !== null && new \DateTime('now') > $this->getDateDiscountExpires()){
-            $this->setDateDiscountExpires(null);
-            $this->setDiscount(0);
-        }
         return $this->discount;
     }
 
@@ -394,11 +385,6 @@ class Product
      */
     public function setDateDiscountExpires($dateDiscountExpires)
     {
-        if(!$this->isDiscountAdded())$dateDiscountExpires = null;
-
-        elseif($dateDiscountExpires === null && $this->dateDiscountExpires !== null){
-            $this->setDiscount(0);
-        }
         $this->dateDiscountExpires = $dateDiscountExpires;
     }
 
@@ -436,6 +422,11 @@ class Product
     public function isAvailable()
     {
         return $this->getDateDeleted() === null && $this->getQuantity() > 0;
+    }
+
+    public function isDeleted()
+    {
+        return $this->getDateDeleted() !== null;
     }
 
 }

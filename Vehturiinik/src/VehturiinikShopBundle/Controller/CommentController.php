@@ -80,7 +80,7 @@ class CommentController extends Controller
             $this->addFlash('notice','You Have Successfully Commented This Product!');
             return $this->redirectToRoute('view_product_comments',['id'=>$id]);
         }
-        return $this->render('comments/addAndEditComment.html.twig',['form'=>$form->createView()]);
+        return $this->render('comments/commentForm.html.twig',['form'=>$form->createView()]);
     }
 
     /**
@@ -110,7 +110,7 @@ class CommentController extends Controller
             $this->addFlash('notice','Comment Edited Successfully!');
             return $this->redirectToRoute('view_product_comments',['id' => $comment->getProductId()]);
         }
-        return $this->render('comments/addAndEditComment.html.twig',['form'=>$form->createView()]);
+        return $this->render('comments/commentForm.html.twig',['form'=>$form->createView()]);
     }
 
     /**

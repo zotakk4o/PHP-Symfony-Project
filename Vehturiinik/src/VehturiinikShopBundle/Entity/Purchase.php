@@ -25,7 +25,7 @@ class Purchase
     /**
      * @var int
      *
-     * @ORM\Column(name="quantityBought", type="integer")
+     * @ORM\Column(name="quantity_bought", type="integer")
      *
      * @Assert\GreaterThanOrEqual(value = 0, message="Quantity Should be Equal or Greater Than Zero")
      *
@@ -37,7 +37,7 @@ class Purchase
     /**
      * @var int
      *
-     * @ORM\Column(name="currentQuantity", type="integer")
+     * @ORM\Column(name="current_quantity", type="integer")
      *
      * @Assert\GreaterThanOrEqual(value = 0, message="Quantity Should be Equal or Greater Than Zero")
      *
@@ -49,7 +49,7 @@ class Purchase
     /**
      * @var int
      *
-     * @ORM\Column(name="quantityForSale", type="integer")
+     * @ORM\Column(name="quantity_for_sale", type="integer")
      *
      * @Assert\GreaterThanOrEqual(value = 0, message="Quantity for Sale Should be Equal or Greater Than Zero")
      *
@@ -62,7 +62,7 @@ class Purchase
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="VehturiinikShopBundle\Entity\User", inversedBy="purchases")
-     * @ORM\JoinColumn(name="userId", referencedColumnName="id")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      *
      */
     private $user;
@@ -70,7 +70,7 @@ class Purchase
     /**
      * @var int
      *
-     * @ORM\Column(name="userId", type="integer")
+     * @ORM\Column(name="user_id", type="integer")
      *
      * @Assert\NotBlank(message="User Id Cannot be Empty")
      *
@@ -83,7 +83,7 @@ class Purchase
      *
      * @ORM\ManyToOne(targetEntity="VehturiinikShopBundle\Entity\Product", inversedBy="buyings")
      *
-     * @ORM\JoinColumn(name="productId", referencedColumnName="id")
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id")
      *
      */
     private $product;
@@ -91,7 +91,7 @@ class Purchase
     /**
      * @var int
      *
-     * @ORM\Column(name="productId", type="integer")
+     * @ORM\Column(name="product_id", type="integer")
      *
      * @Assert\NotBlank(message="Product Id Cannot be Empty")
      *
@@ -115,21 +115,21 @@ class Purchase
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="datePurchased", type="datetime")
+     * @ORM\Column(name="date_purchased", type="datetime")
      */
     private $datePurchased;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dateDeleted", type="datetime", nullable=true)
+     * @ORM\Column(name="date_deleted", type="datetime", nullable=true)
      */
     private $dateDeleted;
 
     /**
      * @var float
      *
-     * @ORM\Column(name="pricePerPiece", type="float")
+     * @ORM\Column(name="price_per_piece", type="float")
      *
      * @Assert\NotBlank(message="Price Field Is Required!")
      *

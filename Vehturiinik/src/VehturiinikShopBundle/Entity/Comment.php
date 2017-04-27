@@ -38,14 +38,14 @@ class Comment
      *
      * @ORM\ManyToOne(targetEntity="VehturiinikShopBundle\Entity\User", inversedBy="comments")
      *
-     * @ORM\JoinColumn(name="authorId", referencedColumnName="id")
+     * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
      */
     private $author;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="authorId", type="integer")
+     * @ORM\Column(name="author_id", type="integer")
      *
      * @Assert\NotBlank(message="Author Id Field Is Required!")
      *
@@ -57,14 +57,14 @@ class Comment
      *
      * @ORM\ManyToOne(targetEntity="VehturiinikShopBundle\Entity\Product", inversedBy="comments")
      *
-     * @ORM\JoinColumn(name="productId", referencedColumnName="id")
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id")
      */
     private $product;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="productId", type="integer")
+     * @ORM\Column(name="product_id", type="integer")
      *
      * @Assert\NotBlank(message="Product Id Field Is Required!")
      *
@@ -74,7 +74,7 @@ class Comment
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dateAdded", type="datetime")
+     * @ORM\Column(name="date_added", type="datetime")
      *
      */
     private $dateAdded;
@@ -82,7 +82,7 @@ class Comment
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dateDeleted", type="datetime", nullable=true)
+     * @ORM\Column(name="date_deleted", type="datetime", nullable=true)
      *
      */
     private $dateDeleted;

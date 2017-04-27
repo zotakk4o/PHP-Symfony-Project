@@ -57,14 +57,14 @@ class Category
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dateAdded", type="datetime")
+     * @ORM\Column(name="date_added", type="datetime")
      */
     private $dateAdded;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dateDeleted", type="datetime", nullable=true)
+     * @ORM\Column(name="date_deleted", type="datetime", nullable=true)
      */
     private $dateDeleted;
 
@@ -114,19 +114,7 @@ class Category
     /**
      * @return Product[]
      */
-    public function getValidProducts()
-    {
-        $products = [];
-        foreach ($this->products as $product){
-            if(!$product->getQuantity() == 0 && $product->getDateDeleted() === null)$products[] = $product;
-        }
-        return $products;
-    }
-
-    /**
-     * @return Product[]
-     */
-    public function getAllProducts()
+    public function getAvailableProducts()
     {
         $products = [];
         foreach ($this->products as $product){
@@ -134,6 +122,20 @@ class Category
         }
         return $products;
     }
+
+    /**
+     * @return Product[]
+     */
+    public function getProducts()
+    {
+        $products = [];
+        foreach ($this->products as $product){
+            if(!$product->isDeleted())$products[] = $product;
+        }
+        return $products;
+    }
+
+
 
     /**
      * @param Product $product
@@ -182,7 +184,7 @@ class Category
 
     public function getProductsCount()
     {
-        return count($this->getValidProducts());
+        return count($this->getAvailableProducts());
     }
 
     /**

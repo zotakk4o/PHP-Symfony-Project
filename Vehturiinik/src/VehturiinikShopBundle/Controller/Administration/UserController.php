@@ -18,7 +18,7 @@ use VehturiinikShopBundle\Entity\Role;
 use VehturiinikShopBundle\Entity\User;
 use VehturiinikShopBundle\Form\CommentType;
 use VehturiinikShopBundle\Form\PurchaseType;
-use VehturiinikShopBundle\Form\UserCommentType;
+use VehturiinikShopBundle\Form\AdminCommentType;
 use VehturiinikShopBundle\Form\UserType;
 
 /**
@@ -241,11 +241,10 @@ class UserController extends Controller
      * @param int $userId
      * @param int $commentId
      * @param Request $request
-     * @Security("has_role('ROLE_USER')")
      * @Route("/user/{userId}/comment/edit/{commentId}", name="edit_user_comment")
      * @return Response
      */
-    public function editCommentAction(int $userId, int $commentId, Request $request)
+    public function editUserCommentAction(int $userId, int $commentId, Request $request)
     {
         $authorIds = [];
         $productIds = [];
@@ -259,13 +258,13 @@ class UserController extends Controller
             return $this->redirectToRoute('view_user_comments',['id' => $userId]);
         }
 
-        $form = $this->createForm(UserCommentType::class,$comment)
+        $form = $this->createForm(AdminCommentType::class,$comment)
             ->add('submit',SubmitType::class,['label'=>'Edit','attr'=>['class'=>'btn btn-primary']]);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
             if(!in_array($form->getData()->getAuthorId(),$authorIds) || !in_array($form->getData()->getProductId(), $productIds)){
                 $form->addError(new FormError('Invalid Author Id or Product Id!'));
-                return $this->render('comments/addAndEditComment.html.twig',['form'=>$form->createView()]);
+                return $this->render('administration/users/commentForm.html.twig',['form'=>$form->createView()]);
             }
             $em = $this->getDoctrine()->getManager();
             $em->persist($comment);
@@ -274,6 +273,6 @@ class UserController extends Controller
             $this->addFlash('notice','Comment Edited Successfully!');
             return $this->redirectToRoute('view_user_comments',['id' => $userId]);
         }
-        return $this->render('comments/addAndEditComment.html.twig',['form'=>$form->createView()]);
+        return $this->render('administration/users/commentForm.html.twig',['form'=>$form->createView()]);
     }
 }

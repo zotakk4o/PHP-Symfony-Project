@@ -24,8 +24,20 @@
                     <div>
                         You save: <h4 class="price discount">{{ product.originalPrice - product.price }} vehturiiki</h4>
                     </div>
+                {% elseif app.user and app.user.money >= constant('VehturiinikShopBundle\\Entity\\User::MONEY_TO_BE_DISCOUNTED') or app.user and app.user.isRegularCustomer %}
+                    <div>
+                        Price: <h4 class="price discount">{{ product.price - (product.price * constant('VehturiinikShopBundle\\Entity\\User::USER_DISCOUNT') / 100) }} vehturiiki</h4>
+                    </div>
+                    <div>
+                        Discount: {{ constant('VehturiinikShopBundle\\Entity\\User::USER_DISCOUNT') }}%
+                    </div>
+                    <div>
+                        You save: <h4 class="price discount">{{ product.originalPrice - (product.price - (product.price * constant('VehturiinikShopBundle\\Entity\\User::USER_DISCOUNT') / 100))}} vehturiiki</h4>
+                    </div>
                 {% else %}
-                    Price: <h4 class="price">{{ product.price }} vehturiiki</h4>
+                    <div>
+                        Price: <h4 class="price">{{ product.price }} vehturiiki</h4>
+                    </div>
                 {% endif %}
                 <div>
                     Quantity in Stock: <h4 class="quantity">{{ product.quantity }}</h4>

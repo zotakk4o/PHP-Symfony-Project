@@ -125,13 +125,19 @@ class CategoryController extends Controller
     /**
      * @param $request Request
      * @param int $id
-     * @Route("/{id}/discount/all", name="discount_category" )
+     * @Route("/{id}/discount", name="discount_category" )
      * @return Response
      */
     public function discountCategoryAction(Request $request, int $id)
     {
-        $form = $this->createForm(DiscountType::class);
+        $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
 
+        if($category == null || !$category->isAvailable() || $category->getProductsCount() == 0){
+            $this->addFlash('warning','Category Unavailable!');
+            return $this->redirectToRoute('view_category_panel');
+        }
+
+        $form = $this->createForm(DiscountType::class);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
             $data = $form->getData();
@@ -147,7 +153,6 @@ class CategoryController extends Controller
                     $product->setDateDiscountExpires($data['dateDiscountExpires']);
                     $product->setDiscountAdded(true);
 
-                    $em->persist($product);
                     $em->flush();
                 }
             }
