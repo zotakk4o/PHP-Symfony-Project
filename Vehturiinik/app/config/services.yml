@@ -9,3 +9,6 @@ services:
         public: false
         tags:
             - { name: twig.extension }
+    app.product_service:
+            class:     VehturiinikShopBundle\Service\ProductService
+            arguments: ['@doctrine.orm.entity_manager']

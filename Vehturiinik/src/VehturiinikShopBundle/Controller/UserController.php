@@ -31,6 +31,9 @@ class UserController extends Controller
      */
     public function registerAction(Request $request)
     {
+        $productService = $this->get('app.product_service');
+        $productService->clearInvalidDiscounts();
+
         if($this->getUser()){
             $this->addFlash('warning','Logout in order to register again!');
             return $this->redirectToRoute('home_index');

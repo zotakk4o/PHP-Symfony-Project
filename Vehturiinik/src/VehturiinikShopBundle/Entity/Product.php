@@ -61,11 +61,11 @@ class Product
      *
      * @ORM\Column(name="discount", type="integer")
      *
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(groups={"discount"})
      *
-     * @Assert\GreaterThanOrEqual(value = 0, message="Discount Should be Equal or Greater Than Zero")
+     * @Assert\GreaterThanOrEqual(value = 0, message="Discount Should be Equal or Greater Than Zero", groups={"discount"})
      *
-     * @Assert\LessThanOrEqual(value=99, message="Discount Cannot be More Than 99%")
+     * @Assert\LessThanOrEqual(value=99, message="Discount Cannot be More Than 99%", groups={"discount"})
      */
     private $discount;
 
@@ -82,7 +82,7 @@ class Product
      *
      * @ORM\Column(name="date_discount_expires", type="datetime", nullable=true)
      *
-     * @Assert\Range(min="+1 day", max="+3 years +11 months")
+     * @Assert\Range(min="+1 day ", max="+3 years +11 months", groups={"discount"})
      */
     private $dateDiscountExpires;
 

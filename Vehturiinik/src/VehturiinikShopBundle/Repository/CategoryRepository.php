@@ -14,10 +14,9 @@ class CategoryRepository extends \Doctrine\ORM\EntityRepository
 {
     public function findAllAvailable()
     {
-        return $this->getEntityManager()
-            ->getRepository(Category::class)
-            ->createQueryBuilder('c')
+        return $this->createQueryBuilder('c')
             ->select('c')
-            ->where('c.dateDeleted IS NULL');
+            ->where('c.dateDeleted IS NULL')
+            ->orderBy('c.dateAdded','DESC');
     }
 }

@@ -28,6 +28,9 @@ class CommentController extends Controller
      */
     public function viewCommentsAction(Request $request,int $id)
     {
+        $productService = $this->get('app.product_service');
+        $productService->clearInvalidDiscounts();
+
         $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
 
         if($product === null || !$product->isAvailable()){

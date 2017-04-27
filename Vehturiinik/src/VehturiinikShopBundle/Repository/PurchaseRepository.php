@@ -18,9 +18,7 @@ class PurchaseRepository extends \Doctrine\ORM\EntityRepository
      */
     public function findOneByUserIdAndProductId($productId, $userId)
     {
-        $query = $this->getEntityManager()
-            ->getRepository(Purchase::class)
-            ->createQueryBuilder('purchase')
+        $query = $this->createQueryBuilder('purchase')
             ->select('purchase')
             ->where('purchase.productId = ?1')
             ->andWhere('purchase.userId = ?2')

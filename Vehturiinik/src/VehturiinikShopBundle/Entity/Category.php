@@ -39,6 +39,8 @@ class Category
      * @var Collection
      *
      * @ORM\OneToMany(targetEntity="VehturiinikShopBundle\Entity\Product", mappedBy="category")
+     *
+     * @ORM\OrderBy({"id" = "ASC"})
      */
     private $products;
 
@@ -120,6 +122,7 @@ class Category
         foreach ($this->products as $product){
             if($product->isAvailable())$products[] = $product;
         }
+
         return $products;
     }
 

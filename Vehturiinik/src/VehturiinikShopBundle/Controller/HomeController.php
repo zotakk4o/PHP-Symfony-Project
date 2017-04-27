@@ -14,6 +14,8 @@ class HomeController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $productService = $this->get('app.product_service');
+        $productService->clearInvalidDiscounts();
 
         $products = $this->getDoctrine()->getRepository(Product::class)->findFirstFive();
 

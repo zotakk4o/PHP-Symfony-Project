@@ -18,15 +18,39 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
      */
     public function findFirstFive()
     {
-       return $this->getEntityManager()
-            ->getRepository(Product::class)
-            ->createQueryBuilder('p')
+       return $this->createQueryBuilder('p')
             ->innerJoin('p.category','c')
             ->where('p.quantity > 0')
             ->andWhere('p.dateDeleted IS NULL')
             ->andWhere('c.dateDeleted IS NULL')
             ->orderBy('p.dateAdded','DESC')
             ->setMaxResults(5)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Product[]
+     */
+    public function findAllAtDiscount()
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p')
+            ->where('p.dateDiscountExpires IS NOT NULL')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Product[]
+     */
+    public function findAllAvailable()
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p')
+            ->where('p.dateDeleted IS NULL')
+            ->where('p.quantity > 0')
+            ->orderBy('p.dateAdded DESC')
             ->getQuery()
             ->getResult();
     }

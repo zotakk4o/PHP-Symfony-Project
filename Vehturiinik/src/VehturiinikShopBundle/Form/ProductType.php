@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -31,7 +32,18 @@ class ProductType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['data_class' => 'VehturiinikShopBundle\Entity\Product']);
+        $resolver->setDefaults([
+            'data_class' => 'VehturiinikShopBundle\Entity\Product',
+            'validation_groups' => function (FormInterface $form){
+                $data = $form->getData();
+
+                if ($data->isDiscountAdded() == true) {
+                    return array('Default','discount');
+                }
+
+                return array('Default');
+            }
+        ]);
 
     }
 

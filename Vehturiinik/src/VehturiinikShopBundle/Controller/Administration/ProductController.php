@@ -138,6 +138,8 @@ class ProductController extends Controller
                 $this->addFlash('warning','Invalid Category Id!');
                 return $this->render('administration/products/productForm.html.twig',['form' => $form->createView()]);
             }
+            if($product->isDiscountAdded() == false)$product->setDiscount(0)->setDateDiscountExpires(null);
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($product);
             $em->flush();
@@ -201,9 +203,9 @@ class ProductController extends Controller
         if($form->isSubmitted() && $form->isValid()){
             $data = $form->getData();
             $em = $this->getDoctrine()->getManager();
-            $products = $this->getDoctrine()->getRepository(Product::class)->findAll();
+            $products = $this->getDoctrine()->getRepository(Product::class)->findAllAvailable();
             if(empty($products)){
-                $this->addFlash('warning','NO Products Has Been Found!');
+                $this->addFlash('warning','NO Products Have Been Found!');
                 return $this->redirectToRoute('view_products_in_categories_panel');
             }
             foreach ($products as $product){

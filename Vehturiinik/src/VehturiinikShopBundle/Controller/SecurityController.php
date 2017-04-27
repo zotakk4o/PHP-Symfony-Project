@@ -13,6 +13,9 @@ class SecurityController extends Controller
      */
     public function loginAction()
     {
+        $productService = $this->get('app.product_service');
+        $productService->clearInvalidDiscounts();
+
         if($this->getUser()){
             $this->addFlash('error','You are already logged in!');
             return $this->redirectToRoute('security_login');

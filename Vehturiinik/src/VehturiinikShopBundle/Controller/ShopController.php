@@ -28,6 +28,9 @@ class ShopController extends Controller
      */
     public function viewCategoriesAction(Request $request)
    {
+       $productService = $this->get('app.product_service');
+       $productService->clearInvalidDiscounts();
+
        $validCategories = [];
        $categories = $this->get('knp_paginator')->paginate(
            $this->getDoctrine()->getRepository(Category::class)->findAllAvailable(),
@@ -39,6 +42,7 @@ class ShopController extends Controller
            /**@var $category Category*/
            if($category->getProductsCount() > 0)$validCategories[] = $category;
        }
+
        $categories->setItems($validCategories);
 
        return $this->render('shop/categories.html.twig',['categories' => $categories]);
@@ -52,6 +56,9 @@ class ShopController extends Controller
      */
     public function viewProductsInCategoryAction($id, Request $request)
    {
+       $productService = $this->get('app.product_service');
+       $productService->clearInvalidDiscounts();
+
         $category = $this->getDoctrine()->getRepository(Category::class)->find($id);
 
         if($category === null || !$category->isAvailable() || $category->getProductsCount() == 0){
