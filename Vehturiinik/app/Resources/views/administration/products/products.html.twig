@@ -14,6 +14,7 @@
             <th>Date Expires</th>
             <th>Quantity</th>
             <th>Category</th>
+            <th>Date Added</th>
             <th>Options</th>
         </tr>
         </thead>
@@ -37,6 +38,7 @@
                 {% endif %}
                 <td>{{ product.quantity }}</td>
                 <td>{{ product.category.name }}</td>
+                <td>{{ product.dateAdded|date("Y-M-d H:i") }}</td>
                 <td>
                     {{ mixedMacros.vehturiinikLink('remove_product_admin','Remove',{'id': product.id}) }}
                     {{ mixedMacros.vehturiinikLink('edit_product_admin','Edit',{'id': product.id}) }}
