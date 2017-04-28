@@ -33,12 +33,12 @@ class CommentController extends Controller
 
         $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
 
-        if($product === null || !$product->isAvailable()){
+        if($product === null){
             $this->addFlash('warning','Product Not Found!');
             return $this->redirectToRoute('view_shop');
         }elseif(empty($product->getComments())){
             $this->addFlash('warning','This Product Has NO Comments!');
-            return $this->redirectToRoute('view_shop');
+            return $this->redirectToRoute('view_products_in_category',['id' => $product->getCategoryId()]);
         }
 
         $comments = $this->get('knp_paginator')->paginate(
@@ -98,7 +98,7 @@ class CommentController extends Controller
         $comment = $this->getDoctrine()->getRepository(Comment::class)->find($id);
         if($comment === null || $comment->getAuthorId() !== $this->getUser()->getId() || $comment->isDeleted()){
             $this->addFlash('warning','Comment Not Found Or Permission Denied!');
-            return $this->redirectToRoute('view_shop');
+            return $this->redirectToRoute('home_index');
         }
 
         $form = $this->createForm(CommentType::class,$comment)
@@ -128,7 +128,7 @@ class CommentController extends Controller
         $comment = $this->getDoctrine()->getRepository(Comment::class)->find($id);
         if($comment === null || $comment->getAuthorId() !== $this->getUser()->getId() || $comment->isDeleted()){
             $this->addFlash('warning','Comment Not Found Or Permission Denied!');
-            return $this->redirectToRoute('view_shop');
+            return $this->redirectToRoute('home_index');
         }
 
         $comment->setDateDeleted(new \DateTime('now'));

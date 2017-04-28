@@ -6,5 +6,7 @@
     {% for purchase in purchases %}
         {{ purchasesMacros.purchaseProduct(purchase, forms[purchase.product.name]) }}
     {% endfor %}
-    {{ knp_pagination_render(purchases) }}
+    <div class="pagination">
+        {{ knp_pagination_render(purchases) }}
+    </div>
 {% endblock %}

@@ -80,6 +80,7 @@ class User implements UserInterface
      *
      * @ORM\OneToMany(targetEntity="VehturiinikShopBundle\Entity\Purchase", mappedBy="user")
      *
+     * @ORM\OrderBy({"datePurchased" = "DESC"})
      */
     private $purchases;
 
@@ -99,6 +100,7 @@ class User implements UserInterface
      *
      * @ORM\OneToMany(targetEntity="VehturiinikShopBundle\Entity\Comment", mappedBy="author")
      *
+     * @ORM\OrderBy({"dateAdded" = "DESC"})
      */
     private $comments;
 

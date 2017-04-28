@@ -1,4 +1,5 @@
 {% macro cartProduct(product, quantity)%}
+    {% import 'macros/mixedMacros.html.twig' as mixedMacros %}
     {% import 'macros/formMacros.html.twig' as formMacros %}
     <div class="panel panel-info">
         <div class="panel-heading">
@@ -47,11 +48,10 @@
                 Quantity in Stock: <h4 class="quantity">{{ product.quantity }}</h4>
             </div>
             <div class="pull-right">
-                <h4> Comments: {{ product.comments|length }}</h4>
                 {% if app.user %}
-                    <a href="{{ path('comment_product', {'id': product.id}) }}" class="btn btn-primary">Comment</a>
+                    {{ mixedMacros.vehturiinikLink('comment_product', 'Comment',{'id': product.id}) }}
                 {% endif %}
-                <a href="{{ path('view_product_comments', {'id': product.id}) }}" class="btn btn-primary">View Comments</a>
+                {{ mixedMacros.vehturiinikLink('view_product_comments', 'View Comments',{'id': product.id}) }}
             </div>
         </div>
     </div>

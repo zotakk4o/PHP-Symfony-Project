@@ -1,4 +1,5 @@
 {% macro purchaseProduct(purchase, form)%}
+    {% import 'macros/mixedMacros.html.twig' as mixedMacros %}
     {% import 'macros/formMacros.html.twig' as formMacros %}
     <div class="panel panel-info">
         <div class="panel-heading">
@@ -40,10 +41,9 @@
                 Quantity bought: <h4 class="quantity">{{ purchase.currentQuantity }}</h4>
             </div>
             <div class="pull-right">
-                <h4> Comments: {{ purchase.product.comments|length }}</h4>
-                <a href="{{ path('comment_product', {'id': purchase.product.id}) }}" class="btn btn-primary">Comment</a>
-                <a href="{{ path('view_product_comments', {'id': purchase.product.id}) }}" class="btn btn-primary">View Comments</a>
-                <a href="{{ path('sell_product', {'purchaseId': purchase.id}) }}" class="btn btn-primary">Sell</a>
+                {{ mixedMacros.vehturiinikLink('comment_product', 'Comment',{'id': purchase.product.id}) }}
+                {{ mixedMacros.vehturiinikLink('view_product_comments', 'View Comments',{'id': purchase.product.id}) }}
+                {{ mixedMacros.vehturiinikLink('sell_product', 'Sell',{'purchaseId': purchase.id}) }}
             </div>
         </div>
     </div>

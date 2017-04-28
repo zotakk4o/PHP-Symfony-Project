@@ -8,6 +8,7 @@
             <th>Id</th>
             <th>Name</th>
             <th>Description</th>
+            <th>Date Added</th>
             <th>Options</th>
         </tr>
         </thead>
@@ -17,16 +18,17 @@
                 <td>{{ category.id }}</td>
                 <td>{{ category.name}}</td>
                 <td>{{ category.summaryOfDescription}}</td>
+                <td>{{ category.dateAdded|date("Y-M-d H:i") }}</td>
                 <td>
-                    {{ mixedMacros.adminTableLink('remove_category','Remove',{'id': category.id}) }}
-                    {{ mixedMacros.adminTableLink('edit_category','Edit',{'id': category.id}) }}
-                    {{ mixedMacros.adminTableLink('discount_category','Discount',{'id': category.id}) }}
+                    {{ mixedMacros.vehturiinikLink('remove_category','Remove',{'id': category.id}) }}
+                    {{ mixedMacros.vehturiinikLink('edit_category','Edit',{'id': category.id}) }}
+                    {{ mixedMacros.vehturiinikLink('discount_category','Discount',{'id': category.id}) }}
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-    {{ mixedMacros.adminTableLink('add_category','Add Category') }}
+    {{ mixedMacros.vehturiinikLink('add_category','Add Category') }}
     <div class="pagination">
         {{ knp_pagination_render(categories) }}
     </div>

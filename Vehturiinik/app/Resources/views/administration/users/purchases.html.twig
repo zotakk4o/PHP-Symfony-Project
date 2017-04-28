@@ -16,8 +16,8 @@
             <td>{{ purchase.user.fullName }}</td>
             <td>{{ purchase.product.name }}</td>
             <td>
-                {{ mixedMacros.adminTableLink('remove_purchase','Remove',{userId: purchase.userId, purchaseId: purchase.id }) }}
-                {{ mixedMacros.adminTableLink('edit_purchase','Edit',{userId: purchase.userId, purchaseId: purchase.id}) }}
+                {{ mixedMacros.vehturiinikLink('remove_purchase','Remove',{userId: purchase.userId, purchaseId: purchase.id }) }}
+                {{ mixedMacros.vehturiinikLink('edit_purchase','Edit',{userId: purchase.userId, purchaseId: purchase.id}) }}
             </td>
         </tr>
     {% endfor %}

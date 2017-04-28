@@ -11,7 +11,7 @@
     </div>
 {% endmacro %}
 
-{% macro adminTableLink(pathName,message,params) %}
+{% macro vehturiinikLink(pathName,message,params) %}
     <a href="{{ path(pathName, params|default([])) }}" class="btn btn-primary">{{ message }}</a>
 {% endmacro %}
 

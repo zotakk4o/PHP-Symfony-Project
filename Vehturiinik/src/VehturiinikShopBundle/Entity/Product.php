@@ -130,6 +130,8 @@ class Product
      * @var Collection
      *
      * @ORM\OneToMany(targetEntity="VehturiinikShopBundle\Entity\Comment", mappedBy="product")
+     *
+     * @ORM\OrderBy({"dateAdded" = "DESC"})
      */
     private $comments;
 
@@ -405,6 +407,7 @@ class Product
         foreach ($this->comments as $comment){
             if(!$comment->isDeleted())$comments[] = $comment;
         }
+
         return $comments;
     }
 

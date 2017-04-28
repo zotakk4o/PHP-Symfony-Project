@@ -1,19 +1,22 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
+    {% import 'macros/mixedMacros.html.twig' as mixedMacros %}
     {% for comment in comments %}
         <div class="panel panel-info">
             <div class="panel-heading">
-                <h3 class="panel-title">{{ comment.author.username }}</h3>
+                <h3 class="panel-title text-center">Author: {{ comment.author.username }}</h3>
+                <br>
+                <h4 class="panel-title text-center">Date Commented: {{ comment.dateAdded|date("Y-M-d H:i") }}</h4>
             </div>
             <div class="panel-body">
                 {{ comment.content }}
                 <div class="pull-right">
                     {% if app.user and app.user.id == comment.author.id %}
-                        <a href="{{ path('edit_product_comment', {'id': comment.id}) }}" class="btn btn-primary">Edit</a>
-                        <a href="{{ path('delete_product_comment', {'id': comment.id}) }}" class="btn btn-primary">Delete</a>
+                        {{ mixedMacros.vehturiinikLink('edit_product_comment','Edit', {'id': comment.id}) }}
+                        {{ mixedMacros.vehturiinikLink('delete_product_comment','Delete', {'id': comment.id}) }}
                     {% endif %}
-                    <a href="{{ path('view_shop') }}" class="btn btn-primary">Shop</a>
+                    {{ mixedMacros.vehturiinikLink('view_shop','Shop') }}
                 </div>
             </div>
         </div>
@@ -21,7 +24,7 @@
     <div class="pagination">
         {{ knp_pagination_render(comments) }}
     </div>
-    {% if app.user %}
-        <a href="{{ path('comment_product', {'id': comments[0].product.id}) }}" class="btn btn-primary">Add Comment</a>
+    {% if app.user and comments is not empty%}
+        {{ mixedMacros.vehturiinikLink('comment_product','Add Comment', {'id': comments[0].product.id}) }}
     {% endif %}
 {% endblock %}

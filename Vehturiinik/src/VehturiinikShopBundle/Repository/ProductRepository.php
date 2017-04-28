@@ -50,7 +50,7 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
             ->select('p')
             ->where('p.dateDeleted IS NULL')
             ->where('p.quantity > 0')
-            ->orderBy('p.dateAdded DESC')
+            ->orderBy('p.dateAdded','DESC')
             ->getQuery()
             ->getResult();
     }

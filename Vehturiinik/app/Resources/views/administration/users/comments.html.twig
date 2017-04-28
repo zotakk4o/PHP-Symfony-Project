@@ -15,8 +15,8 @@
                 <td>{{ comment.author.fullName }}</td>
                 <td>{{ comment.content }}</td>
                 <td>
-                    {{ mixedMacros.adminTableLink('remove_user_comment','Remove',{'userId':comment.author.id, 'commentId':comment.id}) }}
-                    {{ mixedMacros.adminTableLink('edit_user_comment','Edit',{'userId':comment.author.id, 'commentId':comment.id}) }}
+                    {{ mixedMacros.vehturiinikLink('remove_user_comment','Remove',{'userId':comment.author.id, 'commentId':comment.id}) }}
+                    {{ mixedMacros.vehturiinikLink('edit_user_comment','Edit',{'userId':comment.author.id, 'commentId':comment.id}) }}
                 </td>
             </tr>
         {% endfor %}

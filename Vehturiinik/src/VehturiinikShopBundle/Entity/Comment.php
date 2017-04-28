@@ -230,5 +230,15 @@ class Comment
         return $this->getDateDeleted() !== null;
     }
 
+    /**
+     * @return \DateTime
+     */
+    public function getDateAdded(): \DateTime
+    {
+        return $this->dateAdded;
+    }
+
+
+
 }
 

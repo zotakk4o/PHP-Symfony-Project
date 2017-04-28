@@ -12,5 +12,9 @@ use VehturiinikShopBundle\Entity\User;
  */
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {
-
+    public function findAllQuery()
+    {
+        return $this->createQueryBuilder('u')
+            ->orderBy('u.dateRegistered','DESC');
+    }
 }

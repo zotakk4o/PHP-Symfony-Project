@@ -40,7 +40,7 @@ class UserController extends Controller
     {
 
         $users = $this->get('knp_paginator')->paginate(
-            $this->getDoctrine()->getRepository(User::class)->findAll(),
+            $this->getDoctrine()->getRepository(User::class)->findAllQuery(),
             $request->query->getInt('page',1),
             self::PAGE_COUNT
         );

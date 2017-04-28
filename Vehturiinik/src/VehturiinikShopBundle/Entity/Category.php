@@ -40,7 +40,7 @@ class Category
      *
      * @ORM\OneToMany(targetEntity="VehturiinikShopBundle\Entity\Product", mappedBy="category")
      *
-     * @ORM\OrderBy({"id" = "ASC"})
+     * @ORM\OrderBy({"dateAdded" = "DESC"})
      */
     private $products;
 
@@ -208,6 +208,16 @@ class Category
     {
         return $this->getDateDeleted() === null;
     }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateAdded(): \DateTime
+    {
+        return $this->dateAdded;
+    }
+
+
 
 
 

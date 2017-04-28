@@ -98,7 +98,7 @@ class ShopController extends Controller
 
         if(empty($purchases->getItems())){
             $this->addFlash('warning','You haven\'t bought any products!');
-            return $this->redirectToRoute('view_shop');
+            return $this->redirectToRoute('home_index');
         }
         $forms = [];
         foreach ($purchases as $purchase){
@@ -106,7 +106,7 @@ class ShopController extends Controller
             $forms[$purchase->getProduct()->getName()] = $this->createForm(PurchaseQuantityType::class,
                 $purchase,
                 ['action' => $this->generateUrl('set_sell_quantity')])
-                ->add('submit',SubmitType::class,['label' => 'Set Quantity','attr' => ['class' => 'btn-success']])
+                ->add('submit',SubmitType::class,['label' => 'Set Quantity For Sale','attr' => ['class' => 'btn-success']])
                 ->createView();
 
         }
@@ -170,7 +170,7 @@ class ShopController extends Controller
 
         $purchase = $this->getDoctrine()->getRepository(Purchase::class)->findOneByUserIdAndProductId($productId, $userId);
 
-        if($purchase === null) {
+        if($purchase === null || !$purchase->isAvailable()) {
             $this->addFlash('warning','You haven\'t bought this product!');
             return $this->redirectToRoute('view_purchases');
         }elseif($purchase->getCurrentQuantity() < $quantity) {

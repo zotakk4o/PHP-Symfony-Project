@@ -81,12 +81,14 @@ class UserController extends Controller
             return $this->redirectToRoute('view_shop');
         }
 
+
         /**@var Product[] $products*/
         $products = $this->get('knp_paginator')->paginate(
             $session->get('products'),
             $request->query->getInt('page',1),
             self::PAGE_COUNT
         );
+
         $quantities = $session->get('quantities');
 
         if(in_array(0, $quantities)){
@@ -119,19 +121,19 @@ class UserController extends Controller
     public function addToCartAction($id)
     {
         $product = $this->getDoctrine()->getRepository(Product::class)->find($id);
-        if($product === null || !$product->getCategory()->isAvailable()){
+        if($product === null || !$product->getCategory()->isAvailable() || !$product->isAvailable()){
             $this->addFlash('error','This product doesn\'t exist');
-            return $this->redirectToRoute('view_shop');
+            return $this->redirectToRoute('home_index');
         }
+
+        $products = [];
+        $quantities = [];
 
         $session = $this->get('session');
         if(!$session->has('products') && !$session->has('quantities')){
-            $session->set('products', []);
-            $session->set('quantities',[]);
+            $session->set('products', $products);
+            $session->set('quantities',$quantities);
         }
-
-        $products = $session->get('products');
-        $quantities = $session->get('quantities');
 
         if(!array_key_exists($product->getName(),$products)){
             $products[$product->getName()] = $product;
@@ -144,7 +146,7 @@ class UserController extends Controller
         $session->set('quantities', $quantities);
 
         $this->addFlash('notice', strtoupper($product->getName()) . " successfully added to your cart!");
-        return $this->redirectToRoute('view_products_in_category',['id' => $product->getCategory()->getId()]);
+        return $this->redirectToRoute('home_index');
     }
 
     /**
@@ -220,8 +222,8 @@ class UserController extends Controller
         $session = $this->get('session');
 
         if(!$session->has('products') || empty($session->get('products'))){
-            $this->addFlash('warning','You have no items in your cart!');
-            return $this->redirectToRoute('view_shop');
+            $this->addFlash('warning','You Have NO Products in Your Cart!');
+            return $this->redirectToRoute('home_index');
         }
 
         $session->remove('products');
@@ -241,8 +243,8 @@ class UserController extends Controller
     {
         $session = $this->get('session');
         if(!$session->has('products')){
-            $this->addFlash('warning','You Have No Items In Your Cart!');
-            return $this->redirectToRoute('view_shop');
+            $this->addFlash('warning','You Have No Products In Your Cart!');
+            return $this->redirectToRoute('home_index');
         }
         if($session->get('total') > $this->getUser()->getMoney()){
             $this->addFlash('warning','Not Enough Money In The Pocket!');
@@ -255,7 +257,7 @@ class UserController extends Controller
 
         /**@var Product[] $products*/
         foreach ($products as $product){
-            $this->buyProduct($product->getName(), $em, $session, $products, $quantities);
+            if($product->isAvailable())$this->buyProduct($product->getName(), $em, $session, $products, $quantities);
         }
 
         $this->getUser()->setMoney($this->getUser()->getMoney() - $this->get('session')->get('total'));

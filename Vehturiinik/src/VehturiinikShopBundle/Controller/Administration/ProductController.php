@@ -209,7 +209,8 @@ class ProductController extends Controller
                 return $this->redirectToRoute('view_products_in_categories_panel');
             }
             foreach ($products as $product){
-                if($product->getDiscount() < $data['discount']){
+                if($product->getDiscount() < $data['discount']
+                    || $product->getDiscount() == $data['discount'] && $data['dateDiscountExpires'] > $product->getDateDiscountExpires()){
                     $product->setDiscount($data['discount']);
                     $product->setDateDiscountExpires($data['dateDiscountExpires']);
                     $product->setDiscountAdded(true);

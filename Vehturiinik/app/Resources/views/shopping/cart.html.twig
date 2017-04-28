@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block main %}
+    {% import 'macros/mixedMacros.html.twig' as mixedMacros %}
     {% import 'macros/cartMacros.html.twig' as cartMacros %}
     <h2>Your Cash is: {{ app.user.money }} vehturiiki</h2>
     {% if app.user.money >= constant('VehturiinikShopBundle\\Entity\\User::MONEY_TO_BE_DISCOUNTED') or app.user.isRegularCustomer %}
@@ -13,6 +14,6 @@
         {{ knp_pagination_render(products) }}
     </div>
     <h4>Total Amount: {{ total }} vehturiiki</h4>
-    <a href="{{ path('checkout_cart') }}" class="btn btn-primary">Buy All Products</a>
+    {{ mixedMacros.vehturiinikLink('checkout_cart','Buy All Products') }}
 {% endblock %}
 

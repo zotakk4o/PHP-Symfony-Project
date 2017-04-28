@@ -8,6 +8,7 @@
         <th>Username</th>
         <th>Full Name</th>
         <th>Money</th>
+        <th>Date Registered</th>
         <th>Roles</th>
         <th>Options</th>
     </tr>
@@ -19,6 +20,7 @@
                 <td>{{ user.username }}</td>
                 <td>{{ user.fullName }}</td>
                 <td>{{ user.money }}</td>
+                <td>{{ user.dateRegistered|date("Y-M-d H:i") }}</td>
                 <td>
                     Roles:
                     {% for role in user.roles %}
@@ -26,9 +28,9 @@
                     {% endfor %}
                 </td>
                 <td>
-                    {{ mixedMacros.adminTableLink('edit_user','Edit',{id:user.id}) }}
-                    {{ mixedMacros.adminTableLink('view_user_purchases','Manage Purchases',{id:user.id}) }}
-                    {{ mixedMacros.adminTableLink('view_user_comments','Manage Comments',{id:user.id})}}
+                    {{ mixedMacros.vehturiinikLink('edit_user','Edit',{id:user.id}) }}
+                    {{ mixedMacros.vehturiinikLink('view_user_purchases','Manage Purchases',{id:user.id}) }}
+                    {{ mixedMacros.vehturiinikLink('view_user_comments','Manage Comments',{id:user.id})}}
                 </td>
             </tr>
     {% endfor %}
