@@ -33,3 +33,7 @@ body {
 .quantity{
     display: inline-block;
 }
+body{
+    background: url("../pictures/bg.jpg") no-repeat center center fixed;
+    background-size: cover;
+}

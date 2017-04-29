@@ -1,4 +1,4 @@
-{% import 'macros/mixedMacros.html.twig' as mixedMacros %}
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -10,6 +10,7 @@
         {% endblock %}
     </head>
     <body>
+    {% import 'macros/mixedMacros.html.twig' as mixedMacros %}
         {% block header %}
             <header>
                 <nav class="navbar navbar-default navbar-fixed-top">
@@ -18,7 +19,7 @@
                             <a class="navbar-brand" href="{{ path('home_index') }}">Vehturiinik</a>
                         </div>
                         <div class="navbar-header pull-left">
-                            <a class="navbar-brand" href="#">About</a>
+                            <a class="navbar-brand" href="{{ path('view_about_page') }}">About</a>
                         </div>
                         {% if app.user %}
                             <div class="navbar-header pull-right">

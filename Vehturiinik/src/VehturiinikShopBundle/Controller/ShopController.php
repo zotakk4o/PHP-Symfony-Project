@@ -143,7 +143,7 @@ class ShopController extends Controller
         $em->flush();
 
         $this->addFlash('notice','You have successfully sold ' . strtoupper($purchase->getProduct()->getName()));
-        return $this->redirectToRoute('home_index');
+        return $this->redirectToRoute('view_purchases');
     }
 
     /**
@@ -169,7 +169,6 @@ class ShopController extends Controller
         }
 
         $purchase = $this->getDoctrine()->getRepository(Purchase::class)->findOneByUserIdAndProductId($productId, $userId);
-
         if($purchase === null || !$purchase->isAvailable()) {
             $this->addFlash('warning','You haven\'t bought this product!');
             return $this->redirectToRoute('view_purchases');

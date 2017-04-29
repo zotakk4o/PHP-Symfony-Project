@@ -78,7 +78,7 @@ class UserController extends Controller
         $session = $this->get('session');
         if(!$session->has('products') || empty($session->get('products'))){
             $this->addFlash('warning','You have no products in your cart!');
-            return $this->redirectToRoute('view_shop');
+            return $this->redirectToRoute('home_index');
         }
 
 
@@ -126,14 +126,14 @@ class UserController extends Controller
             return $this->redirectToRoute('home_index');
         }
 
-        $products = [];
-        $quantities = [];
-
         $session = $this->get('session');
         if(!$session->has('products') && !$session->has('quantities')){
-            $session->set('products', $products);
-            $session->set('quantities',$quantities);
+            $session->set('products', []);
+            $session->set('quantities',[]);
         }
+
+        $products = $session->get('products');
+        $quantities = $session->get('quantities');
 
         if(!array_key_exists($product->getName(),$products)){
             $products[$product->getName()] = $product;
