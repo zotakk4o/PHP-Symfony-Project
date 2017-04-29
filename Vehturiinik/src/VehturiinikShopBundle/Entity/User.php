@@ -72,6 +72,8 @@ class User implements UserInterface
      * @var float
      *
      * @ORM\Column(name="money", type="float")
+     *
+     * @Assert\NotBlank(message="Money Field is required!")
      */
     private $money;
 
