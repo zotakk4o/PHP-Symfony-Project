@@ -39,6 +39,7 @@ class UserController extends Controller
             return $this->redirectToRoute('home_index');
         }
         $user = new User();
+        $user->setMoney(4200);
         $form = $this->createForm(UserRegisterType::class, $user)
             ->add('submit',SubmitType::class, ['label' => 'Register','attr' => ['class' => 'btn btn-primary']]);
 
@@ -50,7 +51,6 @@ class UserController extends Controller
 
             $role = $this->getDoctrine()->getRepository(Role::class)->findOneBy(['name' => 'ROLE_USER']);
             $user->addRole($role);
-            $user->setMoney(4200);
 
             $em = $this->getDoctrine()->getManager();
             try{
@@ -159,7 +159,10 @@ class UserController extends Controller
     {
         $session = $this->get('session');
         $products = $session->get('products');
-        if(!array_key_exists($productName, $products)){
+        if(empty($products)){
+            $this->addFlash('warning','Cart Empty!');
+            return $this->redirectToRoute('home_index');
+        }elseif(!array_key_exists($productName, $products)){
             $this->addFlash('error','Product not in cart!');
             return $this->redirectToRoute('home_index');
         }
